@@ -1,6 +1,6 @@
 # Cross-Asset Sentiment Regime Detector
 
-**Automated Market Psychology Analysis Using Transformer-Based NLP**
+## Automated Market Psychology Analysis Using Transformer-Based NLP
 
 ---
 
@@ -9,6 +9,7 @@
 The Cross-Asset Sentiment Regime Detector is a capstone research project that combines advanced natural language processing (NLP) with quantitative finance to create an automated system for detecting market sentiment regimes. By analyzing social media discourse (Reddit) and financial news, the system identifies distinct psychological states in markets and generates actionable trading signals.
 
 ### Key Innovation
+
 Traditional sentiment analysis treats market psychology as a continuous variable. This project recognizes that markets operate in distinct **regimes** (euphoria, fear, uncertainty, optimism) and uses transformer-based models to classify these states across multiple asset classes simultaneously.
 
 ---
@@ -16,7 +17,7 @@ Traditional sentiment analysis treats market psychology as a continuous variable
 ## 👨‍🎓 Project Information
 
 - **Author**: Jonathan Rocha
-- **Email**: jrocha@smu.edu
+- **Email**: <jrocha@smu.edu>
 - **Institution**: Southern Methodist University (SMU)
 - **Program**: Master of Science in Data Science (MSDS)
 - **Timeline**: Spring 2026 Capstone
@@ -39,21 +40,25 @@ Traditional sentiment analysis treats market psychology as a continuous variable
 ## 🛠️ Technical Architecture
 
 ### Data Pipeline
+
 - **Social Media**: Reddit API → r/wallstreetbets, r/stocks, r/investing
 - **Financial News**: NewsAPI → Bloomberg, Reuters, Financial Times
 - **Market Data**: yfinance → Stocks, Crypto, Bonds, Commodities
 
 ### NLP Stack
+
 - **Models**: FinBERT, RoBERTa-financial, custom fine-tuned transformers
 - **Framework**: Hugging Face Transformers, PyTorch
 - **Processing**: Sentiment scoring, entity recognition, topic modeling
 
 ### Regime Detection
+
 - **Clustering**: K-means, Gaussian Mixture Models
 - **Time-Series**: Hidden Markov Models for regime transitions
 - **Features**: Multi-dimensional sentiment vectors across assets
 
 ### Application Layer
+
 - **Frontend**: React + TypeScript (this documentation site will evolve into the live dashboard)
 - **Backend**: FastAPI + PostgreSQL
 - **Deployment**: Docker, Kubernetes, MANEFRAME HPC for training
@@ -63,6 +68,7 @@ Traditional sentiment analysis treats market psychology as a continuous variable
 ## 📊 Expected Deliverables
 
 ### Academic Outputs
+
 - ✅ Research Outline (Due: January 12, 2026)
 - 📝 Draft 0: Expanded Introduction + Bibliography (Due: January 26, 2026)
 - 📝 Draft 1: Full Literature Review (Due: February 16, 2026)
@@ -70,6 +76,7 @@ Traditional sentiment analysis treats market psychology as a continuous variable
 - 📝 Final Paper: Complete Research Manuscript (Due: April 20, 2026)
 
 ### Technical Outputs
+
 - Data collection pipeline (Reddit + News APIs)
 - Sentiment analysis models (fine-tuned transformers)
 - Regime detection algorithms (clustering + HMM)
@@ -106,7 +113,8 @@ This project fulfills the capstone requirement for SMU's Master of Science in Da
 
 **Phase**: Research & Planning  
 **Next Milestone**: Research Outline Submission (January 12, 2026)  
-**Progress**: 
+**Progress**:
+
 - ✅ Project proposal completed
 - ✅ GitHub repository initialized
 - ✅ Initial documentation structure
@@ -119,7 +127,7 @@ This project fulfills the capstone requirement for SMU's Master of Science in Da
 ## 📞 Contact & Collaboration
 
 **Jonathan Rocha**  
-📧 jrocha@smu.edu  
+📧 <jrocha@smu.edu>  
 🔗 [GitHub Repository](https://github.com/jonx0037/sentiment-regime-detector)  
 🏫 Southern Methodist University - Lyle School of Engineering
 
@@ -136,7 +144,5 @@ This project fulfills the capstone requirement for SMU's Master of Science in Da
 
 ---
 
-<div align="center">
-  <sub>Built with ❤️ for advancing NLP applications in financial markets</sub><br>
-  <sub>© 2026 Jonathan Rocha | SMU MSDS Capstone Project</sub>
-</div>
+*Built with ❤️ for advancing NLP applications in financial markets*  
+*© 2026 Jonathan Rocha | SMU MSDS Capstone Project*
