@@ -127,3 +127,7 @@ slurm-*.out
 # API Response Caches
 cache/
 .scrapy/
+
+# MS Office temp files
+~$*
+*.~*
