@@ -9,8 +9,8 @@ Last Updated: January 22, 2026
 
 | Metric | Count |
 |--------|-------|
-| Core Research Papers | 22 |
-| Scholarcy Summaries | 22 |
+| Core Research Papers | 28 |
+| Scholarcy Summaries | 27 |
 | Classical Texts (Keynes) | 31 chapters |
 
 ---
@@ -49,27 +49,33 @@ Located in: `course_files/research/full-articles/core-papers/`
 | 14 | `caferra-2022-physica-a-crypto-equity-spillovers-with-transfer-entropy.pdf` | Caferra (2022) | Crypto↔Equity sentiment spillovers (Transfer Entropy) | ✅ |
 | 15 | `cao-et-al-2025-entropy-sentiment-connectedness-to-crash-risk.pdf` | Cao et al. (2025) | Sentiment networks → crash risk | ✅ |
 | 16 | `nyakurukwa-and-seetharam-2025-financial-innovation-djia-sentiment-networks.pdf` | Nyakurukwa & Seetharam (2025) | DJIA sentiment network mapping | ✅ |
+| 17 | `cross-asset-momentum-hybrid-fund-transmission-china.pdf` | Wang et al. (2024) | Cross-asset momentum transmission in China | ✅ |
+| 18 | `cross-asset-risk-management-integrating-llms.pdf` | Yang et al. (2025) | LLMs for cross-asset risk monitoring | ✅ |
+| 19 | `AI-and-ML-models-cross-asset-investment-risk-analysis.pdf` | Sarfarazurrehman et al. (2025) | AI/ML for cross-asset risk analysis | ✅ |
+| 20 | `global-cross-market-trading-optimization-multi-asset-approach.pdf` | Pankwaen et al. (2025) | Multi-asset global trading optimization | ✅ |
 
 ### Market Regime Detection
 
 | # | File | Authors/Year | Topic | Has Summary |
 |---|------|--------------|-------|-------------|
-| 17 | `Explainable_Machine_Learning_for_Regime-Based_Asset_Allocation.pdf` | Zhang et al. (2020) | Explainable ML for regime allocation | ✅ |
-| 18 | `downside-risk-reduction-using-regime-switching-signals-a-statistical-jump-model-approach.pdf` | Shu et al. (2024) | Statistical jump model for regimes | ✅ |
-| 19 | `machine-learning-for-financial-prediction-under-regime-change-using-technical-analysis-a-systematic-review.pdf` | Suárez-Cetrulo et al. (2023) | Systematic review: ML under regime change | ✅ |
+| 21 | `Explainable_Machine_Learning_for_Regime-Based_Asset_Allocation.pdf` | Zhang et al. (2020) | Explainable ML for regime allocation | ✅ |
+| 22 | `downside-risk-reduction-using-regime-switching-signals-a-statistical-jump-model-approach.pdf` | Shu et al. (2024) | Statistical jump model for regimes | ✅ |
+| 23 | `machine-learning-for-financial-prediction-under-regime-change-using-technical-analysis-a-systematic-review.pdf` | Suárez-Cetrulo et al. (2023) | Systematic review: ML under regime change | ✅ |
 
 ### Foundational Works
 
 | # | File | Authors/Year | Topic | Has Summary |
 |---|------|--------------|-------|-------------|
-| 20 | `baker-wurgler-2007-investor-sentiment-in-the-stock-market-journal-of-economic-perspectives.pdf` | Baker & Wurgler (2007) | Investor sentiment index (foundational) | ✅ |
-| 21 | `loughran-mcdonald-2011-when-is-a-liability-not-a-liability-textual-analysis-dictionaries-and-10-ks-the-journal-of-finance.pdf` | Loughran & McDonald (2011) | Finance-specific lexicon (foundational) | ✅ |
+| 24 | `baker-wurgler-2007-investor-sentiment-in-the-stock-market-journal-of-economic-perspectives.pdf` | Baker & Wurgler (2007) | Investor sentiment index (foundational) | ✅ |
+| 25 | `loughran-mcdonald-2011-when-is-a-liability-not-a-liability-textual-analysis-dictionaries-and-10-ks-the-journal-of-finance.pdf` | Loughran & McDonald (2011) | Finance-specific lexicon (foundational) | ✅ |
+| 26 | `kelly-xiu-financial-machine-learning.pdf` | Kelly & Xiu (2023) | Financial ML comprehensive review (foundational) | ✅ |
+| 27 | `relative-sentiment-and-machine-learning-for-tactical-asset-allocation-micaletti.pdf` | Micaletti (2019) | Relative sentiment for tactical allocation | ✅ |
 
 ### Literature Reviews
 
 | # | File | Authors/Year | Topic | Has Summary |
 |---|------|--------------|-------|-------------|
-| 22 | `financial-news-sentiment-analysis-using-nlp-and-machine-learning-for-asset-price-prediction-a-systematic-review.pdf` | (2024) | Systematic review: NLP for price prediction | ✅ |
+| 28 | `financial-news-sentiment-analysis-using-nlp-and-machine-learning-for-asset-price-prediction-a-systematic-review.pdf` | Ehsan et al. (2025) | Systematic review: NLP for price prediction | ✅ |
 
 ---
 
@@ -77,7 +83,7 @@ Located in: `course_files/research/full-articles/core-papers/`
 
 Located in: `course_files/research/full-articles/Scholarcy-Article-Summaries/`
 
-All 22 core papers have corresponding Scholarcy summaries in `.md` format containing:
+27 files containing Scholarcy summaries (22 markdown + 5 PDF conversions):
 - YAML-style metadata headers
 - Abstract extraction
 - Key concepts as hashtags
@@ -102,11 +108,16 @@ Contains 31 chapter PDFs from Keynes' collected writings, including "The General
 
 ### For H2 (Divergence Signal Hypothesis)
 - Caferra (2022) - Sentiment spillovers
+- Wang et al. (2024) - Cross-asset momentum transmission
+- Pankwaen et al. (2025) - Multi-asset trading optimization
 
 ### For H3 (Network Effect Hypothesis)
 - Cao et al. (2025) - Sentiment connectedness
 - Nyakurukwa & Seetharam (2025) - Sentiment networks
+- Yang et al. (2025) - LLM cross-asset risk monitoring
 
 ### For H4 (Ensemble Superiority Hypothesis)
 - Mishev et al. (2020) - Transformer comparisons
 - FinBERT papers (1, 4, 5)
+- Kelly & Xiu (2023) - Financial ML overview
+- Micaletti (2019) - Relative sentiment ML

@@ -69,19 +69,24 @@ This document maps each research article to specific sections of the capstone pa
 
 ### 2.3 Cross-Asset and Sentiment Spillover (NEW SECTION FOR DRAFT-1)
 
-**Current Status:** ⚠️ Partially covered - needs significant expansion
+**Current Status:** ✅ Significantly expanded with new papers
 
 | Article | Citation Status | Key Contribution | Integration Notes |
 |---------|----------------|------------------|-------------------|
 | Caferra (2022) | ✅ Cited | Transfer Entropy: crypto↔equity spillovers | Core for H2/H3 |
 | Cao et al. (2025) | ✅ Cited | Sentiment connectedness → crash risk | Core for H3 |
 | Nyakurukwa & Seetharam (2025) | ✅ Cited | DJIA sentiment network mapping | Core for H3 |
+| Wang et al. (2024) | ⚠️ In library | Cross-asset momentum transmission in China | **Draft-1: Add for H2 evidence** |
+| Yang et al. (2025) | ⚠️ In library | LLMs for cross-asset risk monitoring | **Draft-1: Add for methodology** |
+| Sarfarazurrehman et al. (2025) | ⚠️ In library | AI/ML for cross-asset risk analysis | **Draft-1: Add for case study** |
+| Pankwaen et al. (2025) | ⚠️ In library | Multi-asset global trading optimization | **Draft-1: Add for multi-asset** |
 
 **Draft-1 Action Items:**
 - [ ] Create dedicated subsection 2.3 for cross-asset analysis
 - [ ] Synthesize Transfer Entropy methods from Caferra (2022)
-- [ ] Discuss limitations of pairwise vs. multi-asset approaches
-- [ ] Build case for portfolio-level sentiment aggregation
+- [ ] Integrate Wang et al. (2024) for momentum transmission evidence
+- [ ] Add Yang et al. (2025) for LLM-based cross-asset monitoring
+- [ ] Build case for portfolio-level sentiment aggregation using Pankwaen et al. (2025)
 
 ---
 
@@ -125,12 +130,14 @@ This document maps each research article to specific sections of the capstone pa
 | Evidence Source | Finding | Strength |
 |-----------------|---------|----------|
 | Caferra (2022) | Sentiment mediates cross-market relationships | Moderate |
+| Wang et al. (2024) | Cross-asset momentum transmission mechanisms | Strong |
+| Pankwaen et al. (2025) | Multi-asset optimization across markets | Moderate |
 
-**Gap Analysis:** ⚠️ Limited direct evidence - mostly inferred
+**Gap Analysis:** ✅ Significantly improved with new cross-asset papers
 
 **Draft-1 Action:** 
-- [ ] Review cross-asset papers for divergence evidence
-- [ ] Consider proposing this as novel contribution if unsupported
+- [ ] Synthesize Wang et al. (2024) for momentum/divergence evidence
+- [ ] Integrate Pankwaen et al. (2025) for multi-asset framework
 
 ---
 
@@ -141,10 +148,14 @@ This document maps each research article to specific sections of the capstone pa
 |-----------------|---------|----------|
 | Cao et al. (2025) | High connectedness → crash risk | Strong |
 | Nyakurukwa & Seetharam (2025) | DJIA sentiment highly interconnected | Moderate |
+| Yang et al. (2025) | LLM-based cross-asset monitoring | Moderate |
+| Sarfarazurrehman et al. (2025) | AI/ML for cross-asset risk analysis | Moderate |
 
-**Gap Analysis:** ✅ Well-supported for within-asset-class networks
+**Gap Analysis:** ✅ Well-supported with new AI/ML cross-asset papers
 
-**Draft-1 Action:** Extend to cross-asset network hypothesis (novel)
+**Draft-1 Action:** 
+- [ ] Extend to cross-asset network hypothesis using Yang et al. (2025)
+- [ ] Integrate Sarfarazurrehman et al. (2025) for risk analysis framework
 
 ---
 
@@ -155,8 +166,14 @@ This document maps each research article to specific sections of the capstone pa
 |-----------------|---------|----------|
 | Mishev et al. (2020) | Different models excel on different sources | Strong |
 | Shen & Zhang (2024) | FinBERT beats general LLMs on financial text | Moderate |
+| Kelly & Xiu (2023) | Comprehensive financial ML methodology review | Strong |
+| Micaletti (2019) | Relative sentiment for tactical asset allocation | Moderate |
 
-**Gap Analysis:** ✅ Well-supported theoretically, empirical validation needed
+**Gap Analysis:** ✅ Well-supported with foundational ML papers added
+
+**Draft-1 Action:**
+- [ ] Integrate Kelly & Xiu (2023) for ML methodology framework
+- [ ] Add Micaletti (2019) for tactical allocation evidence
 
 ---
 
@@ -172,9 +189,12 @@ This document maps each research article to specific sections of the capstone pa
    - No dedicated papers on commodity sentiment
    - Action: Search for gold, oil sentiment analysis papers
 
-3. **Multi-Asset Regime Detection**
-   - Existing work focuses on single-asset or pairwise relationships
-   - This is the core **novel contribution** of the research
+3. **Multi-Asset Regime Detection** ✅ ADDRESSED
+   - Previously a gap, now covered by:
+     - Wang et al. (2024) - momentum transmission
+     - Yang et al. (2025) - LLM cross-asset monitoring
+     - Pankwaen et al. (2025) - multi-asset optimization
+   - Core **novel contribution** remains: integrated sentiment-based detection
 
 4. **Real-Time System Implementations**
    - Most papers are retrospective analysis
@@ -222,6 +242,18 @@ This document maps each research article to specific sections of the capstone pa
 |---------|---------------|----------------|-------------------|----------------|
 | 2.1 Transformers | 80% | 95% | 4 | 3 |
 | 2.2 Sentiment/NLP | 75% | 90% | 8 | 1 |
-| 2.3 Cross-Asset | 40% | 85% | 3 | 0 |
+| 2.3 Cross-Asset | 40% | 90% | 3 | 4 |
 | 2.4 Regime Detection | 70% | 90% | 4 | 0 |
-| **TOTAL** | **65%** | **90%** | **19** | **4** |
+| Foundational | 70% | 95% | 3 | 2 |
+| **TOTAL** | **65%** | **92%** | **22** | **6** |
+
+### New Papers to Integrate for Draft-1
+
+| Paper | Section | Priority |
+|-------|---------|----------|
+| Wang et al. (2024) - Cross-asset momentum | 2.3 | High |
+| Yang et al. (2025) - LLM cross-asset risk | 2.3 | High |
+| Pankwaen et al. (2025) - Multi-asset optimization | 2.3 | Medium |
+| Sarfarazurrehman et al. (2025) - AI/ML risk analysis | 2.3 | Medium |
+| Kelly & Xiu (2023) - Financial ML review | 2.4 / Methods | High |
+| Micaletti (2019) - Tactical allocation | 2.2 | Medium |
