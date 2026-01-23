@@ -2,7 +2,7 @@
 
 **Cross-Asset Sentiment Regime Detector**  
 Mapping Research Articles to Paper Sections  
-Last Updated: January 22, 2026
+Last Updated: January 23, 2026
 
 ---
 
@@ -124,10 +124,14 @@ This document maps each research article to specific sections of the capstone pa
 | Kraaijeveld & De Smedt (2020) | 1-3 days | Crypto | Strong |
 | Renault (2017) | Next-day | Equities | Moderate |
 | Caferra (2022) | Not specified | Crypto↔Equity | Moderate |
+| Olaiyapo (2024) | Trading signals | Forex | Strong |
+| Gu & Song (2024) | Forecasting | Forex (exchange rates) | Strong |
+| Sibande et al. (2024) | Not specified | Currency markets | Moderate |
+| Cai, Tang & Chen (2024) | Real-time | High-frequency equities | Strong |
 
-**Gap Analysis:** ❌ No direct evidence for forex or commodities lead times
+**Gap Analysis:** ✅ ADDRESSED - Forex gap filled with 4 new papers
 
-**Draft-1 Action:** Search for forex/commodities sentiment prediction papers
+**Draft-1 Action:** Integrate forex papers into cross-asset framework
 
 ---
 
@@ -180,13 +184,18 @@ This document maps each research article to specific sections of the capstone pa
 | Shen & Zhang (2024) | FinBERT beats general LLMs on financial text | Moderate |
 | Kelly & Xiu (2023) | Comprehensive financial ML methodology review | Strong |
 | Micaletti (2019) | Relative sentiment for tactical asset allocation | Moderate |
+| Fatouros et al. (2024) | ChatGPT for financial sentiment analysis | Strong |
+| Gu & Song (2024) | Fine-tuned FinBERT for exchange rates | Strong |
+| Dakalbab et al. (2024) | Multimodal attention mechanisms for forex | Moderate |
 
-**Gap Analysis:** ✅ Well-supported with foundational ML papers added
+**Gap Analysis:** ✅ Well-supported with foundational ML papers and new LLM papers
 
 **Draft-1 Action:**
 
 - [ ] Integrate Kelly & Xiu (2023) for ML methodology framework
 - [ ] Add Micaletti (2019) for tactical allocation evidence
+- [ ] Add Fatouros et al. (2024) for ChatGPT capabilities
+- [ ] Add Gu & Song (2024) for fine-tuned FinBERT evidence
 
 ---
 
@@ -194,13 +203,16 @@ This document maps each research article to specific sections of the capstone pa
 
 ### Identified Gaps
 
-1. **Forex Sentiment Analysis**
-   - Current library has limited forex-specific papers
-   - Action: Search for forex sentiment prediction literature
+1. **Forex Sentiment Analysis** ✅ ADDRESSED
+   - Now covered by 4 new papers:
+     - Dakalbab et al. (2024) - Multimodal forex prediction
+     - Olaiyapo (2024) - Forex trading signals
+     - Gu & Song (2024) - FinBERT exchange rate forecasting
+     - Sibande et al. (2024) - Twitter currency market sentiment
 
 2. **Commodities Sentiment Analysis**
    - No dedicated papers on commodity sentiment
-   - Action: Search for gold, oil sentiment analysis papers
+   - Note: Lower priority - forex coverage now complete
 
 3. **Multi-Asset Regime Detection** ✅ ADDRESSED
    - Previously a gap, now covered by:
@@ -209,9 +221,10 @@ This document maps each research article to specific sections of the capstone pa
      - Pankwaen et al. (2025) - multi-asset optimization
    - Core **novel contribution** remains: integrated sentiment-based detection
 
-4. **Real-Time System Implementations**
-   - Most papers are retrospective analysis
-   - Action: Search for deployed sentiment systems literature
+4. **Real-Time System Implementations** ✅ ADDRESSED
+   - Now covered by:
+     - Cai, Tang & Chen (2024) - Real-time high-frequency prediction
+     - Fatouros et al. (2024) - ChatGPT real-time analysis
 
 ---
 
@@ -222,26 +235,26 @@ This document maps each research article to specific sections of the capstone pa
 
    2.1 Transformer Models in Financial Sentiment Analysis
        2.1.1 From Lexicons to BERT (Loughran-McDonald → FinBERT)
-       2.1.2 Large Language Models (GPT, LLaMA variants)
+       2.1.2 Large Language Models (GPT, LLaMA, ChatGPT)
        2.1.3 Model Comparison and Selection Criteria
    
    2.2 Financial Sentiment and Market Prediction
        2.2.1 Foundational Work (Baker-Wurgler, Animal Spirits)
        2.2.2 Social Media as Predictive Signal
-       2.2.3 Cryptocurrency-Specific Sentiment Analysis [NEW]
-       2.2.4 Lead Time Evidence Synthesis [EXPANDED]
+       2.2.3 Cryptocurrency-Specific Sentiment Analysis
+       2.2.4 Lead Time Evidence Synthesis
    
-   2.3 Cross-Asset Sentiment Analysis [NEW SECTION]
+   2.3 Cross-Asset Sentiment Analysis [EXPANDED]
        2.3.1 Sentiment Spillover Mechanisms
        2.3.2 Transfer Entropy and Information Flow
        2.3.3 Network-Based Approaches
-       2.3.4 Gap: Multi-Asset Integration
+       2.3.4 Forex and Currency Market Sentiment [NEW]
    
    2.4 Market Regime Detection
        2.4.1 Traditional Approaches (VIX, HMM)
        2.4.2 Machine Learning Methods
        2.4.3 Sentiment-Based Regime Detection
-       2.4.4 Gap: Sentiment as Leading Indicator
+       2.4.4 Real-Time and High-Frequency Systems [NEW]
    
    2.5 Research Hypotheses
        (Updated based on expanded review)
@@ -253,12 +266,12 @@ This document maps each research article to specific sections of the capstone pa
 
 | Section | Draft-0 Status | Draft-1 Target | Papers Integrated | Papers Pending |
 | --- | --- | --- | --- | --- |
-| 2.1 Transformers | 80% | 95% | 4 | 3 |
-| 2.2 Sentiment/NLP | 75% | 90% | 8 | 1 |
-| 2.3 Cross-Asset | 40% | 90% | 3 | 4 |
-| 2.4 Regime Detection | 70% | 90% | 4 | 0 |
+| 2.1 Transformers | 80% | 98% | 4 | 4 |
+| 2.2 Sentiment/NLP | 75% | 95% | 8 | 2 |
+| 2.3 Cross-Asset | 40% | 95% | 3 | 8 |
+| 2.4 Regime Detection | 70% | 95% | 4 | 2 |
 | Foundational | 70% | 95% | 3 | 2 |
-| **TOTAL** | **65%** | **92%** | **22** | **6** |
+| **TOTAL** | **65%** | **96%** | **22** | **12** |
 
 ### New Papers to Integrate for Draft-1
 
@@ -270,3 +283,9 @@ This document maps each research article to specific sections of the capstone pa
 | Sarfarazurrehman et al. (2025) - AI/ML risk analysis | 2.3 | Medium |
 | Kelly & Xiu (2023) - Financial ML review | 2.4 / Methods | High |
 | Micaletti (2019) - Tactical allocation | 2.2 | Medium |
+| Dakalbab et al. (2024) - Multimodal forex | 2.3.4 | High |
+| Olaiyapo (2024) - Forex trading signals | 2.3.4 | High |
+| Gu & Song (2024) - FinBERT exchange rates | 2.3.4 / 2.1 | High |
+| Sibande et al. (2024) - Twitter currency | 2.3.4 | Medium |
+| Cai, Tang & Chen (2024) - Real-time HF | 2.4.4 | High |
+| Fatouros et al. (2024) - ChatGPT financial | 2.1.2 | High |

@@ -1,7 +1,7 @@
 # Research Article Index
 
 **Cross-Asset Sentiment Regime Detector - Literature Catalog**  
-Last Updated: January 22, 2026
+Last Updated: January 23, 2026
 
 ---
 
@@ -9,8 +9,8 @@ Last Updated: January 22, 2026
 
 | Metric                      | Count       |
 | ---------------------------:| ----------- |
-| Core Research Papers        | 28          |
-| Scholarcy Summaries         | 27          |
+| Core Research Papers        | 34          |
+| Scholarcy Summaries         | 33          |
 | Classical Texts (Keynes)    | 31 chapters |
 
 ---
@@ -71,11 +71,27 @@ Located in: `course_files/research/full-articles/core-papers/`
 | 26 | `kelly-xiu-financial-machine-learning.pdf` | Kelly & Xiu (2023) | Financial ML comprehensive review (foundational) | ✅ |
 | 27 | `relative-sentiment-and-machine-learning-for-tactical-asset-allocation-micaletti.pdf` | Micaletti (2019) | Relative sentiment for tactical allocation | ✅ |
 
+### Forex & Currency Sentiment (NEW - Addresses Gap)
+
+| # | File | Authors/Year | Topic | Has Summary |
+| --- | --- | --- | --- | --- |
+| 28 | `advancing-forex-prediction-through-multimodal_text-driven_model-and-attention-mechanisms_-_Dakalbab,-et_al.pdf` | Dakalbab et al. (2024) | Multimodal text-driven forex prediction with attention | ✅ |
+| 29 | `applying-news-and-media-sentiment-analysis-for-generating-forex-trading-signals_Olaiyapo.pdf` | Olaiyapo (2024) | News/media sentiment → forex trading signals | ✅ |
+| 30 | `enhancing-exchange-rate-forecasting-with-contextual-sentiment-indices_-_a_fine-tuned-FinBERT-approach,_-Gu,-Song.pdf` | Gu & Song (2024) | Fine-tuned FinBERT for exchange rate forecasting | ✅ |
+| 31 | `investor-sentiman-and-(anti)-herding-in-the-currency-market_-_evidence-from-twitter-feed-data_,-Sibande,-et_al.pdf` | Sibande et al. (2024) | Twitter sentiment → currency market herding | ✅ |
+
+### Real-Time & High-Frequency Systems (NEW - Addresses Gap)
+
+| # | File | Authors/Year | Topic | Has Summary |
+| --- | --- | --- | --- | --- |
+| 32 | `can-real_time-investor-sentiment-help-predict-the-high-frequency-stock-returns_-_evidence-from-a-mixed_frequency_rolling-decomposition-forecasting-method_,-Cai,-Tang,-Chen.pdf` | Cai, Tang & Chen (2024) | Real-time sentiment → high-frequency returns | ✅ |
+| 33 | `transforming-sentiment-analysis-in-the-financial-domain-with-ChatGPT_Fatouros,-et_al.pdf` | Fatouros et al. (2024) | ChatGPT for financial sentiment analysis | ✅ |
+
 ### Literature Reviews
 
 | # | File | Authors/Year | Topic | Has Summary |
 | --- | --- | --- | --- | --- |
-| 28 | `financial-news-sentiment-analysis-using-nlp-and-machine-learning-for-asset-price-prediction-a-systematic-review.pdf` | Ehsan et al. (2025) | Systematic review: NLP for price prediction | ✅ |
+| 34 | `financial-news-sentiment-analysis-using-nlp-and-machine-learning-for-asset-price-prediction-a-systematic-review.pdf` | Ehsan et al. (2025) | Systematic review: NLP for price prediction | ✅ |
 
 ---
 
@@ -83,7 +99,7 @@ Located in: `course_files/research/full-articles/core-papers/`
 
 Located in: `course_files/research/full-articles/Scholarcy-Article-Summaries/`
 
-27 files containing Scholarcy summaries (22 markdown + 5 PDF conversions):
+33 files containing Scholarcy summaries (28 markdown + 5 PDF conversions):
 
 - YAML-style metadata headers
 - Abstract extraction
@@ -102,9 +118,13 @@ Contains 31 chapter PDFs from Keynes' collected writings, including "The General
 
 ## Quick Reference by Research Theme
 
+### For H1 (Leading Indicator Hypothesis)
+
 - Bollen et al. (2011) - 2-6 day lead time
 - Kraaijeveld & De Smedt (2020) - 1-3 day crypto lead
 - Renault (2017) - Next-day volatility correlation
+- Cai, Tang & Chen (2024) - Real-time high-frequency prediction
+- Olaiyapo (2024) - Forex trading signals from sentiment
 
 ### For H2 (Divergence Signal Hypothesis)
 
@@ -117,6 +137,7 @@ Contains 31 chapter PDFs from Keynes' collected writings, including "The General
 - Cao et al. (2025) - Sentiment connectedness
 - Nyakurukwa & Seetharam (2025) - Sentiment networks
 - Yang et al. (2025) - LLM cross-asset risk monitoring
+- Sibande et al. (2024) - Twitter currency market herding
 
 ### For H4 (Ensemble Superiority Hypothesis)
 
@@ -124,3 +145,6 @@ Contains 31 chapter PDFs from Keynes' collected writings, including "The General
 - FinBERT papers (1, 4, 5)
 - Kelly & Xiu (2023) - Financial ML overview
 - Micaletti (2019) - Relative sentiment ML
+- Gu & Song (2024) - Fine-tuned FinBERT for forex
+- Fatouros et al. (2024) - ChatGPT financial sentiment
+- Dakalbab et al. (2024) - Multimodal attention mechanisms
