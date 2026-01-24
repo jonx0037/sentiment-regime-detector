@@ -1,7 +1,7 @@
 # Research Article Index
 
 **Cross-Asset Sentiment Regime Detector - Literature Catalog**  
-Last Updated: January 23, 2026
+Last Updated: January 24, 2026
 
 ---
 
@@ -9,9 +9,10 @@ Last Updated: January 23, 2026
 
 | Metric                      | Count       |
 | ---------------------------:| ----------- |
-| Core Research Papers        | 34          |
-| Scholarcy Summaries         | 33          |
+| Core Research Papers        | 48          |
+| Scholarcy Summaries         | 43          |
 | Classical Texts (Keynes)    | 31 chapters |
+| Zotero Exports              | 3 CSVs      |
 
 ---
 
@@ -21,98 +22,134 @@ Located in: `course_files/research/full-articles/core-papers/`
 
 ### Transformer Models & Financial NLP
 
-| # | File | Authors/Year | Topic | Has Summary |
-| --- | --- | --- | --- | --- |
-| 1 | `FinBERT-Financial-Sentiment-Analysis-with-_Pre-trained_-Language-Models.pdf` | Araci (2019) | FinBERT introduction, domain-specific BERT for finance | ✅ |
-| 2 | `Evaluation_of_Sentiment_Analysis_in_Finance_From_Lexicons_to_Transformers.pdf` | Mishev et al. (2020) | Comprehensive evaluation: lexicons vs transformers | ✅ |
-| 3 | `Large_Language_Models_and_Sentiment_Analysis_in_Financial_Markets_A_Review_Datasets_and_Case_Study.pdf` | Liu et al. (2024) | LLM applications in financial sentiment | ✅ |
-| 4 | `Financial_Sentiment_Analysis_on_News_and_Reports_Using_Large_Language_Models_and_FinBERT.pdf` | Shen & Zhang (2024) | FinBERT vs GPT comparison | ✅ |
-| 5 | `luo-w-and-gong-d-2024-pre-trained-large-language-models-for-financial-sentiment-analysis.pdf` | Luo & Gong (2024) | Pre-trained LLMs for financial sentiment | ✅ |
-| 6 | `finllama-financial-sentiment-classification-for-algorithmic-trading-applications.pdf` | (2024) | FinLLaMA for algorithmic trading | ✅ |
-| 7 | `finsosent-advancing-financial-market-sentiment-analysis-through-pretrained-large-language-models.pdf` | (2024) | FinSoSent LLM sentiment analysis | ✅ |
-| 8 | `financial-sentiment-analysis-for-pre-trained-language-models-incorporating-dictionary-knowledge-and-neutral-features.pdf` | (2024) | Dictionary + neural hybrid approach | ✅ |
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 1 | Araci (2019) | FinBERT introduction, domain-specific BERT for finance | ✅ |
+| 2 | Mishev et al. (2020) | Comprehensive evaluation: lexicons vs transformers | ✅ |
+| 3 | Liu et al. (2024) | LLM applications in financial sentiment | ✅ |
+| 4 | Shen & Zhang (2024) | FinBERT vs GPT-4o comparison | ✅ |
+| 5 | Luo & Gong (2024) | Pre-trained LLMs for financial sentiment | ✅ |
+| 6 | Konstantinidis et al. (2024) | FinLLaMA for algorithmic trading | ✅ |
+| 7 | Delgadillo et al. (2024) | FinSoSent LLM sentiment analysis | ✅ |
+| 8 | Sun et al. (2025) | Dictionary + neural hybrid approach | ✅ |
+
+### Advanced NLP & LLM Comparisons (NEW)
+
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 9 | Ergun & Sefer (2025) | FinSentiment transfer learning (BERT, XLNet, RoBERTa, GPT, Llama, T5) | ✅ |
+| 10 | Nasiopoulos et al. (2025) | Fine-tuned GPT-4o, GPT-4o-mini, BERT, FinBERT comparison | ✅ |
+| 11 | Mahendran et al. (2025) | BERT vs FinBERT vs LLMs review | ✅ |
+| 12 | Baghavathi Priya et al. (2025) | FinBERT sentiment dynamics, 89.6% accuracy | ✅ |
 
 ### Social Media & Alternative Data
 
-| # | File | Authors/Year | Topic | Has Summary |
-| --- | --- | --- | --- | --- |
-| 9 | `bollen-mao-zeng-2011-twitter-mood-predicts-the-stock-market-journal-of-computational-science.pdf` | Bollen et al. (2011) | Twitter mood → DJIA prediction (87.6% accuracy) | ✅ |
-| 10 | `renault-2017-intraday-online-investor-sentiment-and-return-patterns-in-the-us-stock-market-journal-of-banking-finance.pdf` | Renault (2017) | Reddit sentiment → next-day volatility | ✅ |
-| 11 | `kraaijeveld-de-smedt-2020-the-predictive-power-of-public-twitter-sentiment-for-forecasting-cryptocurrency-prices-journal-of-international-financial-markets-institutions-money.pdf` | Kraaijeveld & De Smedt (2020) | Twitter → crypto prices (1-3 day lead) | ✅ |
-| 12 | `enhancing-sentiment-analysis-in-stock-market-tweets-through-bert-based-knowledge-transfer.pdf` | Cicekyurt & Bakal (2025) | BERT transfer learning on stock tweets | ✅ |
-| 13 | `social-media-sentiment-analysis-for-cryptocurrency-market-prediction.pdf` | (2024) | Social media → crypto prediction | ✅ |
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 13 | Bollen et al. (2011) | Twitter mood → DJIA prediction (87.6% accuracy) | ✅ |
+| 14 | Renault (2017) | Reddit/StockTwits → intraday returns | ✅ |
+| 15 | Kraaijeveld & De Smedt (2020) | Twitter → crypto prices (1-3 day lead) | ✅ |
+| 16 | Cicekyurt & Bakal (2025) | BERT transfer learning on stock tweets (+20% F1) | ✅ |
+| 17 | Raheman et al. (2022) | Social media → crypto prediction | ✅ |
+| 18 | Amin et al. (2024) | Twitter + macro factors for stock prediction | ✅ |
+
+### Cryptocurrency Sentiment Analysis (NEW)
+
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 19 | Roumeliotis et al. (2024) | GPT-4, BERT, FinBERT comparison for crypto | ✅ |
+| 20 | Various (2024) | Sentiment corpus creation for crypto | ✅ |
 
 ### Cross-Asset & Sentiment Spillover
 
-| # | File | Authors/Year | Topic | Has Summary |
-| --- | --- | --- | --- | --- |
-| 14 | `caferra-2022-physica-a-crypto-equity-spillovers-with-transfer-entropy.pdf` | Caferra (2022) | Crypto↔Equity sentiment spillovers (Transfer Entropy) | ✅ |
-| 15 | `cao-et-al-2025-entropy-sentiment-connectedness-to-crash-risk.pdf` | Cao et al. (2025) | Sentiment networks → crash risk | ✅ |
-| 16 | `nyakurukwa-and-seetharam-2025-financial-innovation-djia-sentiment-networks.pdf` | Nyakurukwa & Seetharam (2025) | DJIA sentiment network mapping | ✅ |
-| 17 | `cross-asset-momentum-hybrid-fund-transmission-china.pdf` | Wang et al. (2024) | Cross-asset momentum transmission in China | ✅ |
-| 18 | `cross-asset-risk-management-integrating-llms.pdf` | Yang et al. (2025) | LLMs for cross-asset risk monitoring | ✅ |
-| 19 | `AI-and-ML-models-cross-asset-investment-risk-analysis.pdf` | Sarfarazurrehman et al. (2025) | AI/ML for cross-asset risk analysis | ✅ |
-| 20 | `global-cross-market-trading-optimization-multi-asset-approach.pdf` | Pankwaen et al. (2025) | Multi-asset global trading optimization | ✅ |
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 21 | Caferra (2022) | Crypto↔Equity sentiment spillovers (Transfer Entropy) | ✅ |
+| 22 | Cao et al. (2025) | Sentiment networks → crash risk | ✅ |
+| 23 | Nyakurukwa & Seetharam (2025) | DJIA sentiment network mapping | ✅ |
+| 24 | Wang et al. (2024) | Cross-asset momentum transmission in China | ✅ |
+| 25 | Yang et al. (2025) | LLMs for cross-asset risk monitoring | ✅ |
+| 26 | Sarfarazurrehman et al. (2025) | AI/ML for cross-asset risk analysis | ✅ |
+| 27 | Pankwaen et al. (2025) | Multi-asset global trading optimization | ✅ |
 
 ### Market Regime Detection
 
-| # | File | Authors/Year | Topic | Has Summary |
-| --- | --- | --- | --- | --- |
-| 21 | `Explainable_Machine_Learning_for_Regime-Based_Asset_Allocation.pdf` | Zhang et al. (2020) | Explainable ML for regime allocation | ✅ |
-| 22 | `downside-risk-reduction-using-regime-switching-signals-a-statistical-jump-model-approach.pdf` | Shu et al. (2024) | Statistical jump model for regimes | ✅ |
-| 23 | `machine-learning-for-financial-prediction-under-regime-change-using-technical-analysis-a-systematic-review.pdf` | Suárez-Cetrulo et al. (2023) | Systematic review: ML under regime change | ✅ |
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 28 | Zhang et al. (2020) | Explainable ML for regime allocation | ✅ |
+| 29 | Shu et al. (2024) | Statistical jump model for regimes | ✅ |
+| 30 | Suárez-Cetrulo et al. (2023) | Systematic review: ML under regime change | ✅ |
 
 ### Foundational Works
 
-| # | File | Authors/Year | Topic | Has Summary |
-| --- | --- | --- | --- | --- |
-| 24 | `baker-wurgler-2007-investor-sentiment-in-the-stock-market-journal-of-economic-perspectives.pdf` | Baker & Wurgler (2007) | Investor sentiment index (foundational) | ✅ |
-| 25 | `loughran-mcdonald-2011-when-is-a-liability-not-a-liability-textual-analysis-dictionaries-and-10-ks-the-journal-of-finance.pdf` | Loughran & McDonald (2011) | Finance-specific lexicon (foundational) | ✅ |
-| 26 | `kelly-xiu-financial-machine-learning.pdf` | Kelly & Xiu (2023) | Financial ML comprehensive review (foundational) | ✅ |
-| 27 | `relative-sentiment-and-machine-learning-for-tactical-asset-allocation-micaletti.pdf` | Micaletti (2019) | Relative sentiment for tactical allocation | ✅ |
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 31 | Baker & Wurgler (2007) | Investor sentiment index (foundational) | ✅ |
+| 32 | Loughran & McDonald (2011) | Finance-specific lexicon (foundational) | ✅ |
+| 33 | Kelly & Xiu (2023) | Financial ML comprehensive review (foundational) | ✅ |
+| 34 | Micaletti (2019) | Relative sentiment for tactical allocation | ✅ |
 
-### Forex & Currency Sentiment (NEW - Addresses Gap)
+### Forex & Currency Sentiment
 
-| # | File | Authors/Year | Topic | Has Summary |
-| --- | --- | --- | --- | --- |
-| 28 | `advancing-forex-prediction-through-multimodal_text-driven_model-and-attention-mechanisms_-_Dakalbab,-et_al.pdf` | Dakalbab et al. (2024) | Multimodal text-driven forex prediction with attention | ✅ |
-| 29 | `applying-news-and-media-sentiment-analysis-for-generating-forex-trading-signals_Olaiyapo.pdf` | Olaiyapo (2024) | News/media sentiment → forex trading signals | ✅ |
-| 30 | `enhancing-exchange-rate-forecasting-with-contextual-sentiment-indices_-_a_fine-tuned-FinBERT-approach,_-Gu,-Song.pdf` | Gu & Song (2024) | Fine-tuned FinBERT for exchange rate forecasting | ✅ |
-| 31 | `investor-sentiman-and-(anti)-herding-in-the-currency-market_-_evidence-from-twitter-feed-data_,-Sibande,-et_al.pdf` | Sibande et al. (2024) | Twitter sentiment → currency market herding | ✅ |
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 35 | Dakalbab et al. (2025) | Multimodal text-driven forex prediction with attention | ✅ |
+| 36 | Olaiyapo (2024) | News/media sentiment → forex trading signals | ✅ |
+| 37 | Gu & Song (2026) | Fine-tuned FinBERT for exchange rate forecasting (84.33% accuracy) | ✅ |
+| 38 | Sibande et al. (2023) | Twitter sentiment → currency market herding | ✅ |
+| 39 | Fatouros et al. (2023) | ChatGPT for forex sentiment (35% better than FinBERT) | ✅ |
 
-### Real-Time & High-Frequency Systems (NEW - Addresses Gap)
+### Real-Time & High-Frequency Systems
 
-| # | File | Authors/Year | Topic | Has Summary |
-| --- | --- | --- | --- | --- |
-| 32 | `can-real_time-investor-sentiment-help-predict-the-high-frequency-stock-returns_-_evidence-from-a-mixed_frequency_rolling-decomposition-forecasting-method_,-Cai,-Tang,-Chen.pdf` | Cai, Tang & Chen (2024) | Real-time sentiment → high-frequency returns | ✅ |
-| 33 | `transforming-sentiment-analysis-in-the-financial-domain-with-ChatGPT_Fatouros,-et_al.pdf` | Fatouros et al. (2024) | ChatGPT for financial sentiment analysis | ✅ |
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 40 | Cai, Tang & Chen (2024) | Real-time sentiment → high-frequency returns | ✅ |
 
-### Literature Reviews
+### Commodities Sentiment (NEW)
 
-| # | File | Authors/Year | Topic | Has Summary |
-| --- | --- | --- | --- | --- |
-| 34 | `financial-news-sentiment-analysis-using-nlp-and-machine-learning-for-asset-price-prediction-a-systematic-review.pdf` | Ehsan et al. (2025) | Systematic review: NLP for price prediction | ✅ |
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 41 | Shi (2025) | Gold/USD sentiment with GARCH-MIDAS (18.7% error reduction) | ✅ |
+
+### Literature Reviews & Surveys (NEW)
+
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 42 | Ehsan et al. (2025) | Systematic review: NLP for price prediction | ✅ |
+| 43 | Sathish & Jamalpur (2025) | ML + NLP-based sentiment integration survey | ✅ |
+| 44 | Ferrell & McInnes (2025) | RL + NLP integration for trading (22 papers) | ✅ |
+| 45 | Kengmegni (2025) | Multi-level sentiment approach, limitations analysis | ✅ |
+| 46 | Various (2024) | Literature synthesis on text-based sentiment | ✅ |
+| 47 | Various (2024) | Multi-source sentiment with LLMs | ✅ |
+| 48 | Trushkovskyi (2024) | Crypto trading models from social sentiment | ✅ |
 
 ---
 
 ## Scholarcy Summaries
 
-Located in: `course_files/research/full-articles/Scholarcy-Article-Summaries/`
+Located in: `course_files/research/summaries/`
 
-33 files containing Scholarcy summaries (28 markdown + 5 PDF conversions):
-
-- YAML-style metadata headers
-- Abstract extraction
-- Key concepts as hashtags
-- Section-by-section summaries
+43 files containing Scholarcy summaries with YAML-style metadata headers, abstract extraction, key concepts as hashtags, and section-by-section summaries.
 
 ---
 
 ## Classical Texts
 
-Located in: `course_files/research/full-articles/classical-texts/cambridge-core_the-collected-writings-of-john-maynard-keynes/`
+Located in: `course_files/research/full-articles/classical-texts/`
 
 Contains 31 chapter PDFs from Keynes' collected writings, including "The General Theory of Employment, Interest and Money" (source of "animal spirits" concept cited in Draft-0).
+
+---
+
+## Zotero Bibliography Exports
+
+Located in: `course_files/research/full-articles/zotero-exports/`
+
+| File | Records | Description |
+|------|---------|-------------|
+| Capstone-zotero-export_1-22-26.csv | 24 | Initial bibliography |
+| Capstone-zotero-export_1-23-26_A.csv | 38 | Primary expanded bibliography with full metadata |
+| Capstone-zotero-export_1-23-26_B.csv | 14 | Additional new papers (surveys, comparisons) |
 
 ---
 
@@ -125,26 +162,38 @@ Contains 31 chapter PDFs from Keynes' collected writings, including "The General
 - Renault (2017) - Next-day volatility correlation
 - Cai, Tang & Chen (2024) - Real-time high-frequency prediction
 - Olaiyapo (2024) - Forex trading signals from sentiment
+- Amin et al. (2024) - Macro factors + Twitter sentiment
 
 ### For H2 (Divergence Signal Hypothesis)
 
 - Caferra (2022) - Sentiment spillovers
 - Wang et al. (2024) - Cross-asset momentum transmission
 - Pankwaen et al. (2025) - Multi-asset trading optimization
+- Shi (2025) - Gold/USD sentiment dynamics
 
 ### For H3 (Network Effect Hypothesis)
 
-- Cao et al. (2025) - Sentiment connectedness
+- Cao et al. (2025) - Sentiment connectedness → crash risk
 - Nyakurukwa & Seetharam (2025) - Sentiment networks
 - Yang et al. (2025) - LLM cross-asset risk monitoring
-- Sibande et al. (2024) - Twitter currency market herding
+- Sibande et al. (2023) - Twitter currency market herding
+- Sarfarazurrehman et al. (2025) - AI/ML cross-asset risk
 
 ### For H4 (Ensemble Superiority Hypothesis)
 
 - Mishev et al. (2020) - Transformer comparisons
-- FinBERT papers (1, 4, 5)
+- FinBERT papers (Araci, Shen & Zhang, Gu & Song)
 - Kelly & Xiu (2023) - Financial ML overview
 - Micaletti (2019) - Relative sentiment ML
-- Gu & Song (2024) - Fine-tuned FinBERT for forex
-- Fatouros et al. (2024) - ChatGPT financial sentiment
-- Dakalbab et al. (2024) - Multimodal attention mechanisms
+- Fatouros et al. (2023) - ChatGPT 35% better than FinBERT
+- Ergun & Sefer (2025) - FinSentiment multi-model comparison
+- Nasiopoulos et al. (2025) - Fine-tuned GPT-4o comparison
+- Baghavathi Priya et al. (2025) - FinBERT 89.6% accuracy
+
+### For Methodology Section
+
+- Kelly & Xiu (2023) - Financial ML comprehensive review
+- Sathish & Jamalpur (2025) - ML + NLP integration survey
+- Ferrell & McInnes (2025) - RL + NLP for trading
+- Suárez-Cetrulo et al. (2023) - ML under regime change (140 studies)
+- Kengmegni (2025) - Limitations and multi-level approaches

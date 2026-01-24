@@ -269,8 +269,8 @@ git status
 
 # Stage specific files
 
-git add dev/research/draft-0.md
-git add dev/research/literature-notes.md
+git add course_files/paper-drafts/draft-0.md
+git add course_files/paper-drafts/literature-notes.md
 
 # Commit with meaningful message
 

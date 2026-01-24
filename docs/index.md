@@ -88,9 +88,9 @@ Traditional sentiment analysis treats market psychology as a continuous variable
 
 ## 📚 Documentation
 
-- [Project Proposal](dev/research/project-proposal.md)
-- [Research Outline Draft](dev/research/draft-0.md)
-- [Literature Review Strategy](dev/research/literature-review-prompts.md)
+- [Project Proposal](course_files/paper-drafts/project-proposal.md)
+- [Research Outline Draft](course_files/paper-drafts/draft-0.md)
+- [Literature Review Strategy](course_files/paper-drafts/literature-review-prompts.md)
 - [Technical Documentation](dev/docs/)
 - [GitHub Repository Setup](dev/docs/github-setup.md)
 - [MANEFRAME HPC Workflow](dev/docs/maneframe-hpc-workflow.md)

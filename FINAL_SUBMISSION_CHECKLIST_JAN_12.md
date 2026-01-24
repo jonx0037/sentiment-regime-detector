@@ -73,7 +73,7 @@ Compare your draft against [ResearchOutlineTemplate.html](course_files/ResearchO
 
   ```bash
   # If using Markdown to PDF converter:
-  pandoc dev/research/draft-0.md -o "Rocha_ResearchOutline_Jan12_2026.pdf" \
+  pandoc course_files/paper-drafts/draft-0.md -o "Rocha_ResearchOutline_Jan12_2026.pdf" \
     --pdf-engine=xelatex --variable geometry:margin=1in
   ```
 

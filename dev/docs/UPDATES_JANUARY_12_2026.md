@@ -51,7 +51,7 @@
 
 ---
 
-### 3. `/dev/research/draft-0.md`
+### 3. `/course_files/paper-drafts/draft-0.md`
 
 **Changes Made:**
 
@@ -70,7 +70,7 @@
 
 ---
 
-### 4. `/dev/research/project-proposal.md`
+### 4. `/course_files/paper-drafts/project-proposal.md`
 
 **Changes Made:**
 
@@ -87,7 +87,7 @@
 
 ---
 
-### 5. `/dev/research/literature-review-prompts.md`
+### 5. `/course_files/paper-drafts/literature-review-prompts.md`
 
 **Changes Made:**
 

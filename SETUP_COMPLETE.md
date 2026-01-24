@@ -31,7 +31,7 @@
 
 - ✅ **Main README.md** - Project overview, tech stack, getting started
 - ✅ **Week 1 Checklist** (`dev/docs/week-1-checklist.md`) - Detailed task breakdown
-- ✅ **Literature Review Prompts** (`dev/research/literature-review-prompts.md`) - Search queries for 5-8 papers
+- ✅ **Literature Review Prompts** (`course_files/paper-drafts/literature-review-prompts.md`) - Search queries for 5-8 papers
 - ✅ **GitHub Setup Guide** (`dev/docs/github-setup.md`) - Step-by-step repo initialization
 - ✅ **Workspace Organization** (`dev/docs/workspace-organization.md`) - File structure reference
 
@@ -111,7 +111,7 @@ DS_6210_Capstone/
 ### Sunday (Jan 11)
 
 1. **Literature search** (4-5 hours)
-   - Use: [dev/research/literature-review-prompts.md](dev/research/literature-review-prompts.md)
+   - Use: [course_files/paper-drafts/literature-review-prompts.md](course_files/paper-drafts/literature-review-prompts.md)
    - Find 5-8 papers across 4 themes
    - Download PDFs, skim abstracts
 
@@ -119,7 +119,7 @@ DS_6210_Capstone/
 
 1. **Read papers in depth** (5-6 hours)
    - Annotate key findings, methodology, gaps
-   - Create notes file: `dev/research/literature-notes.md`
+   - Create notes file: `course_files/paper-drafts/literature-notes.md`
 
 2. **Send critical emails**
    - MANEFRAME access request: <help@smu.edu>
@@ -150,10 +150,10 @@ DS_6210_Capstone/
 | Need                   | Resource                                                                               |
 | ---------------------- | -------------------------------------------------------------------------------------- |
 | **This week's tasks**  | [dev/docs/week-1-checklist.md](dev/docs/week-1-checklist.md)                           |
-| **Literature search**  | [dev/research/literature-review-prompts.md](dev/research/literature-review-prompts.md) |
+| **Literature search**  | [course_files/paper-drafts/literature-review-prompts.md](course_files/paper-drafts/literature-review-prompts.md) |
 | **File organization**  | [dev/docs/workspace-organization.md](dev/docs/workspace-organization.md)               |
 | **GitHub setup**       | [dev/docs/github-setup.md](dev/docs/github-setup.md)                                   |
-| **Current draft**      | [dev/research/draft-0.md](dev/research/draft-0.md)                                     |
+| **Current draft**      | [course_files/paper-drafts/draft-0.md](course_files/paper-drafts/draft-0.md)                                     |
 | **Project overview**   | [README.md](../README.md)                                                              |
 | **Todoist automation** | [dev/code/todoist_setup.py](dev/code/todoist_setup.py)                                 |
 
@@ -240,7 +240,7 @@ When you run `todoist_setup.py`, you'll get:
 
 **Research Issues:**
 
-- Literature search: [dev/research/literature-review-prompts.md](dev/research/literature-review-prompts.md)
+- Literature search: [course_files/paper-drafts/literature-review-prompts.md](course_files/paper-drafts/literature-review-prompts.md)
 - Methods clarity: Review papers with similar methodologies (FinBERT, regime detection)
 - Advisor questions: Draft email and send Monday morning
 

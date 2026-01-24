@@ -27,7 +27,7 @@ All course documentation has been updated with:
 3. ✅ `github-setup.md` - Replaced YOUR_USERNAME with jonx0037
 4. ✅ `week-1-checklist.md` - Updated GitHub repo status
 
-### Research Files (dev/research/)
+### Research Files (course_files/paper-drafts/)
 
 1. ✅ `draft-0.md` - Added metadata header with advisor status
 2. ✅ `project-proposal.md` - Updated advisor section and GitHub link

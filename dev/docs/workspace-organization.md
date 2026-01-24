@@ -121,13 +121,13 @@ DS_6210_Capstone/
 ```bash
 # Jump to specific directories
 cd ~/Documents/SMU/DS_6210_Capstone/dev/code      # Source code
-cd ~/Documents/SMU/DS_6210_Capstone/dev/research  # Papers/drafts
+cd ~/Documents/SMU/DS_6210_Capstone/course_files/paper-drafts  # Papers/drafts
 cd ~/Documents/SMU/DS_6210_Capstone/dev/docs      # Documentation
 
 # List files in each category
 ls dev/code/       # Python scripts
 ls dev/config/     # Configuration templates
-ls dev/research/   # Academic papers
+ls course_files/paper-drafts/   # Academic papers
 
 # Search for specific file types
 find dev/ -name "*.py"     # All Python files
