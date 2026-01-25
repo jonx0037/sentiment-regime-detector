@@ -24,7 +24,7 @@ This document maps each research article to specific sections of the capstone pa
 **Current status:** ✅ Comprehensive coverage with new LLM comparison papers
 
 | Article | Citation Status | Key Contribution | Integration Notes |
-|---------|-----------------|------------------|-------------------|
+| --- | --- | --- | --- |
 | Araci (2019) - FinBERT | ✅ Cited | 15% accuracy improvement, domain-specific pre-training | Core foundation - fully integrated |
 | Mishev et al. (2020) | ✅ Cited | Comprehensive transformer comparison (BERT, RoBERTa, XLNet) | Detailed architecture comparison included |
 | Liu et al. (2024) - LLM Review | ✅ Cited | LLM categorization (encoder-only, encoder-decoder, decoder-only) | Architectural framework integrated |
@@ -54,7 +54,7 @@ This document maps each research article to specific sections of the capstone pa
 #### Foundational Work
 
 | Article | Citation Status | Key Contribution | Integration Notes |
-|---------|-----------------|------------------|-------------------|
+| --- | --- | --- | --- |
 | Keynes (1973) | ✅ Cited | "Animal spirits" concept | Historical context |
 | Loughran & McDonald (2011) | ✅ Cited | Finance-specific lexicon | Foundational methodology |
 | Baker & Wurgler (2007) | ✅ Cited | Investor sentiment index | Foundational for H1 |
@@ -62,7 +62,7 @@ This document maps each research article to specific sections of the capstone pa
 #### Social Media and Alternative Data
 
 | Article | Citation Status | Key Contribution | Integration Notes |
-|---------|-----------------|------------------|-------------------|
+| --- | --- | --- | --- |
 | Bollen et al. (2011) | ✅ Cited | Twitter → DJIA (87.6% accuracy, 2-6 day lead) | Core evidence for H1 |
 | Renault (2017) | ✅ Cited | Reddit → next-day volatility | Core evidence |
 | Kraaijeveld & De Smedt (2020) | ✅ Cited | Twitter → crypto (1-3 day lead) | Core evidence for H1 |
@@ -73,7 +73,7 @@ This document maps each research article to specific sections of the capstone pa
 #### Cryptocurrency-Specific Sentiment (NEW SUBSECTION)
 
 | Article | Citation Status | Key Contribution | Integration Notes |
-|---------|-----------------|------------------|-------------------|
+| --- | --- | --- | --- |
 | Roumeliotis et al. (2024) | ✅ NEW | GPT-4, BERT, FinBERT comparison for crypto | **Draft-1: Crypto NLP benchmarks** |
 | Trushkovskyi (2024) | ✅ NEW | Crypto trading models from social sentiment | **Draft-1: Trading applications** |
 
@@ -91,7 +91,7 @@ This document maps each research article to specific sections of the capstone pa
 **Current status:** ✅ Significantly expanded - now comprehensive
 
 | Article | Citation Status | Key Contribution | Integration Notes |
-|---------|-----------------|------------------|-------------------|
+| --------- | ----------------- | ------------------ | ------------------- |
 | Caferra (2022) | ✅ Cited | Transfer Entropy: crypto↔equity spillovers | Core for H2/H3 |
 | Cao et al. (2025) | ✅ Cited | Sentiment connectedness → crash risk | Core for H3 |
 | Nyakurukwa & Seetharam (2025) | ✅ Cited | DJIA sentiment network mapping | Core for H3 |
@@ -103,7 +103,7 @@ This document maps each research article to specific sections of the capstone pa
 #### Forex and Currency Market Sentiment (NEW SUBSECTION 2.3.4)
 
 | Article | Citation Status | Key Contribution | Integration Notes |
-|---------|-----------------|------------------|-------------------|
+| --- | --- | --- | --- |
 | Dakalbab et al. (2025) | ✅ NEW | Multimodal forex prediction with attention | **Draft-1: Attention mechanisms** |
 | Olaiyapo (2024) | ✅ NEW | News/media sentiment → forex trading signals | **Draft-1: Forex trading signals** |
 | Gu & Song (2026) | ✅ NEW | Fine-tuned FinBERT for EUR/USD (84.33% accuracy) | **Draft-1: Currency-pair specific models** |
@@ -113,7 +113,7 @@ This document maps each research article to specific sections of the capstone pa
 #### Commodities Sentiment (NEW SUBSECTION 2.3.5)
 
 | Article | Citation Status | Key Contribution | Integration Notes |
-|---------|-----------------|------------------|-------------------|
+| --- | --- | --- | --- |
 | Shi (2025) | ✅ NEW | Gold/USD GARCH-MIDAS (18.7% error reduction) | **Draft-1: Commodity sentiment** |
 
 #### Draft-1 Action Items: Cross-Asset Analysis

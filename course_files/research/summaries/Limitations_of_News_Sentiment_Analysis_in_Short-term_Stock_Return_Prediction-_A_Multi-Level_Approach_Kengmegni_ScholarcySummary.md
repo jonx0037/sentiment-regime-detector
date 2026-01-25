@@ -5,15 +5,19 @@
 ## [[Gaël Kengmegni kengmegni.gael@gmail.com]]
 
 ## Abstract
+
 In this paper, I investigate the challenges and limitations of using news sentiment analysis for predicting next-day stock returns in the U.S. equity market. While sentiment analysis has shown promise in long-term market prediction, its effectiveness for short-term prediction remains contentious. I propose a novel multi-level approach that integrates sentiment analysis across individual stocks, industries, and the broader economy, extending previous hierarchical market analysis frameworks using a comprehensive dataset combining financial news from Bloomberg, Reuters, and Yahoo Finance (2009-2023). My methodology employs an instruction-pretrained LLaMA 3 8B model for sentiment analysis and benchmarks it against other state-of-the-art models, including RoBERTa Large, FinBERT, and LLaMA 3 8B, on the FiQA and FPB datasets. Following recent advances in financial NLP, I augment traditional sentiment features with market data, implementing separate models of high-coverage (&gt;150 articles annually) and low-coverage stocks to account for varying news frequency. My results demonstrate several key findings. First, even with sophisticated sentiment analysis and feature augmentation, accurate next-day return prediction remains elusive, supporting the efficient market hypothesis at short time horizons. Second, when incorporating both sentiment and market features, models tend to overfit on price-based features, diminishing the impact of sentiment signals. Third, I find that economy-wide sentiment features exhibit greater predictive power than industry- or stock-specific sentiment, underscoring the importance of broader market sentiment over individual stock news. My back-testing reveals that the most robust results come from focusing on less-covered stocks with a consistent correlation between sentiment and returns, though even these strategies show limited economic significance when transaction costs are accounted for. Surprisingly, sources often considered less reliable (Benzinga, Zacks) showed more stable sentiment signals than traditional news providers. These findings contribute to the growing body of literature on the limitations of sentiment-based trading strategies and highlight the importance of realistic expectations in sentimentdriven algorithmic trading. It should be noted that all analyses and conclusions are subject to the limitations of the underlying datasets, including potential survivorship bias in the stock universe and varying news coverage quality across sources and time periods.
 
 ## Key concepts
-#algorithmic_trading; #claim/sentiment_analysis; #sentiment_analysis; #claim/economy; #economy; #news_sentiment; #multi_level
+
+# algorithmic_trading; #claim/sentiment_analysis; #sentiment_analysis; #claim/economy; #economy; #news_sentiment; #multi_level
 
 ## Quote
+
 This study investigates the challenges of using news sentiment analysis to predict next-day stock returns in the U.S. equity market and proposes a novel multi-level approach that integrates sentiment analysis across individual stocks, industries, and the broader economy.
 
 ## Key points
+
 - This research into next-day stock return prediction stems from several key observations
 - The relationship between news sentiment and stock returns appears to be weakening over time, as evidenced by the declining variance in sentiment-return agreement rates from 2009 to 2023
 - This suggests that markets are becoming more efficient at processing sentiment information, potentially due to the proliferation of algorithmic trading strategies
@@ -21,25 +25,28 @@ This study investigates the challenges of using news sentiment analysis to predi
 - The success of market-level signals indicates that sentiment might be more valuable for broad market timing than for individual stock selection
 - Sentiment analysis appears more valuable as one component of a broader investment process rather than as a standalone predictor of returns
 
-
 ## Summary
 
 ### Introduction
+
 The study investigates the challenges of using news sentiment analysis to predict next-day stock returns in the U.S. equity market.
 It proposes a novel multi-level approach that integrates sentiment analysis across individual stocks, industries, and the broader economy.
 The methodology employs an instruction-pre-trained LLaMA 3 8B model for sentiment analysis and combines traditional market data with sentiment indicators.
 
 ### Methodology
+
 The study uses a comprehensive dataset combining financial news from Bloomberg, Reuters, and Yahoo Finance (2009-2023) and evaluates four leading language models for financial sentiment analysis.
 It examines traditional market data alongside sentiment indicators at three levels: individual stocks, industries, and the overall economy.
 The analysis also compares the predictive quality of stocks with heavy news coverage to that of those with less coverage.
 
 ### Findings
+
 The results demonstrate that accurate next-day return prediction remains elusive, even with sophisticated sentiment analysis and feature augmentation.
 The study finds that economy-wide sentiment features exhibit greater predictive power than industry- or stock-specific sentiment.
 The trading strategy back tests reveal that focusing on less-covered stocks with consistent correlation between sentiment and returns yields the most robust results, although these strategies show limited economic significance when accounting for transaction costs.
 
 ### Data
+
 The dataset consists of news articles from 2006 to 2013, including Reuters and Bloomberg, both known for their neutral, fact-based reporting.
 In contrast, sources like Nasdaq, Benzinga, and Zacks tend to have more attention-grabbing headlines.
 The distribution of news coverage across companies is highly skewed, with most firms receiving fewer than 100 articles annually.
@@ -47,6 +54,7 @@ Market data is collected from Yahoo Finance's API, including daily stock prices 
 However, the dataset has a significant limitation due to survivorship bias, as it only includes companies that have survived from 2009 to the present.
 
 ### Model Development
+
 The evaluation of four state-of-the-art language models for financial sentiment analysis revealed that FinBERT and LLaMA 3 8B demonstrated robust performance.
 The instruction-pretrained LLaMA 3 8B was selected for subsequent analysis due to its domain adaptation through instruction tuning.
 The text processing pipeline involves timestamp conversion, entity detection, industry references, and article summarization using the LexRank algorithm.
@@ -54,67 +62,79 @@ The market data processing involves aligning price data with news flow and calcu
 The feature sets include sentiment features, such as mean sentiment score and sentiment dispersion, and market features, such as multi-horizon returns and technical signals.
 
 ### Results
+
 The results of the sentiment analysis show clear patterns in sentiment distribution and source reliability.
 The sentiment score distribution exhibits clustering around -1, 0, and 1, and both the mean and median sentiment scores demonstrate a significant positive bias.
 The agreement between sentiment and stock returns is limited, with sentiment-return sign agreement ratios clustering around 0.5, approximating a random distribution.
 This finding challenges the common assumption that sentiment directly leads price movements at daily frequencies.
 
 ### Market Efficiency
+
 The relationship between sentiment and stock returns is evolving, with market efficiency increasing over time.
 The standard deviation of agreement between sentiment and returns has declined from 0.2 in 2009 to 0.065 in 2023, indicating reduced volatility.
 This shift suggests that simple sentiment-based trading strategies may not be effective in current market conditions.
 
 ### Model Performance
+
 The performance of different modeling methods, including linear models and CatBoost, was compared.
 CatBoost showed greater potential, with a maximum test R-squared of 0.005 and superior directional accuracy of 0.548.
 However, linear models showed greater stability and interpretability of coefficients, making them more suitable for practical implementation.
 Feature importance analysis revealed that market-level signals consistently outperform stock-specific metrics in both price and sentiment domains.
 
 ### Trading Strategy
+
 The analysis found that a specialized approach focusing on sentiment features, low-coverage stocks, and implementing a 0.1 correlation threshold in training sets achieved moderate but consistent results, with an average Sharpe ratio of 0.609 and a mean total return of 8.7%.
 Implementing a trading strategy requires careful consideration of practical constraints, including transaction costs, market impact, and position sizing.
 The results suggest that sentiment analysis may be more valuable as part of a broader strategy than as a standalone approach.
 
 ### Implications
+
 The findings have implications for practitioners considering sentiment-based trading strategies.
 Market-level sentiment suggests that traders might benefit from focusing their sentiment analysis efforts on broad market indicators rather than individual stock news.
 This approach could reduce computational overhead and noise inherent in stock-specific sentiment signals.
 The results also suggest that traditional approaches to news source selection might need revision, with a focus on temporal stability rather than perceived source quality.
 
 ### Limitations
+
 The research has several limitations, including survivorship bias in the dataset, data quality issues, and the focus on U.S. stocks trading in U.S. markets.
 The approach to news timing and market hours introduces another limitation, as important after-hours news flow may be missed.
 These limitations suggest promising directions for future investigation, including extending the approach to intraday data and exploring different prediction horizons.
 
 ### Future Research
+
 Several promising research directions emerge from the limitations, including analyzing how sentiment impacts returns at different frequencies, exploring different prediction horizons, and adjusting the hierarchical level of prediction.
 The research also suggests that sentiment analysis might be more valuable for risk management and portfolio optimization rather than as a standalone predictor of returns.
 Alternative applications of sentiment analysis, such as predicting volatility spikes or trading volume, could provide valuable trading signals even when direct return prediction proves challenging.
 
 ### Features
+
 The framework utilizes various features to analyze stock performance, including excess returns, moving averages, volatility, trend estimates, relative performance, return dispersion, higher moments, volume-weighted returns, and Hurst exponent.
 These features help to isolate stock-specific performance, smooth noisy price data, quantify price uncertainty, and identify potential regime changes.
 
 ### Portfolio Optimization
+
 The portfolio optimization process involves generating a combined prediction score from high- and low-coverage model predictions.
 The objective function aims to maximize the portfolio return while minimizing risk, subject to constraints such as full investment, position limits, and capacity constraints.
 The position size calculation is based on the optimized weight for each stock, and the portfolio value evolution is simulated with daily rebalancing, accounting for transaction costs and market impact.
 
 ### Risk Management
+
 The framework incorporates risk management techniques, including volatility measurement, volatility ratios, and higher-moment analysis.
 The volatility ratio compares recent to historical volatility to identify regime changes, while the higher moments analysis captures non-normal characteristics of returns that might signal future price movements.
 These techniques help to quantify price uncertainty and identify potential risks.
 
-
 ## Study subjects
 
 ### 150 articles
+
 - The analysis examines traditional market data alongside sentiment indicators at three levels: individual stocks, industries, and the overall economy. The study also aims to compare prediction quality between stocks with heavy news coverage(over 150 articles per year) and those with less coverage to understand how news frequency affects prediction accuracy. An important aspect is analyzing which factors matter most for predictions
 
 ### 500000 Bloomberg articles
+
 - FNSPID is supplemented with the Edaz financial news dataset, containing over 11 million Yahoo Finance articles spanning from pre-2000 to 2023. The third source is Philippe Remy’s dataset of more than 500,000 Bloomberg articles and Reuters headlines from 2006 to 2013, which offers high-quality coverage from traditional financial news providers. The news sources in the dataset display interesting patterns in their coverage and style
 
 ## Data analysis
+
 - #method/linear_models
 - #method/linear_model
 - #method/covariance_matrix
@@ -124,96 +144,27 @@ These techniques help to quantify price uncertainty and identify potential risks
 - #method/bert_model
 
 ## Findings
+
 - • FinBERT demonstrated robust performance (84.2% accuracy on FPB, 74.7% on FiQA)despite its relative age
 - • LLaMA 3 8B achieved the highest accuracy scores (97.0% on FPB, 84.4% on FiQA)
 - 2019 consistently emerges as the strongest period for prediction accuracy, with R-squared values reaching 0.004 and directional accuracy exceeding 53%
 - By limiting individual positions to no more than 10% of typical daily volume, the strategy maintains the ability to adjust positions without creating excessive market impact
 
 ## Differs from previous work
+
 - Machine learning approaches initially seemed more promising. Early studies by [^Kimoto_et+al_1990_a] using neural networks and [^Tay_2001_a] with support vector machines reported impressive results, but most of these didn’t hold up in real-world trading.
 
 ## Contributions
+
 - In conclusion, while the holy grail of reliable next-day return prediction through sentiment analysis remains elusive, the research reveals valuable insights about market information processing and the practical limitations of sentiment-based trading. These findings should help both researchers and practitioners develop more realistic approaches to incorporating sentiment analysis into investment strategies.
 
 ## Future work
+
 - The study suggests several promising directions for future research, including investigating the relationship between news coverage intensity and predictability, the role of retail-oriented news sources in price formation, and the interaction between sentiment signals and market microstructure.
 - The research suggests several promising directions for future work, including investigating the relationship between news coverage intensity and predictability. The role of retail-oriented news sources in price formation also merits further study. Additionally, the study suggests exploring alternative applications of sentiment analysis, such as predicting industry-level returns, broad market movements, and trading volume.
 
-
 ## References
-[^Chan_2003_a]: Wesley S. Chan. Stock price reaction to news and no-news: Drift and reversal after headlines. Journal of Financial Economics, 70(2):223–260, 2003.  [OA](https://engine.scholarcy.com/oa_version?query=Chan%2C%20Wesley%20S.%20Stock%20price%20reaction%20to%20news%20and%20no-news%3A%20Drift%20and%20reversal%20after%20headlines%202003&author=Chan&title=Stock%20price%20reaction%20to%20news%20and%20no-news%3A%20Drift%20and%20reversal%20after%20headlines&year=2003) [GScholar](https://scholar.google.co.uk/scholar?q=Chan%2C%20Wesley%20S.%20Stock%20price%20reaction%20to%20news%20and%20no-news%3A%20Drift%20and%20reversal%20after%20headlines%202003) [Scite](/scite_tallies?query=author%3AChan%2Ctitle%3AStock%20price%20reaction%20to%20news%20and%20no-news%3A%20Drift%20and%20reversal%20after%20headlines%2Cyear%3A2003)
-
-[^Baker_2006_a]: Malcolm Baker and Jeffrey Wurgler. Investor sentiment and the cross-section of stock returns. The Journal of Finance, 61(4):1645–1680, 2006.  [OA](https://engine.scholarcy.com/oa_version?query=Baker%2C%20Malcolm%20Wurgler%2C%20Jeffrey%20Investor%20sentiment%20and%20the%20cross-section%20of%20stock%20returns%202006&author=Baker&title=Investor%20sentiment%20and%20the%20cross-section%20of%20stock%20returns&year=2006) [GScholar](https://scholar.google.co.uk/scholar?q=Baker%2C%20Malcolm%20Wurgler%2C%20Jeffrey%20Investor%20sentiment%20and%20the%20cross-section%20of%20stock%20returns%202006) [Scite](/scite_tallies?query=author%3ABaker%2Ctitle%3AInvestor%20sentiment%20and%20the%20cross-section%20of%20stock%20returns%2Cyear%3A2006)
-
-[^Tetlock_et+al_2008_a]: Paul C. Tetlock, Maya Saar-Tsechansky, and Sofus Macskassy. More than words: Quantifying language to measure firms’ fundamentals. The Journal of Finance, 63(3):1437–1467, 2008.  [OA](https://engine.scholarcy.com/oa_version?query=Tetlock%2C%20Paul%20C.%20Saar-Tsechansky%2C%20Maya%20Macskassy%2C%20Sofus%20More%20than%20words%3A%20Quantifying%20language%20to%20measure%20firms%E2%80%99%20fundamentals%202008&author=Tetlock&title=More%20than%20words%3A%20Quantifying%20language%20to%20measure%20firms%E2%80%99%20fundamentals&year=2008) [GScholar](https://scholar.google.co.uk/scholar?q=Tetlock%2C%20Paul%20C.%20Saar-Tsechansky%2C%20Maya%20Macskassy%2C%20Sofus%20More%20than%20words%3A%20Quantifying%20language%20to%20measure%20firms%E2%80%99%20fundamentals%202008) [Scite](/scite_tallies?query=author%3ATetlock%2Ctitle%3AMore%20than%20words%3A%20Quantifying%20language%20to%20measure%20firms%E2%80%99%20fundamentals%2Cyear%3A2008)
-
-[^Loughran_2011_a]: Tim Loughran and Bill McDonald. When is a liability not a liability? textual analysis, dictionaries, and 10-ks. The Journal of Finance, 66(1):35–65, 2011.  [OA](https://engine.scholarcy.com/oa_version?query=Loughran%2C%20Tim%20McDonald%2C%20Bill%20When%20is%20a%20liability%20not%20a%20liability%3F%20textual%20analysis%2C%20dictionaries%2C%20and%2010-ks%202011&author=Loughran&title=When%20is%20a%20liability%20not%20a%20liability%3F%20textual%20analysis%2C%20dictionaries%2C%20and%2010-ks&year=2011) [GScholar](https://scholar.google.co.uk/scholar?q=Loughran%2C%20Tim%20McDonald%2C%20Bill%20When%20is%20a%20liability%20not%20a%20liability%3F%20textual%20analysis%2C%20dictionaries%2C%20and%2010-ks%202011) [Scite](/scite_tallies?query=author%3ALoughran%2Ctitle%3AWhen%20is%20a%20liability%20not%20a%20liability%3F%20textual%20analysis%2C%20dictionaries%2C%20and%2010-ks%2Cyear%3A2011)
-
-[^Araci_2019_a]: Deniz Araci. Finbert: Financial sentiment analysis with pre-trained language models. arXiv preprint, arXiv:1908.10063, 2019.  [OA](https://arxiv.org/abs/1908.10063)  
-
-[^Barber_2008_a]: Brad M. Barber and Terrance Odean. All that glitters: The effect of attention and news on the buying behavior of individual and institutional investors. The Review of Financial Studies, 21(2):785–818, 2008.  [OA](https://engine.scholarcy.com/oa_version?query=Barber%2C%20Brad%20M.%20Odean%2C%20Terrance%20All%20that%20glitters%3A%20The%20effect%20of%20attention%20and%20news%20on%20the%20buying%20behavior%20of%20individual%20and%20institutional%20investors%202008&author=Barber&title=All%20that%20glitters%3A%20The%20effect%20of%20attention%20and%20news%20on%20the%20buying%20behavior%20of%20individual%20and%20institutional%20investors&year=2008) [GScholar](https://scholar.google.co.uk/scholar?q=Barber%2C%20Brad%20M.%20Odean%2C%20Terrance%20All%20that%20glitters%3A%20The%20effect%20of%20attention%20and%20news%20on%20the%20buying%20behavior%20of%20individual%20and%20institutional%20investors%202008) [Scite](/scite_tallies?query=author%3ABarber%2Ctitle%3AAll%20that%20glitters%3A%20The%20effect%20of%20attention%20and%20news%20on%20the%20buying%20behavior%20of%20individual%20and%20institutional%20investors%2Cyear%3A2008)
-
-[^Fama_1970_a]: Eugene F. Fama. Efficient capital markets: A review of theory and empirical work. The Journal of Finance, 25(2): 383–417, 1970.  [OA](https://engine.scholarcy.com/oa_version?query=Fama%2C%20Eugene%20F.%20Efficient%20capital%20markets%3A%20A%20review%20of%20theory%20and%20empirical%20work%201970&author=Fama&title=Efficient%20capital%20markets%3A%20A%20review%20of%20theory%20and%20empirical%20work&year=1970) [GScholar](https://scholar.google.co.uk/scholar?q=Fama%2C%20Eugene%20F.%20Efficient%20capital%20markets%3A%20A%20review%20of%20theory%20and%20empirical%20work%201970) [Scite](/scite_tallies?query=author%3AFama%2Ctitle%3AEfficient%20capital%20markets%3A%20A%20review%20of%20theory%20and%20empirical%20work%2Cyear%3A1970)
-
-[^Fama_1992_a]: Eugene F. Fama and Kenneth R. French. The cross-section of expected stock returns. The Journal of Finance, 47(2): 427–465, 1992.  [OA](https://engine.scholarcy.com/oa_version?query=Fama%2C%20Eugene%20F.%20French%2C%20Kenneth%20R.%20The%20cross-section%20of%20expected%20stock%20returns%201992&author=Fama&title=The%20cross-section%20of%20expected%20stock%20returns&year=1992) [GScholar](https://scholar.google.co.uk/scholar?q=Fama%2C%20Eugene%20F.%20French%2C%20Kenneth%20R.%20The%20cross-section%20of%20expected%20stock%20returns%201992) [Scite](/scite_tallies?query=author%3AFama%2Ctitle%3AThe%20cross-section%20of%20expected%20stock%20returns%2Cyear%3A1992)
-
-[^Fama_1993_a]: Eugene F. Fama and Kenneth R. French. Common risk factors in the returns on stocks and bonds. Journal of Financial Economics, 33(1):3–56, 1993.  [OA](https://engine.scholarcy.com/oa_version?query=Fama%2C%20Eugene%20F.%20French%2C%20Kenneth%20R.%20Common%20risk%20factors%20in%20the%20returns%20on%20stocks%20and%20bonds%201993&author=Fama&title=Common%20risk%20factors%20in%20the%20returns%20on%20stocks%20and%20bonds&year=1993) [GScholar](https://scholar.google.co.uk/scholar?q=Fama%2C%20Eugene%20F.%20French%2C%20Kenneth%20R.%20Common%20risk%20factors%20in%20the%20returns%20on%20stocks%20and%20bonds%201993) [Scite](/scite_tallies?query=author%3AFama%2Ctitle%3ACommon%20risk%20factors%20in%20the%20returns%20on%20stocks%20and%20bonds%2Cyear%3A1993)
-
-[^Brock_et+al_1992_a]: William Brock, Josef Lakonishok, and Blake LeBaron. Simple technical trading rules and the stochastic properties of stock returns. The Journal of Finance, 47(5):1731–1764, 1992.  [OA](https://engine.scholarcy.com/oa_version?query=Brock%2C%20William%20Lakonishok%2C%20Josef%20LeBaron%2C%20Blake%20Simple%20technical%20trading%20rules%20and%20the%20stochastic%20properties%20of%20stock%20returns%201992&author=Brock&title=Simple%20technical%20trading%20rules%20and%20the%20stochastic%20properties%20of%20stock%20returns&year=1992) [GScholar](https://scholar.google.co.uk/scholar?q=Brock%2C%20William%20Lakonishok%2C%20Josef%20LeBaron%2C%20Blake%20Simple%20technical%20trading%20rules%20and%20the%20stochastic%20properties%20of%20stock%20returns%201992) [Scite](/scite_tallies?query=author%3ABrock%2Ctitle%3ASimple%20technical%20trading%20rules%20and%20the%20stochastic%20properties%20of%20stock%20returns%2Cyear%3A1992)
-
-[^Sullivan_et+al_1999_a]: Ryan Sullivan, Allan Timmermann, and Halbert White. Data-snooping, technical trading rule performance, and the bootstrap. The Journal of Finance, 54(5):1647–1691, 1999.  [OA](https://engine.scholarcy.com/oa_version?query=Sullivan%2C%20Ryan%20Timmermann%2C%20Allan%20White%2C%20Halbert%20Data-snooping%2C%20technical%20trading%20rule%20performance%2C%20and%20the%20bootstrap%201999&author=Sullivan&title=Data-snooping%2C%20technical%20trading%20rule%20performance%2C%20and%20the%20bootstrap&year=1999) [GScholar](https://scholar.google.co.uk/scholar?q=Sullivan%2C%20Ryan%20Timmermann%2C%20Allan%20White%2C%20Halbert%20Data-snooping%2C%20technical%20trading%20rule%20performance%2C%20and%20the%20bootstrap%201999) [Scite](/scite_tallies?query=author%3ASullivan%2Ctitle%3AData-snooping%2C%20technical%20trading%20rule%20performance%2C%20and%20the%20bootstrap%2Cyear%3A1999)
-
-[^Lo_2004_a]: Andrew W. Lo. The adaptive markets hypothesis. The Journal of Portfolio Management, 30(5):15–29, 2004.  [OA](https://engine.scholarcy.com/oa_version?query=Lo%2C%20Andrew%20W.%20The%20adaptive%20markets%20hypothesis%202004&author=Lo&title=The%20adaptive%20markets%20hypothesis&year=2004) [GScholar](https://scholar.google.co.uk/scholar?q=Lo%2C%20Andrew%20W.%20The%20adaptive%20markets%20hypothesis%202004) [Scite](/scite_tallies?query=author%3ALo%2Ctitle%3AThe%20adaptive%20markets%20hypothesis%2Cyear%3A2004)
 
 [^Kimoto_et+al_1990_a]: Tsuneo Kimoto, Kazuo Asakawa, Masakazu Yoda, and Masanori Takeoka. Stock market prediction system with modular neural networks. Neural Networks, 1:1–6, 1990.  [OA](https://engine.scholarcy.com/oa_version?query=Kimoto%2C%20Tsuneo%20Asakawa%2C%20Kazuo%20Yoda%2C%20Masakazu%20Takeoka%2C%20Masanori%20Stock%20market%20prediction%20system%20with%20modular%20neural%20networks%201990&author=Kimoto&title=Stock%20market%20prediction%20system%20with%20modular%20neural%20networks&year=1990) [GScholar](https://scholar.google.co.uk/scholar?q=Kimoto%2C%20Tsuneo%20Asakawa%2C%20Kazuo%20Yoda%2C%20Masakazu%20Takeoka%2C%20Masanori%20Stock%20market%20prediction%20system%20with%20modular%20neural%20networks%201990) [Scite](/scite_tallies?query=author%3AKimoto%2Ctitle%3AStock%20market%20prediction%20system%20with%20modular%20neural%20networks%2Cyear%3A1990)
 
 [^Tay_2001_a]: Francis E. Tay and Lijuan Cao. Application of support vector machines in financial time series forecasting. Omega, 29 (4):309–317, 2001.  [OA](https://engine.scholarcy.com/oa_version?query=Tay%2C%20Francis%20E.%20Cao%2C%20Lijuan%20Application%20of%20support%20vector%20machines%20in%20financial%20time%20series%20forecasting%202001&author=Tay&title=Application%20of%20support%20vector%20machines%20in%20financial%20time%20series%20forecasting&year=2001) [GScholar](https://scholar.google.co.uk/scholar?q=Tay%2C%20Francis%20E.%20Cao%2C%20Lijuan%20Application%20of%20support%20vector%20machines%20in%20financial%20time%20series%20forecasting%202001) [Scite](/scite_tallies?query=author%3ATay%2Ctitle%3AApplication%20of%20support%20vector%20machines%20in%20financial%20time%20series%20forecasting%2Cyear%3A2001)
-
-[^Bailey_et+al_2014_a]: David H. Bailey, Jonathan M. Borwein, Marcos López de Prado, and Qiji Jim Zhu. Pseudo-mathematics and financial charlatanism: The effects of backtest overfitting on out-of-sample performance. Notices of the American Mathematical Society, 61(5):458–471, 2014.  [OA](https://engine.scholarcy.com/oa_version?query=Bailey%2C%20David%20H.%20Borwein%2C%20Jonathan%20M.%20Prado%2C%20Marcos%20L%C3%B3pez%20Zhu%2C%20Qiji%20Jim%20Pseudo-mathematics%20and%20financial%20charlatanism%3A%20The%20effects%20of%20backtest%20overfitting%20on%20out-of-sample%20performance%202014&author=Bailey&title=Pseudo-mathematics%20and%20financial%20charlatanism%3A%20The%20effects%20of%20backtest%20overfitting%20on%20out-of-sample%20performance&year=2014) [GScholar](https://scholar.google.co.uk/scholar?q=Bailey%2C%20David%20H.%20Borwein%2C%20Jonathan%20M.%20Prado%2C%20Marcos%20L%C3%B3pez%20Zhu%2C%20Qiji%20Jim%20Pseudo-mathematics%20and%20financial%20charlatanism%3A%20The%20effects%20of%20backtest%20overfitting%20on%20out-of-sample%20performance%202014) [Scite](/scite_tallies?query=author%3ABailey%2Ctitle%3APseudo-mathematics%20and%20financial%20charlatanism%3A%20The%20effects%20of%20backtest%20overfitting%20on%20out-of-sample%20performance%2Cyear%3A2014)
-
-[^Campbell_2008_a]: John Y. Campbell and Samuel B. Thompson. Predicting excess stock returns out of sample: Can anything beat the historical average? The Review of Financial Studies, 21(4):1509–1531, 2008.  [OA](https://engine.scholarcy.com/oa_version?query=Campbell%2C%20John%20Y.%20Thompson%2C%20Samuel%20B.%20Predicting%20excess%20stock%20returns%20out%20of%20sample%3A%20Can%20anything%20beat%20the%20historical%20average%3F%202008&author=Campbell&title=Predicting%20excess%20stock%20returns%20out%20of%20sample%3A%20Can%20anything%20beat%20the%20historical%20average%3F&year=2008) [GScholar](https://scholar.google.co.uk/scholar?q=Campbell%2C%20John%20Y.%20Thompson%2C%20Samuel%20B.%20Predicting%20excess%20stock%20returns%20out%20of%20sample%3A%20Can%20anything%20beat%20the%20historical%20average%3F%202008) [Scite](/scite_tallies?query=author%3ACampbell%2Ctitle%3APredicting%20excess%20stock%20returns%20out%20of%20sample%3A%20Can%20anything%20beat%20the%20historical%20average%3F%2Cyear%3A2008)
-
-[^Cont_2001_a]: Rama Cont. Empirical properties of asset returns: Stylized facts and statistical issues. Quantitative Finance, 1(2): 223–236, 2001.  [OA](https://engine.scholarcy.com/oa_version?query=Cont%2C%20Rama%20Empirical%20properties%20of%20asset%20returns%3A%20Stylized%20facts%20and%20statistical%20issues%202001&author=Cont&title=Empirical%20properties%20of%20asset%20returns%3A%20Stylized%20facts%20and%20statistical%20issues&year=2001) [GScholar](https://scholar.google.co.uk/scholar?q=Cont%2C%20Rama%20Empirical%20properties%20of%20asset%20returns%3A%20Stylized%20facts%20and%20statistical%20issues%202001) [Scite](/scite_tallies?query=author%3ACont%2Ctitle%3AEmpirical%20properties%20of%20asset%20returns%3A%20Stylized%20facts%20and%20statistical%20issues%2Cyear%3A2001)
-
-[^Hochreiter_1997_a]: Sepp Hochreiter and Jürgen Schmidhuber. Long short-term memory. Neural Computation, 9(8):1735–1780, 1997.  [OA](https://engine.scholarcy.com/oa_version?query=Hochreiter%2C%20Sepp%20Schmidhuber%2C%20J%C3%BCrgen%20Long%20short-term%20memory%201997&author=Hochreiter&title=Long%20short-term%20memory&year=1997) [GScholar](https://scholar.google.co.uk/scholar?q=Hochreiter%2C%20Sepp%20Schmidhuber%2C%20J%C3%BCrgen%20Long%20short-term%20memory%201997) [Scite](/scite_tallies?query=author%3AHochreiter%2Ctitle%3ALong%20short-term%20memory%2Cyear%3A1997)
-
-[^Fischer_2018_a]: Thomas Fischer and Christopher Krauss. Deep learning with long short-term memory networks for financial market predictions. European Journal of Operational Research, 270(2):654–669, 2018.  [OA](https://engine.scholarcy.com/oa_version?query=Fischer%2C%20Thomas%20Krauss%2C%20Christopher%20Deep%20learning%20with%20long%20short-term%20memory%20networks%20for%20financial%20market%20predictions%202018&author=Fischer&title=Deep%20learning%20with%20long%20short-term%20memory%20networks%20for%20financial%20market%20predictions&year=2018) [GScholar](https://scholar.google.co.uk/scholar?q=Fischer%2C%20Thomas%20Krauss%2C%20Christopher%20Deep%20learning%20with%20long%20short-term%20memory%20networks%20for%20financial%20market%20predictions%202018) [Scite](/scite_tallies?query=author%3AFischer%2Ctitle%3ADeep%20learning%20with%20long%20short-term%20memory%20networks%20for%20financial%20market%20predictions%2Cyear%3A2018)
-
-[^Zhang_et+al_2019_a]: Yifan Zhang, Guangyu Chu, and Dehuan Shen. The role of investor attention in predicting stock prices: The long short-term memory networks perspective. Finance Research Letters, 30:101–110, 2019.  [OA](https://engine.scholarcy.com/oa_version?query=Zhang%2C%20Yifan%20Chu%2C%20Guangyu%20Shen%2C%20Dehuan%20The%20role%20of%20investor%20attention%20in%20predicting%20stock%20prices%3A%20The%20long%20short-term%20memory%20networks%20perspective%202019&author=Zhang&title=The%20role%20of%20investor%20attention%20in%20predicting%20stock%20prices%3A%20The%20long%20short-term%20memory%20networks%20perspective&year=2019) [GScholar](https://scholar.google.co.uk/scholar?q=Zhang%2C%20Yifan%20Chu%2C%20Guangyu%20Shen%2C%20Dehuan%20The%20role%20of%20investor%20attention%20in%20predicting%20stock%20prices%3A%20The%20long%20short-term%20memory%20networks%20perspective%202019) [Scite](/scite_tallies?query=author%3AZhang%2Ctitle%3AThe%20role%20of%20investor%20attention%20in%20predicting%20stock%20prices%3A%20The%20long%20short-term%20memory%20networks%20perspective%2Cyear%3A2019)
-
-[^Stone_et+al_1966_a]: Philip J. Stone, Dexter C. Dunphy, and Marshall S. Smith. The General Inquirer: A Computer Approach to Content Analysis. MIT Press, 1966.  [OA](https://scholar.google.co.uk/scholar?q=Stone%2C%20Philip%20J.%20Dunphy%2C%20Dexter%20C.%20Smith%2C%20Marshall%20S.%20The%20General%20Inquirer%3A%20A%20Computer%20Approach%20to%20Content%20Analysis%201966) [GScholar](https://scholar.google.co.uk/scholar?q=Stone%2C%20Philip%20J.%20Dunphy%2C%20Dexter%20C.%20Smith%2C%20Marshall%20S.%20The%20General%20Inquirer%3A%20A%20Computer%20Approach%20to%20Content%20Analysis%201966) 
-
-[^Tetlock_2007_a]: Paul C. Tetlock. Giving content to investor sentiment: The role of media in the stock market. The Journal of Finance, 62(3):1139–1168, 2007.  [OA](https://engine.scholarcy.com/oa_version?query=Tetlock%2C%20Paul%20C.%20Giving%20content%20to%20investor%20sentiment%3A%20The%20role%20of%20media%20in%20the%20stock%20market%202007&author=Tetlock&title=Giving%20content%20to%20investor%20sentiment%3A%20The%20role%20of%20media%20in%20the%20stock%20market&year=2007) [GScholar](https://scholar.google.co.uk/scholar?q=Tetlock%2C%20Paul%20C.%20Giving%20content%20to%20investor%20sentiment%3A%20The%20role%20of%20media%20in%20the%20stock%20market%202007) [Scite](/scite_tallies?query=author%3ATetlock%2Ctitle%3AGiving%20content%20to%20investor%20sentiment%3A%20The%20role%20of%20media%20in%20the%20stock%20market%2Cyear%3A2007)
-
-[^Antweiler_2004_a]: Werner Antweiler and Murray Z. Frank. Is all that talk just noise? the information content of internet stock message boards. The Journal of Finance, 59(3):1259–1294, 2004.  [OA](https://engine.scholarcy.com/oa_version?query=Antweiler%2C%20Werner%20Frank%2C%20Murray%20Z.%20Is%20all%20that%20talk%20just%20noise%3F%20the%20information%20content%20of%20internet%20stock%20message%20boards%202004&author=Antweiler&title=Is%20all%20that%20talk%20just%20noise%3F%20the%20information%20content%20of%20internet%20stock%20message%20boards&year=2004) [GScholar](https://scholar.google.co.uk/scholar?q=Antweiler%2C%20Werner%20Frank%2C%20Murray%20Z.%20Is%20all%20that%20talk%20just%20noise%3F%20the%20information%20content%20of%20internet%20stock%20message%20boards%202004) [Scite](/scite_tallies?query=author%3AAntweiler%2Ctitle%3AIs%20all%20that%20talk%20just%20noise%3F%20the%20information%20content%20of%20internet%20stock%20message%20boards%2Cyear%3A2004)
-
-[^Pang_et+al_2002_a]: Bo Pang, Lillian Lee, and Shivakumar Vaithyanathan. Thumbs up? sentiment classification using machine learning techniques. In Proceedings of the Conference on Empirical Methods in Natural Language Processing (EMNLP), pages 79–86, 2002.  [OA](https://scholar.google.co.uk/scholar?q=Pang%2C%20Bo%20Lee%2C%20Lillian%20Vaithyanathan%2C%20Shivakumar%20Thumbs%20up%3F%20sentiment%20classification%20using%20machine%20learning%20techniques%202002) [GScholar](https://scholar.google.co.uk/scholar?q=Pang%2C%20Bo%20Lee%2C%20Lillian%20Vaithyanathan%2C%20Shivakumar%20Thumbs%20up%3F%20sentiment%20classification%20using%20machine%20learning%20techniques%202002) 
-
-[^Das_2007_a]: Sanjiv R. Das and Mike Y. Chen. Yahoo! for amazon: Sentiment extraction from small talk on the web. Management Science, 53(9):1375–1388, 2007.  [OA](https://engine.scholarcy.com/oa_version?query=Das%2C%20Sanjiv%20R.%20Chen%2C%20Mike%20Y.%20Yahoo%21%20for%20amazon%3A%20Sentiment%20extraction%20from%20small%20talk%20on%20the%20web%202007&author=Das&title=Yahoo%21%20for%20amazon%3A%20Sentiment%20extraction%20from%20small%20talk%20on%20the%20web&year=2007) [GScholar](https://scholar.google.co.uk/scholar?q=Das%2C%20Sanjiv%20R.%20Chen%2C%20Mike%20Y.%20Yahoo%21%20for%20amazon%3A%20Sentiment%20extraction%20from%20small%20talk%20on%20the%20web%202007) [Scite](/scite_tallies?query=author%3ADas%2Ctitle%3AYahoo%21%20for%20amazon%3A%20Sentiment%20extraction%20from%20small%20talk%20on%20the%20web%2Cyear%3A2007)
-
-[^Mikolov_et+al_2013_a]: Tomas Mikolov, Ilya Sutskever, Kai Chen, Greg S. Corrado, and Jeffrey Dean. Distributed representations of words and phrases and their compositionality. In Proceedings of the 26th International Conference on Neural Information Processing Systems (NeurIPS), pages 3111–3119, 2013.  [OA](https://scholar.google.co.uk/scholar?q=Mikolov%2C%20Tomas%20Sutskever%2C%20Ilya%20Chen%2C%20Kai%20Corrado%2C%20Greg%20S.%20Distributed%20representations%20of%20words%20and%20phrases%20and%20their%20compositionality%202013) [GScholar](https://scholar.google.co.uk/scholar?q=Mikolov%2C%20Tomas%20Sutskever%2C%20Ilya%20Chen%2C%20Kai%20Corrado%2C%20Greg%20S.%20Distributed%20representations%20of%20words%20and%20phrases%20and%20their%20compositionality%202013) 
-
-[^Le_2014_a]: Quoc Le and Tomas Mikolov. Distributed representations of sentences and documents. In Proceedings of the 31st International Conference on Machine Learning (ICML), 2014.  [OA](https://scholar.google.co.uk/scholar?q=Le%2C%20Quoc%20Mikolov%2C%20Tomas%20Distributed%20representations%20of%20sentences%20and%20documents%202014) [GScholar](https://scholar.google.co.uk/scholar?q=Le%2C%20Quoc%20Mikolov%2C%20Tomas%20Distributed%20representations%20of%20sentences%20and%20documents%202014) 
-
-[^Ding_et+al_2015_a]: Xiaodong Ding, Yue Zhang, Ting Liu, and Jun Duan. Deep learning for event-driven stock prediction. In IJCAI, 2015.  [OA](https://scholar.google.co.uk/scholar?q=Ding%2C%20Xiaodong%20Zhang%2C%20Yue%20Liu%2C%20Ting%20Duan%2C%20Jun%20Deep%20learning%20for%20event-driven%20stock%20prediction%202015) [GScholar](https://scholar.google.co.uk/scholar?q=Ding%2C%20Xiaodong%20Zhang%2C%20Yue%20Liu%2C%20Ting%20Duan%2C%20Jun%20Deep%20learning%20for%20event-driven%20stock%20prediction%202015) 
-
-[^Devlin_et+al_2019_a]: Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. Bert: Pre-training of deep bidirectional transformers for language understanding. In NAACL-HLT, 2019.  [OA](https://scholar.google.co.uk/scholar?q=Devlin%2C%20Jacob%20Chang%2C%20Ming-Wei%20Lee%2C%20Kenton%20Toutanova%2C%20Kristina%20Bert%3A%20Pre-training%20of%20deep%20bidirectional%20transformers%20for%20language%20understanding%202019) [GScholar](https://scholar.google.co.uk/scholar?q=Devlin%2C%20Jacob%20Chang%2C%20Ming-Wei%20Lee%2C%20Kenton%20Toutanova%2C%20Kristina%20Bert%3A%20Pre-training%20of%20deep%20bidirectional%20transformers%20for%20language%20understanding%202019) 
-
-[^Huang_et+al_2022_a]: Aoran Huang, Hongning Wang, and Yizhou Yang. Alphabert: A pretrained language model for financial text mining. In Proceedings of the International Joint Conference on Artificial Intelligence (IJCAI), 2022.  [OA](https://scholar.google.co.uk/scholar?q=Huang%2C%20Aoran%20Wang%2C%20Hongning%20Yang%2C%20Yizhou%20Alphabert%3A%20A%20pretrained%20language%20model%20for%20financial%20text%20mining%202022) [GScholar](https://scholar.google.co.uk/scholar?q=Huang%2C%20Aoran%20Wang%2C%20Hongning%20Yang%2C%20Yizhou%20Alphabert%3A%20A%20pretrained%20language%20model%20for%20financial%20text%20mining%202022) 
-
-[^Yang_et+al_2020_a]: Hongwei Yang, Yujing Zhu, and Qiang Wu. Financial nlp: A survey of deep learning research in financial textual data. IEEE Access, 8:147229–147259, 2020.  [OA](https://engine.scholarcy.com/oa_version?query=Yang%2C%20Hongwei%20Zhu%2C%20Yujing%20Wu%2C%20Qiang%20Financial%20nlp%3A%20A%20survey%20of%20deep%20learning%20research%20in%20financial%20textual%20data%202020&author=Yang&title=Financial%20nlp%3A%20A%20survey%20of%20deep%20learning%20research%20in%20financial%20textual%20data&year=2020) [GScholar](https://scholar.google.co.uk/scholar?q=Yang%2C%20Hongwei%20Zhu%2C%20Yujing%20Wu%2C%20Qiang%20Financial%20nlp%3A%20A%20survey%20of%20deep%20learning%20research%20in%20financial%20textual%20data%202020) [Scite](/scite_tallies?query=author%3AYang%2Ctitle%3AFinancial%20nlp%3A%20A%20survey%20of%20deep%20learning%20research%20in%20financial%20textual%20data%2Cyear%3A2020)
-
-[^Gu_et+al_2020_a]: Shihao Gu, Bryan Kelly, and Dacheng Xiu. Empirical asset pricing via machine learning. The Review of Financial Studies, 33(5):2223–2273, 2020.  [OA](https://engine.scholarcy.com/oa_version?query=Gu%2C%20Shihao%20Kelly%2C%20Bryan%20Xiu%2C%20Dacheng%20Empirical%20asset%20pricing%20via%20machine%20learning%202020&author=Gu&title=Empirical%20asset%20pricing%20via%20machine%20learning&year=2020) [GScholar](https://scholar.google.co.uk/scholar?q=Gu%2C%20Shihao%20Kelly%2C%20Bryan%20Xiu%2C%20Dacheng%20Empirical%20asset%20pricing%20via%20machine%20learning%202020) [Scite](/scite_tallies?query=author%3AGu%2Ctitle%3AEmpirical%20asset%20pricing%20via%20machine%20learning%2Cyear%3A2020)
-
-[^Chen_et+al_2019_a]: Lingfei Chen, Markus Pelger, and Jason Zhu. Deep learning in asset pricing, 2019. Available at SSRN 3350138. Alex Chinco, Adam D. Clark-Joseph, and Mao Ye. Sparse signals in the cross-section of returns. The Journal of  [OA](https://scholar.google.co.uk/scholar?q=Lingfei%20Chen%20Markus%20Pelger%20and%20Jason%20Zhu%20Deep%20learning%20in%20asset%20pricing%202019%20Available%20at%20SSRN%203350138%20Alex%20Chinco%20Adam%20D%20ClarkJoseph%20and%20Mao%20Ye%20Sparse%20signals%20in%20the%20crosssection%20of%20returns%20The%20Journal%20of) [GScholar](https://scholar.google.co.uk/scholar?q=Lingfei%20Chen%20Markus%20Pelger%20and%20Jason%20Zhu%20Deep%20learning%20in%20asset%20pricing%202019%20Available%20at%20SSRN%203350138%20Alex%20Chinco%20Adam%20D%20ClarkJoseph%20and%20Mao%20Ye%20Sparse%20signals%20in%20the%20crosssection%20of%20returns%20The%20Journal%20of) 
-
-[^Green_et+al_2019_a]: Finance, 74(1):449–492, 2019. Marcos López de Prado. Advances in Financial Machine Learning. John Wiley &amp; Sons, 2018. Joshua Green, John R. Hand, and X. Frank Zhang. The supra-view of return predictive signals. Review of Accounting  [OA](https://engine.scholarcy.com/oa_version?query=Green%2C%20Joshua%20Hand%2C%20John%20R.%20Zhang%2C%20X.Frank%20Marcos%20L%C3%B3pez%20de%20Prado%202019&author=Green&title=Marcos%20L%C3%B3pez%20de%20Prado&year=2019) [GScholar](https://scholar.google.co.uk/scholar?q=Green%2C%20Joshua%20Hand%2C%20John%20R.%20Zhang%2C%20X.Frank%20Marcos%20L%C3%B3pez%20de%20Prado%202019) [Scite](/scite_tallies?query=author%3AGreen%2Ctitle%3AMarcos%20L%C3%B3pez%20de%20Prado%2Cyear%3A2019)
-
-[^Studies_2013_a]: Studies, 18(3):692–730, 2013.  [OA](https://engine.scholarcy.com/oa_version?query=Studies%20183692730%202013&author=Studies&title=&year=2013) [GScholar](https://scholar.google.co.uk/scholar?q=Studies%20183692730%202013) [Scite](/scite_tallies?query=Studies%2C%2018%283%29%3A692%E2%80%93730%2C%202013.)
-
-[^Wolpert_2016_a]: Studies, 29(1):5–68, 2016. David H. Wolpert and William G. Macready. No free lunch theorems for optimization. IEEE Transactions on  [OA](https://engine.scholarcy.com/oa_version?query=Wolpert%2C%20David%20H.%20Macready%2C%20William%20G.%20No%20free%20lunch%20theorems%20for%20optimization%202016&author=Wolpert&title=No%20free%20lunch%20theorems%20for%20optimization&year=2016) [GScholar](https://scholar.google.co.uk/scholar?q=Wolpert%2C%20David%20H.%20Macready%2C%20William%20G.%20No%20free%20lunch%20theorems%20for%20optimization%202016) [Scite](/scite_tallies?query=author%3AWolpert%2Ctitle%3ANo%20free%20lunch%20theorems%20for%20optimization%2Cyear%3A2016)
-
-[^Hong_et+al_1997_a]: Evolutionary Computation, 1(1):67–82, 1997. Richard Roll. R2. The Journal of Finance, 43(3):541–566, 1988. Lauren Cohen and Andrea Frazzini. Economic links and predictable returns. The Journal of Finance, 63(4):1977–2011, 2008. Harrison Hong, Walter Torous, and Rossen Valkanov. Do industries lead stock markets? Journal of Financial  [OA](https://engine.scholarcy.com/oa_version?query=Hong%2C%20Harrison%20Torous%2C%20Walter%20Valkanov%2C%20Rossen%20Richard%20Roll.%20R2%201997&author=Hong&title=Richard%20Roll.%20R2&year=1997) [GScholar](https://scholar.google.co.uk/scholar?q=Hong%2C%20Harrison%20Torous%2C%20Walter%20Valkanov%2C%20Rossen%20Richard%20Roll.%20R2%201997) [Scite](/scite_tallies?query=author%3AHong%2Ctitle%3ARichard%20Roll.%20R2%2Cyear%3A1997)
-
-[^Kelly_et+al_2007_a]: Economics, 83(2):367–396, 2007. Bryan Kelly and Seth Pruitt. Market expectations in the cross-section of present values. The Journal of Finance, 68(5): 1721–1756, 2013. Benjamin F. King. Market and industry factors in stock price behavior. The Journal of Business, 39(1):139–190, 1966. Torben G. Andersen, Tim Bollerslev, Francis X. Diebold, and Clara Vega. Real-time price discovery in global stock, bond, and foreign exchange markets. Journal of International Economics, 73(2):251–277, 2007. Tobias Adrian and Markus K. Brunnermeier. Covar. American Economic Review, 106(7):1705–1741, 2016. Zheng Dong, Xiaofeng Fan, and Zongyi Peng. Fnspid: A comprehensive financial news dataset in time series. arXiv, 2402.06698, 2024. Daniel Cheng, Yuxiang Gu, Shuanglin Huang, Jianjun Bi, Minlie Huang, and Furu Wei. Instruction pre-training: Language models are supervised multitask learners. arXiv, 2406.14491, 2024.  [OA](https://arxiv.org/abs/2402.06698)  
-

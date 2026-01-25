@@ -17,6 +17,7 @@ I'm working on my MSDS Capstone at SMU. I need help composing Draft-1 of my rese
 ## Current State
 
 Draft-0 (completed January 12, 2026) established:
+
 - Abstract, Introduction, and Methods sections
 - Literature review covering 22 papers
 - Four research hypotheses (H1-H4)
@@ -32,34 +33,38 @@ For Draft-1, I need to SUBSTANTIALLY EXPAND the Literature Review (Section 2) by
 ## Research Library Resources
 
 ### Zotero Exports (Full Bibliography)
+
 Located in: \`course_files/research/full-articles/zotero-exports/\`
+
 - \`Capstone-zotero-export_1-23-26_A.csv\` — Primary bibliography (30+ papers)
 - \`Capstone-zotero-export_1-23-26_B.csv\` — Extended bibliography (25+ papers)
 
 ### Full-Text PDFs (50+ papers)
+
 Located in: \`course_files/research/full-articles/core-papers/\`
 
 ### Scholarcy Summaries (40+ structured summaries)
+
 Located in: \`course_files/research/summaries/\`
 Each summary contains: key concepts, quotable passages, methodology details, and structured findings.
 
 ## Literature Review Structure for Draft-1
 
-2. Literature Review
+1. Literature Review
 
    2.1 Transformer Models in Financial Sentiment Analysis
        2.1.1 From Lexicons to BERT (Loughran-McDonald → FinBERT)
        2.1.2 Large Language Models (GPT, LLaMA, ChatGPT, FinLlama)
        2.1.3 Model Comparison and Selection Criteria
        2.1.4 Domain-Specific Fine-Tuning Approaches [NEW]
-   
+
    2.2 Financial Sentiment and Market Prediction
        2.2.1 Foundational Work (Baker-Wurgler, Animal Spirits)
        2.2.2 Social Media as Predictive Signal
        2.2.3 Cryptocurrency-Specific Sentiment Analysis
        2.2.4 Lead Time Evidence Synthesis
        2.2.5 Limitations and Short-Term Prediction Challenges [NEW]
-   
+
    2.3 Cross-Asset Sentiment Analysis [MAJOR EXPANSION]
        2.3.1 Sentiment Spillover Mechanisms
        2.3.2 Transfer Entropy and Information Flow
@@ -67,7 +72,7 @@ Each summary contains: key concepts, quotable passages, methodology details, and
        2.3.4 Forex and Currency Market Sentiment [NEW - 5 papers]
        2.3.5 Multi-Asset Portfolio Integration [NEW - 4 papers]
        2.3.6 Commodities (Gold, Oil) Sentiment [NEW]
-   
+
    2.4 Market Regime Detection [MAJOR EXPANSION]
        2.4.1 Traditional Approaches (VIX, HMM)
        2.4.2 Machine Learning Methods (Clustering, Jump Models)
@@ -75,7 +80,7 @@ Each summary contains: key concepts, quotable passages, methodology details, and
        2.4.4 Real-Time and High-Frequency Systems [NEW - 3 papers]
        2.4.5 Explainable AI for Regime Classification [NEW]
        2.4.6 Risk Management Integration [NEW]
-   
+
    2.5 Research Gaps and Hypotheses
        2.5.1 Synthesis of Literature Gaps
        2.5.2 Updated Research Hypotheses (H1-H4)
@@ -203,6 +208,7 @@ Revised Section 2 (Literature Review) approximately **5,000-7,000 words** that:
 5. Positions the novel contribution as addressing the cross-asset regime detection gap that NO existing paper fully covers
 
 Please start by:
+
 1. Reading \`course_files/paper-drafts/draft-0.md\` (current draft)
 2. Scanning the Scholarcy summaries in \`course_files/research/summaries/\` for key themes
 3. Proposing a detailed outline for the expanded literature review
@@ -257,7 +263,7 @@ Before starting work, verify:
 ## Paper Count Summary
 
 | Category | Papers | Status |
-|----------|--------|--------|
+| -------- | ------ | ------ |
 | Transformer/LLM Models | 12 | ✅ Ready |
 | Forex/Currency | 5 | ✅ Ready |
 | Cross-Asset | 5 | ✅ Ready |
@@ -274,12 +280,14 @@ Before starting work, verify:
 ## Key Citations Quick Reference
 
 ### Foundational Papers
+
 - Baker & Wurgler (2007) - Investor sentiment theory
 - Loughran & McDonald (2011) - Finance-specific lexicons
 - Bollen, Mao & Zeng (2011) - Twitter predicts DJIA (86.7%)
 - Araci (2019) - FinBERT introduction
 
 ### Transformer/LLM Models
+
 - Mishev et al. (2020) - Lexicons to transformers evaluation
 - Fatouros et al. (2023) - ChatGPT 35% better than FinBERT
 - Konstantinidis et al. (2024) - FinLlama with LoRA
@@ -287,23 +295,26 @@ Before starting work, verify:
 - Nasiopoulos et al. (2025) - GPT-4o vs FinBERT comparison
 
 ### Cross-Asset Analysis
+
 - Caferra (2022) - Crypto-equity sentiment spillover
 - Wang et al. (2024) - Cross-asset momentum
 - Yang et al. (2025) - LLM cross-asset risk monitoring
 - Cao et al. (2025) - Sentiment connectedness → crash risk
 
 ### Forex Sentiment
+
 - Sibande et al. (2023) - Twitter → currency herding
 - Olaiyapo (2024) - Forex trading signals
 - Dakalbab et al. (2025) - Multimodal forex prediction
 - Gu & Song (2026) - FinBERT for EUR/USD (84.33%)
 
 ### Regime Detection
+
 - Zhang, Yi & Chen (2020) - Explainable ML for regimes
 - Shu, Yu & Mulvey (2024) - Statistical Jump Models
 - Suárez Cetrulo et al. (2024) - ML under regime change
 
 ### Real-Time Systems
+
 - Renault (2017) - Intraday StockTwits → S&P 500
 - Cai, Tang & Chen (2024) - High-frequency prediction
-
