@@ -1,7 +1,7 @@
 # Literature Mapping: Draft-0 → Draft-1
 
 **Cross-Asset Sentiment Regime Detector**  
-Mapping Research Articles to Paper Sections  
+Mapping Research Articles to Paper Sections (48 Papers)  
 Last Updated: January 25, 2026
 
 ---

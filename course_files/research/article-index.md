@@ -9,8 +9,8 @@ Last Updated: January 24, 2026
 
 | Metric                      | Count       |
 | ---------------------------:| ----------- |
-| Core Research Papers        | 51          |
-| Scholarcy Summaries         | 46          |
+| Core Research Papers        | 48          |
+| Scholarcy Summaries         | 48          |
 | Classical Texts (Keynes)    | 31 chapters |
 | Zotero Exports              | 4 CSVs      |
 
@@ -137,7 +137,7 @@ Located in: `course_files/research/full-articles/core-papers/`
 
 Located in: `course_files/research/summaries/`
 
-46 files containing Scholarcy summaries with YAML-style metadata headers, abstract extraction, key concepts as hashtags, and section-by-section summaries.
+48 files containing Scholarcy summaries with YAML-style metadata headers, abstract extraction, key concepts as hashtags, and section-by-section summaries.
 
 ---
 

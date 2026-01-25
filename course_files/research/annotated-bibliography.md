@@ -2,7 +2,7 @@
 
 **Cross-Asset Sentiment Regime Detector**  
 Last Updated: January 25, 2026  
-Total Entries: 51 papers
+Total Entries: 48 papers
 
 ---
 
