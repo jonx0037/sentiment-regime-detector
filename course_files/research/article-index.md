@@ -9,10 +9,10 @@ Last Updated: January 24, 2026
 
 | Metric                      | Count       |
 | ---------------------------:| ----------- |
-| Core Research Papers        | 48          |
-| Scholarcy Summaries         | 43          |
+| Core Research Papers        | 51          |
+| Scholarcy Summaries         | 46          |
 | Classical Texts (Keynes)    | 31 chapters |
-| Zotero Exports              | 3 CSVs      |
+| Zotero Exports              | 4 CSVs      |
 
 ---
 
@@ -119,9 +119,17 @@ Located in: `course_files/research/full-articles/core-papers/`
 | 43 | Sathish & Jamalpur (2025) | ML + NLP-based sentiment integration survey | ✅ |
 | 44 | Ferrell & McInnes (2025) | RL + NLP integration for trading (22 papers) | ✅ |
 | 45 | Kengmegni (2025) | Multi-level sentiment approach, limitations analysis | ✅ |
-| 46 | Various (2024) | Literature synthesis on text-based sentiment | ✅ |
-| 47 | Various (2024) | Multi-source sentiment with LLMs | ✅ |
-| 48 | Trushkovskyi (2024) | Crypto trading models from social sentiment | ✅ |
+| 46 | Todd, Bowden & Moshfeghi (2024) | Text-based sentiment synthesis, multimodal analysis | ✅ |
+| 47 | Shao et al. (2025) | HD-SURDLM framework, multi-source sentiment with LLM | ✅ |
+| 48 | Trushkovskyi (2025) | Crypto trading models from social sentiment (Twitter/Reddit) | ✅ |
+
+### Advanced Multi-Source & Real-Time Systems (NEW)
+
+| # | Authors/Year | Topic | Has Summary |
+|---|--------------|-------|-------------|
+| 49 | Cai, Tang & Chen (2024) | Real-time sentiment → high-frequency returns | ✅ |
+| 50 | Amin et al. (2024) | Twitter + macro factors → stock prediction | ✅ |
+| 51 | Various (2024-2025) | Additional cryptocurrency sentiment papers | ✅ |
 
 ---
 
@@ -129,7 +137,7 @@ Located in: `course_files/research/full-articles/core-papers/`
 
 Located in: `course_files/research/summaries/`
 
-43 files containing Scholarcy summaries with YAML-style metadata headers, abstract extraction, key concepts as hashtags, and section-by-section summaries.
+46 files containing Scholarcy summaries with YAML-style metadata headers, abstract extraction, key concepts as hashtags, and section-by-section summaries.
 
 ---
 
@@ -150,6 +158,7 @@ Located in: `course_files/research/full-articles/zotero-exports/`
 | Capstone-zotero-export_1-22-26.csv | 24 | Initial bibliography |
 | Capstone-zotero-export_1-23-26_A.csv | 38 | Primary expanded bibliography with full metadata |
 | Capstone-zotero-export_1-23-26_B.csv | 14 | Additional new papers (surveys, comparisons) |
+| Capstone-zotero-export_1-24-26.csv | 51 | Complete updated bibliography (latest) |
 
 ---
 
@@ -163,6 +172,7 @@ Located in: `course_files/research/full-articles/zotero-exports/`
 - Cai, Tang & Chen (2024) - Real-time high-frequency prediction
 - Olaiyapo (2024) - Forex trading signals from sentiment
 - Amin et al. (2024) - Macro factors + Twitter sentiment
+- Trushkovskyi (2025) - Twitter/Reddit → crypto trading models
 
 ### For H2 (Divergence Signal Hypothesis)
 
@@ -170,6 +180,7 @@ Located in: `course_files/research/full-articles/zotero-exports/`
 - Wang et al. (2024) - Cross-asset momentum transmission
 - Pankwaen et al. (2025) - Multi-asset trading optimization
 - Shi (2025) - Gold/USD sentiment dynamics
+- Shao et al. (2025) - HD-SURDLM multi-source framework
 
 ### For H3 (Network Effect Hypothesis)
 
@@ -189,6 +200,7 @@ Located in: `course_files/research/full-articles/zotero-exports/`
 - Ergun & Sefer (2025) - FinSentiment multi-model comparison
 - Nasiopoulos et al. (2025) - Fine-tuned GPT-4o comparison
 - Baghavathi Priya et al. (2025) - FinBERT 89.6% accuracy
+- Todd et al. (2024) - Text-based sentiment synthesis, multimodal analysis
 
 ### For Methodology Section
 
@@ -197,3 +209,5 @@ Located in: `course_files/research/full-articles/zotero-exports/`
 - Ferrell & McInnes (2025) - RL + NLP for trading
 - Suárez-Cetrulo et al. (2023) - ML under regime change (140 studies)
 - Kengmegni (2025) - Limitations and multi-level approaches
+- Todd et al. (2024) - Literature synthesis on transformer vs multimodal methods
+- Shao et al. (2025) - HD-SURDLM with Gibbs sampling methodology

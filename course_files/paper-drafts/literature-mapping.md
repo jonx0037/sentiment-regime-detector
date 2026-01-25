@@ -2,7 +2,7 @@
 
 **Cross-Asset Sentiment Regime Detector**  
 Mapping Research Articles to Paper Sections  
-Last Updated: January 24, 2026
+Last Updated: January 25, 2026
 
 ---
 
@@ -161,6 +161,16 @@ This document maps each research article to specific sections of the capstone pa
 | Sathish & Jamalpur (2025) | ✅ NEW | ML + NLP-based sentiment integration survey | **Draft-1: Integration frameworks** |
 | Ferrell & McInnes (2025) | ✅ NEW | RL + NLP integration for trading (22 papers) | **Draft-1: RL connections** |
 | Kengmegni (2025) | ✅ NEW | Multi-level sentiment, limitations analysis | **Draft-1: Addressing limitations** |
+| Todd, Bowden & Moshfeghi (2024) | ✅ NEW | Text-based sentiment synthesis, multimodal methods | **Draft-1: Future directions** |
+| Shao et al. (2025) | ✅ NEW | HD-SURDLM framework, multi-source sentiment | **Draft-1: Dynamic modeling methods** |
+
+#### Multi-Source Sentiment & Trading Applications (NEW SUBSECTION)
+
+| Article | Citation Status | Key Contribution | Integration Notes |
+|---------|-----------------|------------------|-------------------|
+| Trushkovskyi (2025) | ✅ NEW | Twitter/Reddit → crypto trading (Granger causality) | **Draft-1: H1 evidence, trading bots** |
+| Shao et al. (2025) | ✅ NEW | HD-SURDLM: 1.02% improvement in 1-day forecasts | **Draft-1: Gibbs sampling methodology** |
+| Todd et al. (2024) | ✅ NEW | Multimodal (text-audio) for earnings calls | **Draft-1: Multimodal opportunities** |
 
 ---
 
@@ -181,6 +191,7 @@ This document maps each research article to specific sections of the capstone pa
 | Sibande et al. (2023) | Not specified | Currency markets | Moderate |
 | Cai, Tang & Chen (2024) | Real-time | High-frequency equities | Strong |
 | Amin et al. (2024) | Daily | Equities + macro | Strong |
+| Trushkovskyi (2025) | Daily | Crypto (Bitcoin) | Strong |
 
 **Gap Analysis:** ✅ FULLY ADDRESSED - All major asset classes covered
 
@@ -196,8 +207,9 @@ This document maps each research article to specific sections of the capstone pa
 | Wang et al. (2024) | Cross-asset momentum transmission mechanisms | Strong |
 | Pankwaen et al. (2025) | Multi-asset optimization (29.52% returns) | Strong |
 | Shi (2025) | Gold/USD divergence patterns | Moderate |
+| Shao et al. (2025) | HD-SURDLM multi-source sentiment dynamics | Strong |
 
-**Gap Analysis:** ✅ Significantly improved with cross-asset and commodity papers
+**Gap Analysis:** ✅ Significantly improved with cross-asset and multi-source papers
 
 ---
 
@@ -232,6 +244,7 @@ This document maps each research article to specific sections of the capstone pa
 | Ergun & Sefer (2025) | FinSentiment multi-model comparison | Strong |
 | Nasiopoulos et al. (2025) | GPT-4o fine-tuning outperforms baselines | Strong |
 | Baghavathi Priya et al. (2025) | FinBERT 89.6% accuracy | Strong |
+| Todd et al. (2024) | Multimodal (text-audio) opportunities | Strong |
 
 **Gap Analysis:** ✅ EXCELLENT - Multiple papers support ensemble/fine-tuned approach
 
@@ -248,7 +261,7 @@ This document maps each research article to specific sections of the capstone pa
 | Multi-Asset Regime Detection | ✅ ADDRESSED | Wang, Yang, Pankwaen, Sarfarazurrehman |
 | Real-Time Systems | ✅ ADDRESSED | Cai, Tang & Chen (2024) - MF-EEMD-ML |
 | LLM Comparisons | ✅ ADDRESSED | 4 new papers: Ergun, Nasiopoulos, Mahendran, Baghavathi Priya |
-| Crypto-Specific NLP | ✅ ADDRESSED | Roumeliotis et al. (2024), Trushkovskyi (2024) |
+| Crypto-Specific NLP | ✅ ADDRESSED | Roumeliotis et al. (2024), Trushkovskyi (2025) |
 
 ### Remaining Minor Gaps
 
@@ -304,11 +317,11 @@ This document maps each research article to specific sections of the capstone pa
 |---------|----------------|----------------|-------------------|--------------|
 | 2.1 Transformers | 80% | 98% | 4 | +8 |
 | 2.2 Sentiment/NLP | 75% | 95% | 8 | +4 |
-| 2.3 Cross-Asset | 40% | 98% | 3 | +10 |
+| 2.3 Cross-Asset | 40% | 98% | 3 | +11 |
 | 2.4 Regime Detection | 70% | 95% | 4 | +1 |
 | Foundational | 70% | 95% | 3 | +2 |
-| Surveys | 0% | 90% | 0 | +4 |
-| **TOTAL** | **56%** | **96%** | **22** | **+29** |
+| Surveys | 0% | 95% | 0 | +6 |
+| **TOTAL** | **56%** | **96%** | **22** | **+32** |
 
 ---
 
@@ -316,8 +329,8 @@ This document maps each research article to specific sections of the capstone pa
 
 | Metric | Previous | Current | Change |
 |--------|----------|---------|--------|
-| Total Papers | 34 | 48 | +14 |
-| Scholarcy Summaries | 33 | 43 | +10 |
-| Hypothesis Coverage | 65% | 96% | +31% |
-| Asset Class Coverage | 3 | 6 | +3 (forex, commodities, real estate) |
-| 2024-2025 Papers | 12 | 26 | +14 |
+| Total Papers | 48 | 51 | +3 |
+| Scholarcy Summaries | 43 | 46 | +3 |
+| Hypothesis Coverage | 96% | 98% | +2% |
+| Asset Class Coverage | 6 | 6 | - |
+| 2024-2025 Papers | 26 | 29 | +3 |

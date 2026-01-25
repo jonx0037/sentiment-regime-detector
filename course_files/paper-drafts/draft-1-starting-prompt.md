@@ -1,4 +1,3 @@
-\`\`\`\`markdown
 # Draft-1 Starting Prompt
 
 ## Use this prompt to start a new chat session for composing Draft-1
@@ -10,7 +9,6 @@
 
 ## Context Prompt
 
-\`\`\`markdown
 I'm working on my MSDS Capstone at SMU. I need help composing Draft-1 of my research paper: "Cross-Asset Sentiment Regime Detector: Automating Market Psychology Analysis Through Multi-Source NLP."
 
 **Project Repository:** github.com/jonx0037/sentiment-regime-detector
@@ -44,11 +42,9 @@ Located in: \`course_files/research/full-articles/core-papers/\`
 ### Scholarcy Summaries (40+ structured summaries)
 Located in: \`course_files/research/summaries/\`
 Each summary contains: key concepts, quotable passages, methodology details, and structured findings.
-\`\`\`
 
 ## Literature Review Structure for Draft-1
 
-\`\`\`markdown
 2. Literature Review
 
    2.1 Transformer Models in Financial Sentiment Analysis
@@ -84,7 +80,6 @@ Each summary contains: key concepts, quotable passages, methodology details, and
        2.5.1 Synthesis of Literature Gaps
        2.5.2 Updated Research Hypotheses (H1-H4)
        2.5.3 Novel Contribution Positioning
-\`\`\`
 
 ## Papers to Integrate by Theme (30+ New Papers)
 
@@ -203,7 +198,7 @@ Revised Section 2 (Literature Review) approximately **5,000-7,000 words** that:
 
 1. Integrates 30+ new papers naturally into an expanded thematic narrative
 2. Adds new subsections: 2.1.4, 2.2.5, 2.3.4, 2.3.5, 2.3.6, 2.4.4, 2.4.5, 2.4.6
-3. Provides comprehensive gap analysis showing how this research addresses remaining gaps
+3. Provides a comprehensive gap analysis showing how this research addresses remaining gaps
 4. Strengthens all four hypothesis justifications with extensive new evidence
 5. Positions the novel contribution as addressing the cross-asset regime detection gap that NO existing paper fully covers
 
@@ -212,15 +207,14 @@ Please start by:
 2. Scanning the Scholarcy summaries in \`course_files/research/summaries/\` for key themes
 3. Proposing a detailed outline for the expanded literature review
 4. Writing the expanded sections with proper citations
-\`\`\`
 
 ---
 
 ## Quick Copy Version (Condensed)
 
-For quick session start, copy this condensed prompt:
+For a quick session start, copy this condensed prompt:
 
-\`\`\`markdown
+```markdown
 I need help composing Draft-1 of my MSDS Capstone paper on Cross-Asset Sentiment Regime Detection.
 
 **Workspace:** /Users/jonathanrocha/Documents/SMU/DS_6210_Capstone
@@ -246,7 +240,7 @@ Expand Section 2 (Literature Review) from ~2,000 to ~6,000 words by integrating 
 - Sentiment networks (Cao crash risk, Nyakurukwa)
 
 Start by proposing an outline, then write the expanded sections with proper APA citations.
-\`\`\`
+```
 
 ---
 
@@ -313,4 +307,3 @@ Before starting work, verify:
 - Renault (2017) - Intraday StockTwits → S&P 500
 - Cai, Tang & Chen (2024) - High-frequency prediction
 
-\`\`\`\`

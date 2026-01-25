@@ -1,8 +1,8 @@
 # Annotated Bibliography
 
 **Cross-Asset Sentiment Regime Detector**  
-Last Updated: January 24, 2026  
-Total Entries: 48 papers
+Last Updated: January 25, 2026  
+Total Entries: 51 papers
 
 ---
 
@@ -261,3 +261,21 @@ Kengmegni, G. (2025). Limitations of News Sentiment Analysis in Short-term Stock
   - Multi-level sentiment analysis (stock, industry, economy) for prediction.
   - Findings: Short-term prediction remains challenging despite advances.
   - Relevance: Limitations awareness; multi-level methodology.
+
+Todd, A., Bowden, J., & Moshfeghi, Y. (2024). Text‐based sentiment analysis in finance: Synthesising the existing literature and exploring future directions. Intelligent Systems in Accounting, Finance and Management, 31(1), e1549. <https://doi.org/10.1002/isaf.1549>
+  - Critical evaluation of sentiment analysis techniques in finance with focus on transformer architecture and multimodal analysis.
+  - Keywords: Sentiment Analysis, Deep Learning, Transformer Architecture, Multimodal Analysis, Corporate Earnings
+  - Findings: Transformer-based methods and multimodal classifiers (text-audio) represent underexplored opportunities in finance.
+  - Relevance: Key literature synthesis for H4 (Ensemble Superiority); guidance on emerging multimodal approaches.
+
+Shao, Z., Yao, X., Chen, F., Wang, Z., & Gao, J. (2025). Revisiting time-varying dynamics in stock market forecasting: A multi-source sentiment analysis approach with large language model. Decision Support Systems, 190, 114362. <https://doi.org/10.1016/j.dss.2024.114362>
+  - Introduces HD-SURDLM framework combining Twitter sentiment (2.5M posts) with dynamic financial modeling using VADER, TextBlob, and RoBERTa.
+  - Keywords: Multi-source Sentiment, LLM, Stock Forecasting, Gibbs Sampling, Dynamic Modeling
+  - Findings: 1.02% improvement in 1-day forecasts; 0.42% for 20-day; 0.36% for 50-day; outperforms LSTM, Random Forest, RNN.
+  - Relevance: Core evidence for H2 (cross-asset dynamics); multi-source sentiment aggregation methodology.
+
+Trushkovskyi, A. (2025). Application of Social Media Sentiment Analysis for Developing Trading Models in the Cryptocurrency Market. Journal of Applied Economic Sciences (JAES), 20(3), 535. <https://doi.org/10.57017/jaes.v20.3(89).11>
+  - Examines predictive role of Twitter/Reddit sentiment for Bitcoin price changes using OLS, Random Forest, and XGBoost.
+  - Keywords: Cryptocurrency, Social Media Sentiment, Bitcoin, Trading Models, Granger Causality
+  - Findings: 0.24-0.25% price increase predicted per unit sentiment increase; Granger causality confirms sentiment leads returns.
+  - Relevance: Core evidence for H1 (Leading Indicator); crypto-specific sentiment methodology with trading bot applications.
