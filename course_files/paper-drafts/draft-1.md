@@ -1,15 +1,5 @@
 # Cross-Asset Sentiment Regime Detector: Automating Market Psychology Analysis Through Multi-Source NLP
 
-**Author:** Jonathan Rocha (<jrocha@smu.edu>)  
-**Advisor:** [Searching - TBD]  
-**Affiliation:** Master of Science in Data Science, Southern Methodist University, Dallas, TX 75275 USA  
-**GitHub:** github.com/jonx0037/sentiment-regime-detector  
-**Draft:** 1.0  
-**Date:** January 25, 2026  
-**Based on:** Draft-0 (January 12, 2026)
-
----
-
 Jonathan Rocha¹, [Advisor Name]¹
 ¹ Master of Science in Data Science, Southern Methodist University, Dallas, TX 75275 USA
 <jrocha@smu.edu>
@@ -52,35 +42,39 @@ Section 2 reviews related work in financial sentiment analysis, NLP for finance,
 
 #### 2.1.1 From Lexicons to BERT
 
-The evolution of financial sentiment analysis reflects a broader transition in natural language processing from rule-based systems to contextual deep learning models. Early approaches relied on domain-specific lexicons to identify sentiment-bearing words in financial texts. Loughran and McDonald (2011) demonstrated that general-purpose sentiment dictionaries perform poorly in financial contexts because words carry domain-specific meanings—for example, "liability" carries negative connotations in everyday English but represents a neutral accounting term in finance. Their finance-specific lexicon addressed this limitation and became a foundational resource for subsequent research.
+The evolution of financial sentiment analysis mirrors the transition in natural language processing from symbolic, rule-based methods to neural network-based contextual language models. Initial approaches applied domain-adapted sentiment lexicons to extract polarity-bearing terms in financial corpora. Loughran and McDonald (2011) showed that generic sentiment dictionaries yield low precision for financial texts, as terms like "liability" possess distinct semantic valence in finance compared to general English. Their finance-oriented lexicon remediated this mismatch and established a benchmark resource for subsequent computational finance research.
 
-The introduction of transformer-based architectures marked a paradigm shift in financial sentiment analysis. Araci (2019) introduced FinBERT, a BERT model fine-tuned on financial news and analyst reports, achieving a 15% accuracy improvement over previous state-of-the-art methods. Critically, FinBERT demonstrated effectiveness even with limited labeled data, outperforming baseline models when trained on as few as 500 examples. This finding established the viability of transfer learning for financial NLP tasks where labeled datasets are scarce.
+The introduction of transformer-based architectures marked a paradigm shift in financial sentiment analysis. For instance, Araci (2019) introduced FinBERT, a BERT model fine-tuned on financial news and analyst reports, which achieved a 15% improvement in accuracy over previous state-of-the-art methods. Moreover, FinBERT demonstrated effectiveness even with limited labeled data, outperforming baseline models when trained on as few as 500 examples. As a result, this finding established the viability of transfer learning for financial NLP tasks with scarce labeled datasets.
 
-Mishev et al. (2020) conducted over 100 experiments to systematically evaluate sentiment analysis approaches ranging from lexicons to transformers. Their comprehensive study compared BERT variants including RoBERTa, XLNet, ALBERT, and DistilBERT across multiple financial datasets. The results demonstrated that contextual embeddings achieve substantially greater efficiency than lexicons and fixed word encoders. BART and ALBERT-xxlarge achieved the highest performance with Matthews Correlation Coefficient scores of 0.895 and 0.881 respectively. Notably, distilled versions of transformers such as DistilBERT retained greater than 95% of BERT's accuracy while requiring 40% fewer parameters, making them suitable for production environments where computational resources are constrained.
+Mishev et al. (2020) conducted over 100 experiments to systematically evaluate sentiment analysis approaches ranging from lexicons to transformers. Their comprehensive study compared BERT variants, including RoBERTa, XLNet, ALBERT, and DistilBERT, across multiple financial datasets. The results demonstrated that contextual embeddings achieve substantially greater efficiency than lexicons and fixed word encoders. BART and ALBERT-xxlarge achieved the highest performance with Matthews Correlation Coefficient scores of 0.895 and 0.881, respectively. Notably, distilled versions of transformers, such as DistilBERT, retained more than 95% of BERT's accuracy while requiring 40% fewer parameters, making them suitable for production environments with constrained computational resources.
 
 #### 2.1.2 Large Language Models
 
-The emergence of large language models has introduced new capabilities for financial sentiment analysis, particularly through zero-shot and few-shot learning paradigms. Fatouros et al. (2023) investigated ChatGPT 3.5 for sentiment analysis in the foreign exchange market, finding that the model achieved approximately 35% higher sentiment classification performance and 36% higher correlation with market returns compared to FinBERT. Their zero-shot prompting approach demonstrated that LLMs can interpret financial texts without domain-specific fine-tuning, though the study emphasized that prompt engineering significantly influences performance outcomes.
+The rise of large language models (LLMs) has enhanced financial sentiment analysis, especially via zero-shot and few-shot learning frameworks. Fatouros et al. (2023) assessed ChatGPT 3.5 for FX market sentiment evaluation, observing approximately 35% greater sentiment classification accuracy and 36% higher correlation with market returns than the domain-adapted FinBERT. Their zero-shot evaluation confirmed that LLMs can parse and classify financial texts without supervised domain adaptation, although prompt engineering was identified as a critical variable affecting output.
 
-Konstantinidis et al. (2024) developed FinLlama, a fine-tuned version of Llama 2 7B designed specifically for financial sentiment classification. Their approach employed Low-Rank Adaptation (LoRA) to minimize computational requirements, reducing trainable parameters to just 0.0638% of the total model parameters while maintaining accuracy. In portfolio construction experiments, FinLlama achieved 44.7% higher cumulative returns than FinBERT-based portfolios, with a significantly higher Sharpe ratio and lower annualized volatility. Beyond binary classification, FinLlama quantifies sentiment strength, providing traders with nuanced insight into financial news articles.
+Konstantinidis et al. (2024) introduced FinLlama, a fine-tuned Llama 2 7B model optimized for financial sentiment analysis. They implemented Low-Rank Adaptation (LoRA) to reduce computational complexity, lowering the number of trainable parameters to 0.0638% of the total while maintaining model accuracy. In portfolio optimization tasks, FinLlama produced cumulative returns 44.7% higher than those of FinBERT-based portfolios, along with higher Sharpe ratios and lower annualized volatility. Beyond binary sentiment detection, FinLlama provides sentiment polarity scores, enabling traders to extract nuanced insights from financial news articles.
 
-Luo and Gong (2024) demonstrated that supervised fine-tuning of LLaMA-2 7B achieves state-of-the-art performance on the Financial PhraseBank benchmark, improving accuracy from 0.86 to 0.90. Their experiments compared few-shot learning, further pre-training, and supervised fine-tuning approaches, finding that further pre-training alone does not provide noticeable improvement over baseline performance. The supervised fine-tuning approach proved most effective, confirming that task-specific adaptation remains essential even for large pre-trained models.
+Luo and Gong (2024) demonstrated that supervised fine-tuning of LLaMA-2 7B achieves state-of-the-art performance on the Financial PhraseBank benchmark, improving accuracy from 0.86 to 0.90. Their experiments compared few-shot learning, further pre-training, and supervised fine-tuning, finding that further pre-training alone does not yield noticeable improvement over baseline performance. The supervised fine-tuning approach proved most effective, confirming that task-specific adaptation remains essential even for large pre-trained models.
 
 Shen and Zhang (2024) compared FinBERT against GPT-3.5-turbo and GPT-4o for sentiment analysis on financial news articles and reports. Their findings indicated that FinBERT with domain-specific pre-training consistently outperformed general-purpose LLMs in accuracy, precision, recall, and F1-score. However, GPT-4o with few-shot examples of financial texts achieved competitive results, suggesting that effective prompt engineering can make general-purpose LLMs viable tools for financial sentiment analysis without extensive fine-tuning.
 
 #### 2.1.3 Model Comparison and Selection Criteria
 
-Systematic comparisons across model architectures have clarified the trade-offs between accuracy, computational cost, and deployment considerations. Nasiopoulos et al. (2025) conducted a comparative study of fine-tuned deep learning models including GPT-4o, GPT-4o-mini, BERT, and FinBERT, benchmarked against traditional machine learning classifiers. Using Bayesian optimization across 100 trials for hyperparameter tuning, they found that fine-tuned GPT-4o and GPT-4o-mini achieved 87.79% accuracy on combined FiQA and Financial PhraseBank datasets. Traditional approaches including Support Vector Machines, Random Forests, and Logistic Regression lagged substantially behind at 64.53% to 65.31% accuracy. Fine-tuned LLMs outperformed fine-tuned BERT models by approximately 9% in mean accuracy, though at the cost of increased computational time and inference expense.
+Systematic comparisons across model architectures have clarified the trade-offs between accuracy, computational cost, and deployment considerations. Nasiopoulos et al. (2025) conducted a comparative study of fine-tuned deep learning models, including GPT-4o, GPT-4o-mini, BERT, and FinBERT, benchmarked against traditional machine learning classifiers. Using Bayesian optimization across 100 trials for hyperparameter tuning, they found that fine-tuned GPT-4o and GPT-4o-mini achieved 87.79% accuracy on the combined FiQA and Financial PhraseBank datasets. Traditional approaches, including Support Vector Machines, Random Forests, and Logistic Regression, lagged substantially behind, with accuracies of 64.53% to 65.31%. Fine-tuned LLMs outperformed fine-tuned BERT models by approximately 9% in mean accuracy, though at the cost of increased computational time and inference expense.
 
-Mahendran et al. (2025) reviewed advances in financial sentiment analysis using BERT, FinBERT, and large language models, highlighting practical considerations for deployment. Their analysis noted that DistilBERT retains 97% of BERT's capabilities while requiring only half the parameters, making it suitable for low-latency applications such as algorithmic trading and real-time market monitoring. The review identified persistent challenges including model bias, limited interpretability, high computational requirements, and ethical concerns around data privacy and market manipulation. Domain-specific adaptation remains essential because financial language contains jargon and subtle expressions that general-purpose models may misinterpret.
+Mahendran et al. (2025) reviewed advances in financial sentiment analysis using BERT, FinBERT, and large language models, highlighting practical considerations for deployment. Their analysis noted that DistilBERT retains 97% of BERT's capabilities while requiring only half the parameters, making it suitable for low-latency applications such as algorithmic trading and real-time market monitoring. The review identified persistent challenges, including model bias, limited interpretability, high computational requirements, and ethical concerns around data privacy and market manipulation. Domain-specific adaptation remains essential because financial language contains jargon and subtle expressions that general-purpose models may misinterpret.
 
-Ergun and Sefer (2025) proposed FinSentiment, a comprehensive transfer learning framework that creates finance-specific versions of multiple pretrained models including Fin-BERT, Fin-XLNet, Fin-RoBERTa, Fin-GPT, Fin-Llama, and Fin-T5. Their experiments across three financial sentiment datasets demonstrated that models pretrained on financial corpora consistently outperform their general-domain counterparts. RoBERTa pretrained on financial text exhibited exceptional performance and robustness, achieving state-of-the-art results even when fine-tuned on as few as 250 labeled samples. This finding suggests that transfer learning techniques provide favorable solutions to financial sentiment analysis tasks, particularly in data-scarce scenarios.
+Liu et al. (2024) provided a comprehensive review of large language models and sentiment analysis in financial markets, synthesizing advances across datasets, methodologies, and application domains. Their analysis cataloged publicly available financial sentiment datasets and evaluated both traditional machine learning approaches and modern transformer-based methods. The review emphasized that while LLMs demonstrate impressive zero-shot capabilities, their practical deployment in financial contexts requires careful consideration of inference latency, computational costs, and the need for domain-specific calibration. Their case study on market prediction illustrated how sentiment features derived from news and social media can be integrated with technical indicators to improve forecasting accuracy.
+
+Ergun and Sefer (2025) proposed FinSentiment, a comprehensive transfer-learning framework that produces finance-specific versions of multiple pretrained models, including Fin-BERT, Fin-XLNet, Fin-RoBERTa, Fin-GPT, Fin-Llama, and Fin-T5. Their experiments across three financial sentiment datasets demonstrated that models pretrained on financial corpora consistently outperform their general-domain counterparts. RoBERTa pretrained on financial text exhibited exceptional performance and robustness, achieving state-of-the-art results even when fine-tuned on as few as 250 labeled samples. This finding suggests that transfer learning techniques offer effective solutions for financial sentiment analysis, particularly in data-scarce settings.
 
 #### 2.1.4 Domain-Specific Fine-Tuning Approaches
 
-Beyond architecture selection, recent research has investigated how pre-training corpus composition and feature engineering influence model performance. Delgadillo et al. (2024) developed FinSoSent, a domain-specific language model pretrained on 49 million words from the Thomas Reuters Corpus of financial news articles. Through over 860 experiments with varying learning rates, epochs, and batch sizes, they found that selecting the right hyperparameter configuration is as critical as domain-specific pre-training for achieving optimal performance. While FinSoSent outperformed baseline models including Amazon Comprehend, GPT-3.5-Turbo, IBM Watson, SentiStrength, and VADER, the performance differences were marginal, with accuracy in the 50-60% range across tested datasets. Ensemble methods using majority voting provided modest additional improvements, underscoring the difficulty of sentiment analysis even with domain-specific approaches.
+Beyond architecture selection, recent research has investigated how the composition of the pre-training corpus and feature engineering influence model performance. Delgadillo et al. (2024) developed FinSoSent, a domain-specific language model pretrained on 49 million words from the Thomas Reuters Corpus of financial news articles. Through over 860 experiments with varying learning rates, epochs, and batch sizes, they found that selecting the right hyperparameter configuration is as critical as domain-specific pre-training for achieving optimal performance. While FinSoSent outperformed baseline models, including Amazon Comprehend, GPT-3.5-Turbo, IBM Watson, SentiStrength, and VADER, the performance differences were marginal, with accuracy in the 50-60% range across tested datasets. Ensemble methods using majority voting provided modest additional improvements, underscoring the difficulty of sentiment analysis even with domain-specific approaches.
 
-Sun et al. (2025) addressed persistent challenges in neutral sentiment recognition through EnhancedFinSentiBERT, a three-branch architecture integrating financial domain pre-training, dictionary knowledge embedding, and neutral feature extraction. The dictionary knowledge component employs dynamic weight adjustment based on word performance across financial contexts and implements multi-dimensional sentiment representation that captures not only polarity but also intensity and market impact. The neutral feature extractor uses multi-head attention mechanisms to capture subtle distinctions between neutral and sentiment-bearing expressions. In experiments comparing against BERT-base, XLNet, GPT-4, Llama 2, FinBERT, and BloombergGPT, EnhancedFinSentiBERT achieved F1 scores of 87.0% on Financial PhraseBank, 88.0% on FiQA, and 97.6% on Headline datasets. On consensus-labeled subsets, F1 scores reached 98.0%, indicating that the model performs exceptionally well when annotator agreement is high. Ablation analysis revealed that dictionary knowledge embedding and neutral feature extraction contribute most significantly to performance improvement, suggesting that architectural innovations beyond model scaling remain valuable for financial sentiment analysis.
+Cicekyurt and Bakal (2025) explored BERT-based knowledge transfer for enhancing sentiment analysis in stock market tweets. Their approach leveraged pre-trained BERT representations and applied targeted fine-tuning on Twitter-specific financial discourse, addressing the unique linguistic characteristics of social media text including abbreviations, hashtags, and informal language. The study demonstrated that knowledge transfer from general-domain BERT to finance-specific Twitter data yields significant performance improvements over training from scratch, particularly when labeled data is limited. Their findings reinforce the value of transfer learning strategies for sentiment analysis on noisy, informal financial text sources.
+
+Sun et al. (2025) addressed persistent challenges in neutral sentiment recognition with EnhancedFinSentiBERT, a three-branch architecture integrating financial-domain pre-training, dictionary knowledge embedding, and neutral feature extraction. The dictionary knowledge component employs dynamic weight adjustment based on word performance across financial contexts and implements a multi-dimensional sentiment representation that captures not only polarity but also intensity and market impact. The neutral feature extractor uses multi-head attention mechanisms to capture subtle distinctions between neutral and sentiment-bearing expressions. In experiments comparing against BERT-base, XLNet, GPT-4, Llama 2, FinBERT, and BloombergGPT, EnhancedFinSentiBERT achieved F1 scores of 87.0% on Financial PhraseBank, 88.0% on FiQA, and 97.6% on Headline datasets. On consensus-labeled subsets, F1 scores reached 98.0%, indicating that the model performs exceptionally well when annotator agreement is high. Ablation analysis revealed that dictionary knowledge embedding and neutral feature extraction contribute most significantly to performance improvement, suggesting that architectural innovations beyond model scaling remain valuable for financial sentiment analysis.
 
 ### 2.2 Financial Sentiment and Market Prediction
 
@@ -90,26 +84,26 @@ Market sentiment has long been recognized as a fundamental driver of asset price
 
 The theoretical foundations of behavioral finance trace to Keynes' (1936) concept of "animal spirits"—the spontaneous urge to action rather than inaction that drives economic decisions beyond cold calculation. This insight anticipated decades of research demonstrating that markets are not merely information-processing mechanisms but also arenas of collective psychology.
 
-Baker and Wurgler (2007) operationalized investor sentiment measurement through a composite index derived from six market-based proxies: closed-end fund discount, NYSE share turnover, number of IPOs, average first-day IPO return, equity share in new issues, and dividend premium. Their seminal finding revealed that sentiment predicts cross-sectional stock returns, with the effect concentrated in stocks that are difficult to arbitrage and hard to value—small stocks, young stocks, high volatility stocks, unprofitable stocks, non-dividend-paying stocks, extreme growth stocks, and distressed stocks. The sentiment index exhibits a correlation of 0.43 with contemporaneous market returns and demonstrates significant predictive power for future returns, particularly during sentiment extremes. Baker and Wurgler's framework established that sentiment is not merely noise but a systematic factor that professional investors cannot fully arbitrage away due to limits on short-selling and the costs of trading in affected securities.
+Baker and Wurgler (2007) operationalized investor sentiment measurement through a composite index derived from six market-based proxies: the closed-end fund discount, NYSE share turnover, the number of IPOs, the average first-day IPO return, equity share in new issues, and the dividend premium. Their seminal finding revealed that sentiment predicts cross-sectional stock returns, with the effect concentrated in difficult-to-arbitrage, hard-to-value stocks—small, young, high-volatility, unprofitable, non-dividend-paying, extreme-growth, and distressed. The sentiment index exhibits a correlation of 0.43 with contemporaneous market returns and demonstrates significant predictive power for future returns, particularly during sentiment extremes. Baker and Wurgler's framework established that sentiment is not merely noise but a systematic factor that professional investors cannot fully arbitrage away due to limits on short-selling and the costs of trading in affected securities.
 
 #### 2.2.2 Social Media as Predictive Signal
 
-The emergence of social media platforms created unprecedented opportunities for real-time sentiment measurement at scale. Bollen et al. (2011) conducted a foundational study using approximately 9.8 million tweets collected over ten months in 2008. Their methodology employed two sentiment tools: OpinionFinder for binary positive/negative classification and Google Profile of Mood States (GPOMS) for six-dimensional mood measurement (Calm, Alert, Sure, Vital, Kind, Happy). The critical finding was that the "Calm" dimension demonstrated Granger causality with DJIA movements at lags of 2-6 days. A Self-Organizing Fuzzy Neural Network (SOFNN) trained on historical DJIA and the Calm mood dimension achieved 86.7% directional accuracy in predicting DJIA closing values, a significant improvement over baseline models using only historical price data. This study established the principle that aggregate social media mood contains forward-looking information about market movements.
+The emergence of social media platforms created unprecedented opportunities for real-time, scale sentiment measurement. Bollen et al. (2011) conducted a foundational study using approximately 9.8 million tweets collected over ten months in 2008. Their methodology employed two sentiment tools: OpinionFinder for binary positive/negative classification and Google Profile of Mood States (GPOMS) for six-dimensional mood measurement (Calm, Alert, Sure, Vital, Kind, Happy). The critical finding was that the "Calm" dimension demonstrated Granger causality with DJIA movements at lags of 2-6 days. A Self-Organizing Fuzzy Neural Network (SOFNN) trained on historical DJIA and the Calm mood dimension achieved 86.7% directional accuracy in predicting DJIA closing values, a significant improvement over baseline models using only historical price data. This study established the principle that aggregate social media mood contains forward-looking information about market movements.
 
-Renault (2017) extended social media sentiment research to intraday timeframes using StockTwits, a platform specifically designed for financial discussion. Analyzing S&P 500 stock discussions, the study found that first half-hour sentiment predicts last half-hour returns within the same trading day, with accuracy ranging from 74-76%. Notably, novice-labeled traders drove this effect more strongly than expert-labeled traders, suggesting that StockTwits sentiment captures retail investor psychology rather than institutional views. This finding is particularly relevant for regime detection, as retail sentiment extremes often precede market turning points when institutional investors have not yet repositioned.
+Renault (2017) extended social media sentiment research to intraday timeframes using StockTwits, a platform specifically designed for financial discussion. Analyzing S&P 500 stock discussions, the study found that first-half-hour sentiment predicts last-half-hour returns on the same trading day, with accuracy ranging from 74% to 76%. Notably, novice-labeled traders drove this effect more strongly than expert-labeled traders, suggesting that StockTwits sentiment captures retail investor psychology rather than institutional views. This finding is particularly relevant for regime detection, as retail sentiment extremes often precede market turning points when institutional investors have not yet repositioned.
 
 #### 2.2.3 Cryptocurrency-Specific Sentiment Analysis
 
 Cryptocurrency markets, characterized by 24/7 trading, high retail participation, and strong social media presence, provide a natural laboratory for sentiment-based prediction research. The asset class's sensitivity to narrative and community dynamics makes it particularly amenable to sentiment analysis approaches.
 
-Kraaijeveld and De Smedt (2020) examined the predictive power of Twitter sentiment for nine major cryptocurrencies: Bitcoin, Bitcoin Cash, EOS, Ethereum, IOTA, Litecoin, NEO, Ripple, and Tron. Using a labeled dataset and machine learning classifiers, they found significant predictive relationships for Bitcoin, Bitcoin Cash, and Litecoin with lead times of 1-4 days. The study also documented that 1-14% of tweets in their corpus originated from bot accounts, highlighting data quality challenges specific to crypto sentiment analysis. Their Granger causality tests demonstrated that social media sentiment contains information not fully reflected in prices, supporting the use of sentiment as a leading indicator.
+Kraaijeveld and De Smedt (2020) examined the predictive power of Twitter sentiment for nine major cryptocurrencies: Bitcoin, Bitcoin Cash, EOS, Ethereum, IOTA, Litecoin, NEO, Ripple, and Tron. Using a labeled dataset and machine learning classifiers, they found significant predictive relationships for Bitcoin, Bitcoin Cash, and Litecoin with lead times of 1-4 days. The study also documented that 1-14% of tweets in their corpus originated from bot accounts, highlighting data quality challenges specific to crypto sentiment analysis. Their Granger causality tests showed that social media sentiment contains information not fully reflected in prices, supporting its use as a leading indicator.
 
 Roumeliotis et al. (2024) conducted a comprehensive comparison of language models for cryptocurrency sentiment analysis, providing crucial benchmarking data for model selection. Their evaluation found:
 
-- Fine-tuned GPT-4: 86.7% accuracy
-- FinBERT (domain-specific): 84.3% accuracy  
-- BERT (general): 83.3% accuracy
-- Base GPT-4 (zero-shot): 82.9% accuracy
+    • Fine-tuned GPT-4: 86.7% accuracy
+    • FinBERT (domain-specific): 84.3% accuracy
+    • BERT (general): 83.3% accuracy
+    • Base GPT-4 (zero-shot): 82.9% accuracy
 
 These results demonstrate that domain-specific fine-tuning (FinBERT) achieves near-parity with state-of-the-art LLMs at substantially lower computational cost. The marginal improvement from GPT-4 fine-tuning (2.4 percentage points over FinBERT) must be weighed against significant increases in inference cost and latency, a practical consideration for real-time regime detection systems.
 
@@ -121,7 +115,7 @@ Trushkovskyi (2025) quantified the economic significance of social media sentime
 
 Across asset classes and methodologies, the literature consistently demonstrates that sentiment signals precede market movements. Table 2.2.1 synthesizes predictive lead times from major studies:
 
-**Table 2.2.1: Lead Time Evidence Synthesis**
+##### **Table 2.2.1: Lead Time Evidence Synthesis**
 
 | Study | Asset Class | Lead Time | Accuracy/Correlation |
 |-------|-------------|-----------|---------------------|
@@ -132,43 +126,43 @@ Across asset classes and methodologies, the literature consistently demonstrates
 | Trushkovskyi (2025) | Cryptocurrency | 1 day | 0.24-0.25% per unit |
 | Baker & Wurgler (2007) | Equities (broad) | Monthly | 0.43 correlation |
 
-This convergence across independent studies using different methodologies, time periods, and asset classes strengthens the theoretical foundation for sentiment-based regime detection. The consistency of 1-6 day lead times suggests an optimal window for regime transition early warning systems.
+This convergence across independent studies using different methodologies, time periods, and asset classes strengthens the theoretical foundation for sentiment-based regime detection. The consistency of 1-6 day lead times suggests an optimal window for regime-transition early-warning systems.
 
 #### 2.2.5 Limitations and Short-Term Prediction Challenges
 
 Despite the encouraging evidence for sentiment-based prediction, recent research has identified important limitations that temper expectations for real-time applications. Kengmegni (2025) conducted a rigorous analysis of news sentiment for next-day stock prediction, finding that agreement ratios between sentiment signals and subsequent price movements hover around 0.5—essentially random chance. The study documented that market efficiency has increased over time, with prediction error standard deviations declining from 0.2 in 2009 to 0.065 by 2023, suggesting that markets have become more efficient at incorporating sentiment information.
 
-Critically, Kengmegni found that economy-wide sentiment measures outperform stock-specific sentiment for prediction, implying that aggregate sentiment indices may capture systematic factors that individual stock sentiment cannot. This finding supports our research design's focus on cross-asset aggregate sentiment rather than single-security approaches. The study's conclusion that "next-day stock prediction remains elusive" underscores the importance of regime-level analysis (identifying broad market states) rather than precise return prediction.
+Critically, Kengmegni found that economy-wide sentiment measures outperform stock-specific sentiment for predictive purposes, suggesting that aggregate sentiment indices may capture systematic factors that individual stock sentiment cannot. This finding supports our research design's focus on cross-asset aggregate sentiment rather than single-security approaches. The study's conclusion that "next-day stock prediction remains elusive" underscores the importance of regime-level analysis (identifying broad market states) rather than precise return prediction.
 
 #### 2.2.6 Cross-Asset Sentiment Spillover
 
-While single-asset sentiment analysis is mature, cross-asset approaches remain sparse but show significant promise. Caferra (2022) examined sentiment spillovers between cryptocurrency (Bitcoin) and stock markets (S&P 500) using Transfer Entropy methods. The study found that sentiment metrics successfully mediate the relationship between these markets, with crypto sentiments affecting stock returns and economic sentiments influencing Bitcoin dynamics. Notably, entropy-based methods outperformed traditional VAR models in identifying these connections, demonstrating the value of information-theoretic approaches for cross-asset analysis.
+While single-asset sentiment analysis is mature, cross-asset approaches remain sparse but show significant promise. Caferra (2022) examined sentiment spillovers between cryptocurrency (Bitcoin) and stock markets (S&P 500) using Transfer Entropy methods. The study found that sentiment metrics mediate the relationship between these markets: crypto sentiment affects stock returns, and economic sentiment influences Bitcoin dynamics. Notably, entropy-based methods outperformed traditional VAR models in identifying these connections, demonstrating the value of information-theoretic approaches for cross-asset analysis.
 
-Cao et al. (2025) investigated sentiment connectedness networks among S&P 500 firms using nonlinear Granger causality methods and entropy-based centrality measures. Their findings revealed that firms with higher sentiment connectedness face significantly elevated stock price crash risk. The effect was particularly pronounced during market extremes, when sentiment connectedness proved a better predictor than individual firm sentiment. This work demonstrates how network-based sentiment analysis can identify systemic risk propagation.
+Cao et al. (2025) investigated sentiment-connectedness networks among S&P 500 firms using nonlinear Granger causality methods and entropy-based centrality measures. Their findings revealed that firms with higher sentiment connectedness face significantly elevated stock price crash risk. The effect was particularly pronounced during market extremes, when sentiment connectedness proved a better predictor than individual firm sentiment. This work demonstrates how network-based sentiment analysis can identify the propagation of systemic risk.
 
 Nyakurukwa and Seetharam (2025) mapped investor sentiment networks across DJIA stocks, finding that sentiment is highly interconnected among major equities and influences market behavior through network propagation effects. Their network analysis approach provides methodological foundations for understanding how sentiment flows through interconnected markets. These foundations for cross-asset sentiment transmission are explored further in Section 2.3.
 
 ### 2.3 Cross-Asset Sentiment Analysis
 
-While sentiment analysis has matured for individual asset classes, the integration of sentiment signals across multiple markets represents a frontier with significant theoretical and practical implications. Cross-asset sentiment analysis examines how investor psychology propagates across market boundaries, revealing interconnections that traditional correlation measures may miss. This section surveys the emerging literature on sentiment spillovers, cross-market transmission mechanisms, and the extension of sentiment analysis to forex, commodities, and multi-asset portfolio contexts.
+While sentiment analysis has matured for individual asset classes, integrating sentiment signals across multiple markets remains a frontier with significant theoretical and practical implications. Cross-asset sentiment analysis examines how investor psychology propagates across market boundaries, revealing interconnections that traditional correlation measures may miss. This section surveys the emerging literature on sentiment spillovers, cross-market transmission mechanisms, and the extension of sentiment analysis to forex, commodities, and multi-asset portfolio contexts.
 
 #### 2.3.1 Sentiment Spillover Mechanisms
 
-The theoretical foundation for cross-asset sentiment analysis rests on the observation that investor psychology does not respect asset class boundaries. Caferra (2022) provided seminal evidence of sentiment spillovers between cryptocurrency (Bitcoin) and equity markets (S&P 500) using Transfer Entropy methods—an information-theoretic approach that captures directional information flow beyond linear correlations. The study found that crypto sentiments affect stock returns while economic sentiments influence Bitcoin dynamics, demonstrating bidirectional sentiment transmission. Critically, entropy-based methods outperformed traditional VAR models in identifying these connections, suggesting that sentiment spillovers are fundamentally nonlinear phenomena requiring appropriate analytical tools.
+The theoretical foundation for cross-asset sentiment analysis rests on the observation that investor psychology does not respect asset class boundaries. Caferra (2022) provided seminal evidence of sentiment spillovers between cryptocurrency (Bitcoin) and equity markets (S&P 500) using Transfer Entropy methods—an information-theoretic approach that captures directional information flow beyond linear correlations. The study found that crypto sentiment affects stock returns, while economic sentiment influences Bitcoin dynamics, demonstrating bidirectional sentiment transmission. Critically, entropy-based methods outperformed traditional VAR models in identifying these connections, suggesting that sentiment spillovers are fundamentally nonlinear phenomena requiring appropriate analytical tools.
 
 Wang et al. (2024) extended cross-asset analysis to China's stock and bond markets, discovering asymmetric momentum transmission: stock market momentum negatively influences bond returns, while bond market momentum positively influences stock returns. Their analysis revealed that hybrid funds serve as intermediaries in this transmission mechanism, with more flexible asset allocation enabling stronger cross-market effects. For every 1% increase in hybrid fund returns, the CSI 300 Index increased by 0.73-0.86%. These findings demonstrate that institutional investment vehicles can amplify or dampen cross-asset sentiment propagation, a consideration relevant for understanding how sentiment signals may be transmitted—or distorted—across market boundaries.
 
 #### 2.3.2 Network-Based Approaches and Sentiment Connectedness
 
-Network analysis has emerged as a powerful framework for understanding sentiment dynamics across interconnected markets. Cao et al. (2025) investigated sentiment connectedness networks among S&P 500 firms using nonlinear Granger causality and entropy-based centrality measures, finding that firms with higher sentiment connectedness face significantly elevated stock price crash risk. The effect proved particularly pronounced during market extremes, when network-level sentiment measures outperformed individual firm sentiment for risk prediction.
+Network analysis has emerged as a powerful framework for understanding sentiment dynamics across interconnected markets. Cao et al. (2025) investigated sentiment-connectedness networks among S&P 500 firms using nonlinear Granger causality and entropy-based centrality measures, finding that firms with higher sentiment connectedness face significantly elevated stock price crash risk. The effect was particularly pronounced during market extremes, when network-level sentiment measures outperformed individual-firm sentiment for risk prediction.
 
-Yang et al. (2025) introduced a Cross-Asset Risk Management framework leveraging large language models for real-time monitoring of equity, fixed-income, and currency markets simultaneously. Their approach synthesizes market signals across asset classes to identify potential risks and opportunities, achieving 82.1% accuracy in predicting market shifts—substantially outperforming traditional methods including blockchain-enhanced frameworks (74.0%) and conventional big data approaches (75.2%). The framework's integration of GPT-4 and Llama-3-30b for interpreting financial texts across asset classes demonstrates the practical feasibility of unified cross-asset sentiment monitoring systems.
+Yang et al. (2025) introduced a Cross-Asset Risk Management framework that leverages large language models for real-time monitoring of equity, fixed-income, and currency markets. Their approach synthesizes market signals across asset classes to identify potential risks and opportunities, achieving 82.1% accuracy in predicting market shifts—substantially outperforming traditional methods, including blockchain-enhanced frameworks (74.0%) and conventional big data approaches (75.2%). The framework's integration of GPT-4 and Llama-3-30b for interpreting financial texts across asset classes demonstrates the practical feasibility of unified, cross-asset sentiment-monitoring systems.
 
 #### 2.3.3 Forex and Currency Market Sentiment
 
-Foreign exchange markets, characterized by 24-hour trading and sensitivity to macroeconomic narratives, present unique opportunities for sentiment-based analysis. Olaiyapo (2024) examined sentiment analysis for generating Forex trading signals, combining lexicon-based analysis with Naive Bayes classification on news articles and social media posts related to the US Dollar. The Naive Bayes model achieved 85% classification accuracy with precision of 0.87 and F1-score of 0.86. When combined with technical indicators (moving averages and RSI), the sentiment-based signals generated over 12% profit during the testing period, demonstrating the practical value of sentiment integration for currency trading.
+Foreign exchange markets, characterized by 24-hour trading and sensitivity to macroeconomic narratives, present unique opportunities for sentiment-based analysis. Olaiyapo (2024) examined sentiment analysis for generating Forex trading signals, combining lexicon-based analysis with Naive Bayes classification on news articles and social media posts related to the US Dollar. The Naive Bayes model achieved 85% classification accuracy with a precision of 0.87 and an F1-score of 0.86. When combined with technical indicators (moving averages and RSI), the sentiment-based signals generated over 12% profit during the testing period, demonstrating the practical value of sentiment integration for currency trading.
 
-Dakalbab et al. (2025) advanced forex prediction through a multimodal deep learning framework integrating technical and sentiment analysis via cross-modal attention mechanisms. Testing on EUR/USD, GBP/USD, and USD/JPY currency pairs, their hybrid attention model achieved accuracy of 82.9% and Matthews Correlation Coefficient of 0.744-0.776, consistently outperforming single-modality approaches. The study's key contribution was demonstrating that sentiment-technical fusion captures market dynamics that neither modality captures alone—a finding with direct implications for multi-source regime detection systems.
+Dakalbab et al. (2025) advanced forex prediction by integrating technical and sentiment analysis via cross-modal attention mechanisms within a multimodal deep learning framework. Testing on EUR/USD, GBP/USD, and USD/JPY currency pairs, their hybrid attention model achieved an accuracy of 82.9% and a Matthews Correlation Coefficient of 0.744-0.776, consistently outperforming single-modality approaches. The study's key contribution was demonstrating that sentiment-technical fusion captures market dynamics that neither modality alone captures—a finding with direct implications for multi-source regime-detection systems.
 
 Sibande et al. (2021) established a direct link between herding behavior in currency markets and investor sentiment using a Twitter-based happiness index. Analyzing nine developed-market currencies, they found that forex markets exhibit strong anti-herding behavior, particularly during extreme sentiment states. The relationship between sentiment and anti-herding proved regime-specific: extreme bullish or bearish sentiment strengthened anti-herding, while average sentiment was associated with weaker effects. These findings suggest that real-time sentiment monitoring can identify periods of heightened speculative activity in currency markets—a capability directly relevant to regime detection.
 
@@ -176,30 +170,30 @@ Sibande et al. (2021) established a direct link between herding behavior in curr
 
 The integration of sentiment analysis into multi-asset portfolio management represents a natural extension of cross-asset research with significant practical applications. Sarfarazurrehman et al. (2025) explored AI and machine learning models for cross-asset investment risk analysis spanning real estate and equities markets. Their Deep Reinforcement Learning (DRL) and LSTM-based approaches achieved cumulative returns of 29.52% with a Sharpe ratio of 0.98, significantly outperforming traditional Mean-Variance Optimization. The study also documented that real estate investment trusts (REITs) are pervasive transmitters of long-term volatility, with shocks lasting longer than those in equities, commodities, and bonds—underscoring the importance of understanding cross-asset risk propagation.
 
-Pankwaen et al. (2025) developed an Iterative Model Combining Algorithm (IMCA) for global cross-market trading optimization across 39 stocks from multiple regions plus Bitcoin. Their framework dynamically recalibrates model weights in response to real-time market conditions, achieving 29.52% cumulative returns and a Sharpe ratio of 0.829. Critically, the study evaluated performance during major market disruptions including COVID-19, the SVB crisis, and the 2022 crypto crash, demonstrating that adaptive multi-asset frameworks maintain effectiveness across regime transitions. The IMCA framework's success in volatile conditions suggests that dynamic, sentiment-aware approaches may be essential for robust cross-asset regime detection.
+Pankwaen et al. (2025) developed an Iterative Model Combining Algorithm (IMCA) for global cross-market trading optimization across 39 stocks from multiple regions plus Bitcoin. Their framework dynamically recalibrates model weights in response to real-time market conditions, achieving cumulative returns of 29.52% and a Sharpe ratio of 0.829. Critically, the study evaluated performance during major market disruptions, including COVID-19, the SVB crisis, and the 2022 crypto crash, demonstrating that adaptive multi-asset frameworks maintain effectiveness across regime transitions. The IMCA framework's success in volatile conditions suggests that dynamic, sentiment-aware approaches may be essential for robust cross-asset regime detection.
 
 #### 2.3.5 Commodities and Safe-Haven Asset Sentiment
 
 Commodities, particularly gold as a traditional safe-haven asset, exhibit unique sentiment dynamics that complement equity and currency analysis. Shi (2025) developed a sentiment-based GARCH-MIDAS hybrid model to explain the unusual 2020-2022 period when gold prices rose 40% despite a 12% increase in the US Dollar Index—violating their typical inverse relationship. Using FinBERT-scored sentiment from financial media, the augmented model reduced out-of-sample prediction errors by 18.7% compared to traditional volatility models (23.6% reduction in MSE versus standard GARCH).
 
-The study identified sentiment-driven herding effects, amplified by pandemic uncertainties and geopolitical tensions, as critical channels driving the gold-DXY correlation shift. Notably, negative sentiment exhibited 1.8 times stronger marginal impact on volatility than positive sentiment—an asymmetric effect consistent with loss aversion theory in behavioral finance (see also the negativity bias findings in Nyakurukwa and Seetharam 2025, discussed in Section 2.2.5). Sentiment factors accounted for approximately 15% of previously unobserved heteroskedasticity in long-term volatility components, establishing a new paradigm for incorporating behavioral factors into commodity pricing models.
+The study identified sentiment-driven herding effects, amplified by pandemic uncertainties and geopolitical tensions, as critical drivers of the shift in the gold-DXY correlation. Notably, negative sentiment exhibited 1.8 times stronger marginal impact on volatility than positive sentiment—an asymmetric effect consistent with loss aversion theory in behavioral finance (see also the negativity bias findings in Nyakurukwa and Seetharam 2025, discussed in Section 2.2.5). Sentiment factors accounted for approximately 15% of previously unobserved heteroskedasticity in long-term volatility components, establishing a new paradigm for incorporating behavioral factors into commodity pricing models.
 
 The cross-asset evidence reviewed in this section—spanning crypto-equity spillovers, currency market herding, multi-asset portfolio optimization, and commodity safe-haven dynamics—demonstrates both the feasibility and value of unified sentiment analysis frameworks. These findings motivate our research design, which synthesizes sentiment signals across all four asset classes for regime-level detection rather than single-asset prediction.
 
 ### 2.4 Market Regime Detection
 
-Having established in Sections 2.1-2.3 that transformer-based sentiment analysis achieves strong classification performance and that sentiment signals demonstrate predictive power across individual and cross-asset contexts, we now turn to the challenge of integrating these insights for market regime detection. The identification of market regimes—distinct periods characterized by different return distributions, volatility patterns, and investor behavior—represents a critical challenge in financial modeling. Accurate regime detection enables portfolio managers to adjust allocations dynamically, hedge against downside risk, and capitalize on regime-specific opportunities. This section reviews traditional approaches, machine learning innovations, and the emerging role of sentiment signals in regime identification.
+Having established in Sections 2.1-2.3 that transformer-based sentiment analysis achieves strong classification performance, and that sentiment signals demonstrate predictive power across individual and cross-asset contexts, we now turn to the challenge of integrating these insights for market regime detection. The identification of market regimes—distinct periods characterized by different return distributions, volatility patterns, and investor behavior—represents a critical challenge in financial modeling. Accurate regime detection enables portfolio managers to dynamically adjust allocations, hedge against downside risk, and capitalize on regime-specific opportunities. This section reviews traditional approaches, machine learning innovations, and the emerging role of sentiment signals in regime identification.
 
 #### 2.4.1 Traditional Approaches
 
 Classical regime detection relies on threshold-based indicators and statistical models that identify regimes from observable market data:
 
-- **Volatility thresholds:** VIX levels exceeding 30 conventionally signal Risk-Off conditions, while sustained levels below 15 indicate complacent Risk-On environments.
-- **Moving average crossovers:** Technical signals such as the Death Cross (50-day moving average crossing below 200-day) have historically coincided with bear market initiations.
-- **Economic indicators:** Yield curve inversions, rising unemployment claims, and declining PMI readings serve as macroeconomic regime markers.
-- **Hidden Markov Models (HMMs):** Traditional HMMs assume that observed market data emerges from a hidden state process, with regime transitions governed by fixed transition probabilities.
+    • **Volatility thresholds:** VIX levels above 30 conventionally signal Risk-Off conditions, while sustained levels below 15 indicate a complacent Risk-On environment.
+    • **Moving average crossovers:** Technical signals such as the Death Cross (50-day moving average crossing below the 200-day) have historically coincided with bear-market initiations.
+    • **Economic indicators:** Yield curve inversions, rising unemployment claims, and declining PMI readings serve as macroeconomic regime markers.
+    • **Hidden Markov Models (HMMs):** Traditional HMMs assume that observed market data emerges from a hidden state process, with regime transitions governed by fixed transition probabilities.
 
-The fundamental limitation of these approaches is their lagging nature—they identify regimes after transitions have substantially progressed. Baker and Wurgler (2007) demonstrated that investor sentiment indices predict broad market returns, suggesting that behavioral signals may provide earlier regime indicators than price-based methods. However, their sentiment proxies relied on indirect measures (closed-end fund discounts, IPO volume, equity issuance share) rather than direct textual sentiment extraction.
+The fundamental limitation of these approaches is their lag—they identify regimes after transitions have already progressed substantially. Baker and Wurgler (2007) demonstrated that investor sentiment indices predict broad market returns, suggesting that behavioral signals may provide earlier regime indicators than price-based methods. However, their sentiment proxies relied on indirect measures (closed-end fund discounts, IPO volume, equity issuance share) rather than direct textual sentiment extraction.
 
 #### 2.4.2 Machine Learning Methods
 
@@ -207,11 +201,11 @@ Modern machine learning approaches have substantially advanced regime detection 
 
 Zhang et al. (2020) developed an explainable machine learning framework for regime-based asset allocation using hierarchical clustering. Their model integrated macroeconomic indicators with market technical signals to divide economic conditions into four distinct regimes, then applied the Black-Litterman model for portfolio optimization. Backtesting from August 2010 to May 2020 achieved 22.53% annualized returns with a Sharpe ratio of 1.06, significantly outperforming both equal-weighted benchmarks and traditional Black-Litterman implementations. Critically, their approach captured both major market upswings and successfully withdrew capital before market crashes, demonstrating the practical value of regime-aware allocation strategies.
 
-Shu et al. (2024) proposed a statistical jump model (JM) approach that enhances traditional Markov-switching models by imposing jump penalties at each state transition. This penalty mechanism promotes regime persistence, reducing spurious switching signals that plague traditional HMMs. Evaluating the approach across U.S., German, and Japanese equity indices from 1990 to 2023, they found the JM-guided strategy consistently reduced volatility and maximum drawdown while improving Sharpe ratios compared to both buy-and-hold and HMM-guided strategies. The JM approach enhanced compound annual growth rates by 1-4% across regions while limiting turnover to approximately 44% annually.
+Shu et al. (2024) proposed a statistical jump model (JM) approach that enhances traditional Markov-switching models by imposing jump penalties at each state transition. This penalty mechanism promotes regime persistence, reducing spurious switching signals that plague traditional HMMs. Evaluating the approach across U.S., German, and Japanese equity indices from 1990 to 2023, they found that the JM-guided strategy consistently reduced volatility and maximum drawdown while improving Sharpe ratios relative to both the buy-and-hold and HMM-guided strategies. The JM approach enhanced compound annual growth rates by 1-4% across regions while limiting turnover to approximately 44% annually.
 
-Suárez-Cetrulo et al. (2023) conducted a systematic review of 140 studies on machine learning for financial prediction under regime change. Their analysis identified four primary algorithmic categories showing promise: evolving systems (32.1% of studies), ensemble-based methods, traditional systems adapted to concept change, and neural networks with online learning capabilities. A critical finding was that most conventional machine learning techniques struggle with abrupt structural changes—the exact characteristic that distinguishes regime transitions from normal market fluctuations. They emphasized that the literatures on online learning (concept drift) and regime switching have developed largely independently, despite addressing fundamentally similar challenges.
+Suárez-Cetrulo et al. (2023) conducted a systematic review of 140 studies on machine learning for financial prediction under regime change. Their analysis identified four primary algorithmic categories showing promise: evolving systems (32.1% of studies), ensemble-based methods, traditional systems adapted to concept change, and neural networks with online learning capabilities. A critical finding was that most conventional machine learning techniques struggle with abrupt structural changes—the exact characteristic that distinguishes regime transitions from normal market fluctuations. They emphasized that the literature on online learning (concept drift) and regime switching has developed largely independently, despite addressing fundamentally similar challenges.
 
-**Table 2.4.1: Regime Detection Performance Comparison**
+##### **Table 2.4.1: Regime Detection Performance Comparison**
 
 | Approach | Method | Annual Return | Sharpe Ratio | Key Advantage | Citation |
 |----------|--------|---------------|--------------|---------------|----------|
@@ -225,19 +219,19 @@ Suárez-Cetrulo et al. (2023) conducted a systematic review of 140 studies on ma
 
 The application of sentiment analysis to regime detection remains an emerging frontier with substantial untapped potential. Foundational work has established that sentiment signals possess predictive power for market movements:
 
-Bollen et al. (2011) demonstrated that Twitter mood states predicted DJIA movements 2-6 days ahead with 86.7% accuracy (87.6% direction accuracy in validation), establishing sentiment as a potentially leading indicator for market direction. Their analysis identified specific emotional dimensions (calm, anxiety) that correlated with subsequent market movements, suggesting that investor psychology shifts precede price adjustments.
+Bollen et al. (2011) demonstrated that Twitter mood states predicted DJIA movements 2-6 days ahead with 86.7% accuracy (87.6% direction accuracy in validation), establishing sentiment as a potentially leading indicator for market direction. Their analysis identified specific emotional dimensions (calm and anxiety) that correlated with subsequent market movements, suggesting that shifts in investor psychology precede price adjustments.
 
-Renault (2017) constructed a field-specific sentiment lexicon from StockTwits messages and examined intraday relationships between sentiment and S&P 500 ETF returns. The study found that first half-hour sentiment changes predicted last half-hour returns, with the sentiment effect primarily driven by novice traders. A trading strategy exploiting this pattern achieved a Sharpe ratio of 1.496, with significant price reversal occurring the following trading day—consistent with noise trading theory. Importantly, predictability disappeared when using standard dictionary-based sentiment methods, highlighting the importance of domain-specific lexicons.
+Renault (2017) constructed a field-specific sentiment lexicon from StockTwits messages and examined intraday relationships between sentiment and returns of the S&P 500 ETF. The study found that first-half-hour sentiment changes predicted last-half-hour returns, with the sentiment effect primarily driven by novice traders. A trading strategy exploiting this pattern achieved a Sharpe ratio of 1.496, with significant price reversals the following trading day—consistent with noise-trading theory. Importantly, predictability disappeared when using standard dictionary-based sentiment methods, underscoring the need for domain-specific lexicons.
 
-Micaletti (2022) introduced the concept of relative sentiment—the difference between institutional and individual investor sentiment expectations—for tactical asset allocation. Using Sentix economic sentiment indices across U.S., Europe, Japan, and Asia ex-Japan markets, he found that relative sentiment factors demonstrated robust predictive power across all regions, surpassing both standalone sentiment and time-series momentum in informational content. Composite relative sentiment strategies outperformed benchmarks by 400-700 basis points annually with higher Sharpe ratios and lower maximum drawdowns. Notably, when time-series momentum was negative but relative sentiment was positive, annualized returns averaged 27% versus -23% when both were negative—a 50 percentage point differential determined by sentiment state.
+Micaletti (2022) introduced the concept of relative sentiment—the difference between institutional and individual investor sentiment expectations—for tactical asset allocation. Using Sentix economic sentiment indices across the U.S., Europe, Japan, and Asia ex-Japan markets, he found that relative sentiment factors demonstrated robust predictive power across all regions, surpassing both standalone sentiment and time-series momentum in informational content. Composite relative sentiment strategies outperformed benchmarks by 400-700 basis points annually with higher Sharpe ratios and lower maximum drawdowns. Notably, when time-series momentum was negative, but relative sentiment was positive, annualized returns averaged 27% versus -23% when both were negative—a 50 percentage-point differential determined by sentiment state.
 
 #### 2.4.4 Real-Time and High-Frequency Systems
 
 The temporal resolution of sentiment-based regime detection presents significant methodological challenges. Traditional daily or weekly sentiment aggregation may miss critical intraday regime shifts, while high-frequency analysis demands sophisticated modeling to handle mixed-frequency data.
 
-Cai et al. (2024) addressed this challenge through a "MF-EEMD-ML" prediction system that integrates half-hourly sentiment from stock message boards with three-minute stock return prediction. Their methodology employed the RR-MIDAS (Reverse Restricted Mixed Data Sampling) framework combined with Ensemble Empirical Mode Decomposition to handle non-stationarity and mixed-frequency dynamics. The system achieved maximum reductions of 19.18% in MAE, 19.08% in RMSE, and 11.71% in SMAPE compared to traditional approaches. Critically, they demonstrated that sentiment impact on high-frequency returns persists across seven intraday periods, with influence gradually weakening over time.
+Cai et al. (2024) addressed this challenge through an "MF-EEMD-ML" prediction system that integrates half-hourly sentiment from stock message boards with three-minute stock return prediction. Their methodology employed the RR-MIDAS (Reverse Restricted Mixed Data Sampling) framework combined with Ensemble Empirical Mode Decomposition to handle non-stationarity and mixed-frequency dynamics. The system achieved maximum reductions of 19.18% in MAE, 19.08% in RMSE, and 11.71% in SMAPE compared to traditional approaches. Critically, they demonstrated that sentiment impact on high-frequency returns persists across seven intraday periods, with influence gradually weakening over time.
 
-Shao et al. (2024) developed the Heterogeneous Dynamic Seemingly Unrelated Regression with Dynamic Linear Models (HD-SURDLM) framework for stock return prediction. Integrating sentiment from 2.5 million Twitter posts and news sources using VADER, TextBlob, and RoBERTa, their model captured both cross-sectional dependencies across assets and temporal dynamics. The approach achieved 1.02% improvement in 1-day horizon forecasts, 0.42% for 20-day predictions, and 0.36% for 50-day forecasts compared to LSTM, Random Forest, and RNN baselines. An important practical consideration emerged: while RoBERTa-based sentiment extraction provided superior accuracy, computational costs increased from 3-6 seconds (simple methods) to up to 14 hours, highlighting trade-offs between accuracy and real-time deployment feasibility.
+Shao et al. (2024) developed the Heterogeneous Dynamic Seemingly Unrelated Regression with Dynamic Linear Models (HD-SURDLM) framework for predicting stock returns. Integrating sentiment from 2.5 million Twitter posts and news sources using VADER, TextBlob, and RoBERTa, their model captured both cross-sectional dependencies across assets and temporal dynamics. The approach achieved 1.02% improvement in 1-day horizon forecasts, 0.42% for 20-day predictions, and 0.36% for 50-day forecasts compared to LSTM, Random Forest, and RNN baselines. An important practical consideration emerged: while RoBERTa-based sentiment extraction provided superior accuracy, computational costs increased from 3-6 seconds (simple methods) to up to 14 hours, highlighting trade-offs between accuracy and real-time deployment feasibility.
 
 The temporal structure of sentiment predictability suggests a natural hierarchy: immediate sentiment shifts (intraday) provide noise trading signals, short-term aggregation (1-5 days) captures directional momentum, and medium-term patterns (weekly-monthly) may indicate regime-level transitions. Our proposed framework targets this medium-term regime detection horizon while preserving the ability to respond to rapid sentiment deterioration during crisis periods.
 
@@ -255,43 +249,43 @@ The tension between model complexity and interpretability becomes particularly a
 
 The ultimate purpose of regime detection is improved risk management—protecting portfolios during adverse conditions while maintaining participation in favorable environments. Integrating sentiment signals into risk management frameworks requires understanding how sentiment dynamics relate to extreme market events.
 
-Shu et al. (2024) demonstrated that their statistical jump model approach specifically targeted downside risk reduction. The JM-guided strategy achieved volatility reductions of approximately 2-3 percentage points versus buy-and-hold, with maximum drawdown improvements of 10-15 percentage points across tested equity indices. The approach exhibited milder drawdowns during major stress periods and provided more robust protection against adverse market movements.
+Shu et al. (2024) demonstrated that their statistical jump model approach specifically targeted downside risk reduction. The JM-guided strategy achieved volatility reductions of approximately 2-3 percentage points relative to buy-and-hold, with maximum drawdown improvements of 10-15 percentage points across the tested equity indices. The approach exhibited milder drawdowns during major stress periods and provided more robust protection against adverse market movements.
 
-Cao et al. (2025) examined sentiment connectedness and stock price crash risk using network analysis of S&P 500 stocks. They constructed sentiment spillover networks using nonlinear Granger causality and measured firm-level sentiment connectedness through multiple network centrality metrics (degree, closeness, betweenness, eigenvector centrality). Firms with higher sentiment connectedness demonstrated elevated crash risk, as they both spread and receive irrational sentiment signals more intensely. Critically, sentiment connectedness proved a better predictor of crash risk than individual firm sentiment, particularly during market extremes. Stock return synchronicity amplified the sentiment-crash relationship, while accounting conservatism provided a mitigating effect.
+Cao et al. (2025) examined sentiment connectedness and stock price crash risk using network analysis of S&P 500 stocks. They constructed sentiment spillover networks using nonlinear Granger causality and measured firm-level sentiment connectedness through multiple network centrality metrics (degree, closeness, betweenness, eigenvector centrality). Firms with higher sentiment connectedness demonstrated elevated crash risk, as they both spread and receive irrational sentiment signals more intensely. Critically, sentiment connectedness proved a better predictor of crash risk than individual firm sentiment, particularly during market extremes. Stock return synchronicity amplified the sentiment-crash relationship, while accounting conservatism mitigated it.
 
-Nyakurukwa and Seetharam (2025) extended sentiment network analysis using TVP-VAR frequency connectedness across DJIA constituents. Their analysis decomposed sentiment connectedness into short-term (1-5 days), medium-term (5-20 days), and long-term (20+ days) components. Key findings included that sentiment shocks transmit predominantly in the short-term, negative news sentiment exhibits higher connectedness than positive sentiment (consistent with negativity bias in media coverage), and sentiment connectedness peaks during globally significant events such as COVID-19. These temporal dynamics suggest that monitoring short-term sentiment connectedness changes may provide early warning of regime stress.
+Nyakurukwa and Seetharam (2025) extended sentiment network analysis by using TVP-VAR frequency-connectedness across DJIA constituents. Their analysis decomposed sentiment connectedness into short-term (1-5 days), medium-term (5-20 days), and long-term (20+ days) components. Key findings included that sentiment shocks transmit predominantly in the short-term, negative news sentiment exhibits higher connectedness than positive sentiment (consistent with negativity bias in media coverage), and sentiment connectedness peaks during globally significant events such as COVID-19. These temporal dynamics suggest that monitoring short-term changes in sentiment connectedness may provide an early warning of regime stress.
 
-For our framework, these findings motivate the inclusion of sentiment network metrics as regime transition indicators. Rapid increases in cross-asset sentiment connectedness may signal approaching regime instability, while divergence patterns (certain assets disconnecting from the sentiment network) may indicate rotation opportunities or pending contagion.
+In our framework, these findings motivate the inclusion of sentiment network metrics as indicators of regime transitions. Rapid increases in cross-asset sentiment connectedness may signal approaching regime instability, while divergence patterns (certain assets disconnecting from the sentiment network) may indicate rotation opportunities or pending contagion.
 
 #### 2.4.7 Adaptive and Online Learning Approaches
 
-Financial markets exhibit non-stationarity—the statistical relationships between features and returns evolve over time, rendering static models obsolete. This phenomenon, termed concept drift in the machine learning literature, presents fundamental challenges for regime detection systems that must maintain accuracy across multiple market cycles.
+Financial markets exhibit non-stationarity—the statistical relationships between features and returns evolve over time, rendering static models obsolete. This phenomenon, known as concept drift in the machine learning literature, poses fundamental challenges for regime-detection systems that must maintain accuracy across multiple market cycles.
 
 Suárez-Cetrulo et al. (2023) emphasized that bridging the gap between data stream learning and financial regime research remains at an early stage. Their review identified several promising approaches for handling non-stationarity:
 
-- **Evolving systems:** Models that continuously update parameters as new data arrives, maintaining responsiveness to changing market dynamics without requiring complete retraining.
-- **Ensemble methods:** Combining multiple learners with different training windows or architectural biases to provide robustness against any single approach becoming obsolete.
-- **Meta-learning:** Using unsupervised algorithms to detect concept recurrence and retrieve previously effective models, or to detect drift events triggering model updates.
-- **Online incremental algorithms:** Sequential learning approaches that process data point-by-point, avoiding the computational burden of batch retraining.
+    • **Evolving systems:** Models that continuously update parameters as new data arrives, maintaining responsiveness to changing market dynamics without requiring complete retraining.
+    • **Ensemble methods:** Combining multiple learners with different training windows or architectural biases to provide robustness against any single approach becoming obsolete.
+    • **Meta-learning:** Using unsupervised algorithms to detect concept recurrence and retrieve previously effective models, or to detect drift events triggering model updates.
+    • **Online incremental algorithms:** Sequential learning approaches that process data point-by-point, avoiding the computational burden of batch retraining.
 
 Shao et al. (2024) implemented time-varying coefficients within their HD-SURDLM framework, allowing sentiment-return relationships to evolve dynamically. Their use of improved Gibbs sampling with enhanced numerical stability enabled efficient sequential updating without model degradation over time. The approach demonstrated consistent outperformance across 7-year evaluation windows encompassing multiple market conditions.
 
-For our sentiment-based regime detector, adaptive capability is essential given that the relationship between sentiment and market regimes may itself be regime-dependent. During periods of high attention and liquidity (bull markets), sentiment may strongly predict subsequent movements; during crisis periods with forced selling and liquidity constraints, sentiment-price relationships may temporarily decouple. Our design incorporates rolling window estimation and regime-specific model weighting to accommodate such structural variation.
+For our sentiment-based regime detector, adaptive capability is essential, as the relationship between sentiment and market regimes may itself be regime-dependent. During periods of high attention and liquidity (bull markets), sentiment may strongly predict subsequent movements; during crisis periods with forced selling and liquidity constraints, sentiment-price relationships may temporarily decouple. Our design incorporates rolling window estimation and regime-specific model weighting to accommodate such structural variation.
 
 **Research Gap Synthesis:**
 Despite significant progress in both sentiment analysis and regime detection, no existing research has systematically integrated multi-source, cross-asset sentiment as a leading indicator for regime transitions. The reviewed literature establishes that: (1) sentiment signals lead price movements by measurable intervals; (2) machine learning can identify meaningful market regimes from complex signal combinations; (3) sentiment connectedness metrics correlate with crash risk and extreme market events; and (4) adaptive methods are necessary for sustained predictive accuracy. Our research fills this gap by constructing a unified sentiment aggregation framework across four asset classes (equities, cryptocurrency, forex, commodities), with the explicit goal of identifying systematic Risk-On/Risk-Off regime transitions before they manifest in traditional price-based indicators.
 
 ### 2.5 Research Gaps and Hypotheses
 
-The preceding literature review reveals several critical gaps that motivate our research design. First, while sentiment analysis has achieved strong performance for individual asset classes, no framework systematically aggregates sentiment across equities, cryptocurrency, forex, and commodities to detect portfolio-level regime transitions. Second, despite evidence that sentiment signals lead price movements by 1-6 days, this lead time has not been exploited for regime-level early warning systems. Third, network-based approaches have demonstrated the importance of sentiment connectedness, but cross-asset sentiment networks remain unexplored. Fourth, the practical integration of multi-source sentiment (social media, news, financial reports) with regime detection algorithms has not been attempted.
+The preceding literature review reveals several critical gaps that motivate our research design. First, while sentiment analysis has achieved strong performance for individual asset classes, no framework systematically aggregates sentiment across equities, cryptocurrency, forex, and commodities to detect portfolio-level regime transitions. Second, despite evidence that sentiment signals lead price movements by 1-6 days, this lead time has not been exploited for regime-level early warning systems. Third, network-based approaches have demonstrated the importance of sentiment connectedness, but cross-asset sentiment networks remain unexplored. Fourth, the practical integration of multi-source sentiment (social media, news, and financial reports) with regime detection algorithms has not been attempted.
 
 Based on the literature review, we hypothesize:
 
-**H1 (Leading Indicator Hypothesis):** Cross-asset sentiment aggregation provides a leading indicator for market regime shifts, preceding VIX-based regime detection by 1-5 trading days. This hypothesis is grounded in findings from Bollen et al. (2011) showing 2-6 day predictive lead time with 86.7% accuracy, Caferra (2022) demonstrating sentiment-mediated cross-market connections, and Trushkovskyi (2025) confirming Granger causality between sentiment and returns.
+**H1 (Leading Indicator Hypothesis):** Cross-asset sentiment aggregation serves as a leading indicator of market regime shifts, preceding VIX-based regime detection by 1-5 trading days. This hypothesis is grounded in findings from Bollen et al. (2011), showing a 2-6 day predictive lead time with 86.7% accuracy; Caferra (2022), demonstrating sentiment-mediated cross-market connections; and Trushkovskyi (2025), confirming Granger causality between sentiment and returns.
 
-**H2 (Divergence Signal Hypothesis):** Sentiment divergence between asset classes (e.g., equities bullish while crypto bearish) signals impending transitions between Risk-On and Risk-Off regimes. Caferra (2022) found that sentiment connectedness successfully identifies market linkages, suggesting that disconnection or divergence may indicate regime instability. Wang et al. (2024) demonstrated asymmetric cross-asset momentum transmission supporting this mechanism.
+**H2 (Divergence Signal Hypothesis):** Sentiment divergence across asset classes (e.g., equities bullish while crypto bearish) signals an impending transition between Risk-On and Risk-Off regimes. Caferra (2022) found that sentiment connectedness successfully identifies market linkages, suggesting that disconnection or divergence may indicate regime instability. Wang et al. (2024) demonstrated asymmetric cross-asset momentum transmission supporting this mechanism.
 
-**H3 (Network Effect Hypothesis):** Sentiment connectedness intensity (measured via network centrality metrics similar to Cao et al. 2025) will correlate with regime transition probability, with high connectedness during stable regimes and rapid disconnection preceding transitions. Sibande et al. (2021) found regime-specific sentiment effects in currency markets, supporting state-dependent sentiment dynamics.
+**H3 (Network Effect Hypothesis):** Sentiment connectedness intensity (measured via network centrality metrics similar to those of Cao et al., 2025) will correlate with regime transition probability, with high connectedness during stable regimes and rapid disconnection preceding transitions. Sibande et al. (2021) found regime-specific sentiment effects in currency markets, supporting state-dependent sentiment dynamics.
 
 **H4 (Ensemble Superiority Hypothesis):** Ensemble transformer models (FinBERT + RoBERTa) will outperform single-model approaches for sentiment classification across heterogeneous data sources, based on Mishev et al. (2020) findings that different models excel on different source types and Roumeliotis et al. (2024) demonstrating that domain-specific models achieve near-parity with LLMs at lower cost.
 
@@ -359,7 +353,7 @@ Classify each text sample by asset class (Equities, Crypto, Forex, Commodities) 
 ### 3.4 Sentiment Classification
 
 **Model Architecture:**
-Ensemble of two transformer models:
+We employ an ensemble of two transformer models, following evidence from Mishev et al. (2020) that different architectures excel on different source types, and Ergun and Sefer (2025) demonstrating that finance-pretrained RoBERTa achieves state-of-the-art results even with limited labeled data:
 
 1. **FinBERT:** Finance-specific BERT variant (Araci, 2019)
    - Pretrained on financial news + analyst reports
@@ -403,6 +397,7 @@ Where:
 - **Equal weight:** All texts contribute equally
 - **Engagement-weighted:** Reddit/Twitter posts weighted by upvotes/retweets
 - **Source-weighted:** News articles weighted higher than anonymous social media
+- **Temporal decay:** Following Cai et al. (2024), more recent sentiment observations receive higher weights to capture evolving market psychology while preserving historical context
 
 **Feature Engineering:**
 
@@ -431,6 +426,7 @@ We compare:
 1. **Random Forest:** Ensemble tree-based classifier
 2. **XGBoost:** Gradient boosting (handles non-linear relationships well)
 3. **LSTM:** Recurrent neural network (captures temporal dependencies in sentiment time series)
+4. **Statistical Jump Model:** Following Shu et al. (2024), a Markov-switching approach with jump penalties that promotes regime persistence and reduces spurious switching signals
 
 **Features (per time window):**
 
@@ -439,7 +435,8 @@ We compare:
 - Cross-asset divergence (1 feature)
 - Historical VIX (1 feature)
 - Rolling correlations between sentiment indices (6 features)
-- **Total:** ~16 features
+- Sentiment connectedness metrics: Following Cao et al. (2025), network centrality measures (degree, betweenness) capturing cross-asset sentiment propagation intensity (4 features)
+- **Total:** ~20 features
 
 **Training/Validation Split:**
 
@@ -646,101 +643,3 @@ SMU MANEFRAME team - HPC support
 39. Yang, J., Tang, Y., Li, Y., et al. (2025). Cross-Asset Risk Management: Integrating LLMs for Real-Time Monitoring of Equity, Fixed Income, and Currency Markets. arXiv preprint arXiv:2504.04292. <https://arxiv.org/abs/2504.04292>
 
 40. Zhang, R., Yi, C., & Chen, Y. (2020). Explainable Machine Learning for Regime-Based Asset Allocation. *2020 IEEE International Conference on Big Data (Big Data)*, 5480-5485. <https://doi.org/10.1109/BigData50022.2020.9378332>
-
----
-
-## Draft-1 Changelog
-
-**Section 2.1 Transformer Models in Financial Sentiment Analysis** — Major Expansion
-
-| Change | Description |
-|--------|-------------|
-| **Structure** | Reorganized into 4 subsections (2.1.1–2.1.4) |
-| **New Subsection 2.1.4** | Domain-Specific Fine-Tuning Approaches |
-| **Papers Added** | 9 new papers integrated |
-| **Word Count** | Expanded from ~400 to ~1,370 words |
-
-**New Citations Added:**
-- Fatouros et al. (2023) — ChatGPT forex sentiment
-- Konstantinidis et al. (2024) — FinLlama
-- Luo & Gong (2024) — LLaMA-2 fine-tuning
-- Nasiopoulos et al. (2025) — GPT-4o vs BERT comparison
-- Mahendran et al. (2025) — BERT/FinBERT/LLM review
-- Ergun & Sefer (2025) — FinSentiment framework
-- Delgadillo et al. (2024) — FinSoSent
-- Sun et al. (2025) — EnhancedFinSentiBERT
-
-**Section 2.2 Financial Sentiment and Market Prediction** — Major Expansion
-
-| Change | Description |
-|--------|-------------|
-| **Structure** | Reorganized into 6 subsections (2.2.1–2.2.6) |
-| **New Subsection 2.2.5** | Limitations and Short-Term Prediction Challenges |
-| **New Subsection 2.2.6** | Cross-Asset Sentiment Spillover |
-| **Papers Added** | 5 new papers integrated |
-| **Word Count** | Expanded from ~650 to ~1,600 words |
-| **Table Added** | Lead Time Evidence Synthesis (6 studies) |
-
-**New Citations Added (Section 2.2):**
-- Kengmegni (2025) — Limitations of news sentiment prediction
-- Roumeliotis et al. (2024) — LLM/NLP crypto sentiment comparison
-- Raheman et al. (2022) — Social media crypto prediction
-- Trushkovskyi (2025) — Crypto sentiment economic significance
-
-**Section 2.3 Cross-Asset Sentiment Analysis** — NEW SECTION
-
-| Change | Description |
-|--------|-------------|
-| **Structure** | New section with 5 subsections (2.3.1–2.3.5) |
-| **New Subsection 2.3.3** | Forex and Currency Market Sentiment |
-| **New Subsection 2.3.4** | Multi-Asset Portfolio Integration |
-| **New Subsection 2.3.5** | Commodities and Safe-Haven Asset Sentiment |
-| **Papers Added** | 8 new papers integrated |
-| **Word Count** | ~1,800 words (entirely new content) |
-
-**New Citations Added (Section 2.3):**
-- Dakalbab et al. (2025) — Multimodal forex prediction (82.9% accuracy)
-- Olaiyapo (2024) — Forex sentiment trading signals (85% accuracy, 12% profit)
-- Pankwaen et al. (2025) — IMCA multi-asset trading (29.52% returns)
-- Sarfarazurrehman et al. (2025) — AI/ML cross-asset risk (0.98 Sharpe)
-- Shi (2025) — Gold/DXY sentiment GARCH-MIDAS (18.7% improvement)
-- Sibande et al. (2021) — Currency market anti-herding
-- Wang et al. (2024) — Cross-asset momentum China
-- Yang et al. (2025) — Cross-asset LLM risk management (82.1% accuracy)
-
-**Section 2.4 Market Regime Detection** — MAJOR EXPANSION
-
-| Change | Description |
-|--------|-------------|
-| **Structure** | Reorganized into 7 subsections (2.4.1–2.4.7) |
-| **New Subsection 2.4.4** | Real-Time and High-Frequency Systems |
-| **New Subsection 2.4.5** | Explainable AI in Regime Detection |
-| **New Subsection 2.4.6** | Risk Management Integration |
-| **New Subsection 2.4.7** | Adaptive and Online Learning Approaches |
-| **Papers Added** | 5 new papers integrated |
-| **Word Count** | Expanded from ~550 to ~2,400 words |
-| **Table Added** | Regime Detection Performance Comparison (5 methods) |
-
-**New Citations Added (Section 2.4):**
-- Cai et al. (2024) — Real-time mixed-frequency sentiment (19.18% MAE reduction)
-- Micaletti (2022) — Relative sentiment tactical allocation (400-700 bps outperformance)
-- Nyakurukwa and Seetharam (2025) — TVP-VAR sentiment frequency connectedness
-- Shao et al. (2024) — HD-SURDLM time-varying dynamics (1.02% improvement)
-- (Expanded coverage of Zhang et al. 2020, Shu et al. 2024, Suárez-Cetrulo et al. 2023, Renault 2017, Cao et al. 2025)
-
-**Structural Changes:**
-- Section 2.3 (old: Market Regime Detection) → Section 2.4
-- Section 2.4 (old: Data Quality) → Moved to Section 3.1 (Methods)
-- Section 2.5 (old: Research Hypotheses) → Section 2.5 Research Gaps and Hypotheses
-- Methods sections renumbered: 3.1→3.2, 3.2→3.3→3.4, etc.
-
-**Total Reference Count:** 40 (up from 37)
-
-**Literature Review Progress:**
-- ✅ Section 2.1 Transformer Models (~1,370 words, 12 papers)
-- ✅ Section 2.2 Financial Sentiment (~1,600 words, 9 papers)
-- ✅ Section 2.3 Cross-Asset Sentiment (~1,800 words, 10 papers)
-- ✅ Section 2.4 Market Regime Detection (~2,400 words, 10 papers)
-- ✅ Section 2.5 Research Gaps and Hypotheses (~350 words)
-
-**Estimated Section 2 Total:** ~7,520 words (target: 5,000-7,000 words)
