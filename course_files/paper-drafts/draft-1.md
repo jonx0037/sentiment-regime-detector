@@ -1,7 +1,7 @@
 # Cross-Asset Sentiment Regime Detector: Automating Market Psychology Analysis Through Multi-Source NLP
 
-Jonathan Rocha¹, [Advisor Name]¹
-¹ Master of Science in Data Science, Southern Methodist University, Dallas, TX 75275 USA
+Jonathan Rocha¹, [Advisor Name]
+Master of Science in Data Science, Southern Methodist University, Dallas, TX 75275 USA
 <jrocha@smu.edu>
 
 ## Abstract
@@ -12,7 +12,7 @@ Market regime shifts often precede measurable price movements, driven by changes
 
 ### Motivation
 
-Financial markets operate in distinct psychological regimes characterized by collective risk appetite and sentiment. Traditional technical indicators (moving averages, RSI, VIX) are lagging—they reflect regime changes after they've already occurred in price data. However, market psychology shifts often manifest first in textual data: social media sentiment, news tone, and forum discussions. The 2021 GameStop short squeeze, the 2020 COVID crash, and the 2022 crypto winter all exhibited distinct sentiment patterns before, during, and after regime transitions.
+Financial markets operate in distinct psychological regimes characterized by collective risk appetite and sentiment. Traditional technical indicators (moving averages, RSI, VIX) are lagging—they reflect regime changes after they've already occurred in price data. However, market psychology shifts often manifest first in textual data, such as social media sentiment, news tone, and forum discussions. The 2021 GameStop short squeeze, the 2020 COVID crash, and the 2022 crypto winter all exhibited distinct sentiment patterns before, during, and after regime transitions.
 
 Current sentiment analysis tools either focus on single asset classes or provide only rudimentary keyword-based scoring. No existing system aggregates cross-asset sentiment to detect systematic regime shifts applicable to portfolio-level risk management.
 
@@ -24,7 +24,7 @@ This research addresses three key limitations in current market sentiment analys
 2. **Manual Integration:** Sentiment must be manually interpreted alongside technical indicators
 3. **Limited Accessibility:** Institutional-grade sentiment tools (Bloomberg, RavenPack) cost $20K+/year
 
-This research aims to develop an automated, cross-asset sentiment analysis system that identifies market regime transitions as a leading indicator, accessible through an intuitive web interface.
+This research aims to develop an automated, cross-asset sentiment analysis system that identifies market regime transitions as leading indicators, accessible via an intuitive web interface.
 
 ### Research Contributions
 
@@ -34,7 +34,7 @@ This research aims to develop an automated, cross-asset sentiment analysis syste
 
 ### Paper Structure
 
-Section 2 reviews related work in financial sentiment analysis, NLP for finance, and market regime detection. Section 3 details our data sources and collection methodology. Section 4 describes the sentiment extraction and regime classification models. Section 5 presents [will present] validation results and backtesting performance. Section 6 discusses implications, limitations, and future work.
+Section 2 reviews related work in financial sentiment analysis, NLP for finance, and market regime detection. Section 3 details our data sources and collection methodology. Section 4 describes the sentiment-extraction and regime-classification models. Section 5 presents [will present] validation results and backtesting performance. Section 6 discusses implications, limitations, and future work.
 
 ## 2. Literature Review
 
@@ -72,7 +72,7 @@ Ergun and Sefer (2025) proposed FinSentiment, a comprehensive transfer-learning 
 
 Beyond architecture selection, recent research has investigated how the composition of the pre-training corpus and feature engineering influence model performance. Delgadillo et al. (2024) developed FinSoSent, a domain-specific language model pretrained on 49 million words from the Thomas Reuters Corpus of financial news articles. Through over 860 experiments with varying learning rates, epochs, and batch sizes, they found that selecting the right hyperparameter configuration is as critical as domain-specific pre-training for achieving optimal performance. While FinSoSent outperformed baseline models, including Amazon Comprehend, GPT-3.5-Turbo, IBM Watson, SentiStrength, and VADER, the performance differences were marginal, with accuracy in the 50-60% range across tested datasets. Ensemble methods using majority voting provided modest additional improvements, underscoring the difficulty of sentiment analysis even with domain-specific approaches.
 
-Cicekyurt and Bakal (2025) explored BERT-based knowledge transfer for enhancing sentiment analysis in stock market tweets. Their approach leveraged pre-trained BERT representations and applied targeted fine-tuning on Twitter-specific financial discourse, addressing the unique linguistic characteristics of social media text including abbreviations, hashtags, and informal language. The study demonstrated that knowledge transfer from general-domain BERT to finance-specific Twitter data yields significant performance improvements over training from scratch, particularly when labeled data is limited. Their findings reinforce the value of transfer learning strategies for sentiment analysis on noisy, informal financial text sources.
+Cicekyurt and Bakal (2025) explored BERT-based knowledge transfer to enhance sentiment analysis of stock market tweets. Their approach leveraged pre-trained BERT representations and applied targeted fine-tuning on Twitter-specific financial discourse, addressing the unique linguistic characteristics of social media text, including abbreviations, hashtags, and informal language. The study demonstrated that knowledge transfer from general-domain BERT to finance-specific Twitter data yields significant performance improvements over training from scratch, particularly when labeled data is limited. Their findings reinforce the value of transfer learning strategies for sentiment analysis of noisy, informal financial text.
 
 Sun et al. (2025) addressed persistent challenges in neutral sentiment recognition with EnhancedFinSentiBERT, a three-branch architecture integrating financial-domain pre-training, dictionary knowledge embedding, and neutral feature extraction. The dictionary knowledge component employs dynamic weight adjustment based on word performance across financial contexts and implements a multi-dimensional sentiment representation that captures not only polarity but also intensity and market impact. The neutral feature extractor uses multi-head attention mechanisms to capture subtle distinctions between neutral and sentiment-bearing expressions. In experiments comparing against BERT-base, XLNet, GPT-4, Llama 2, FinBERT, and BloombergGPT, EnhancedFinSentiBERT achieved F1 scores of 87.0% on Financial PhraseBank, 88.0% on FiQA, and 97.6% on Headline datasets. On consensus-labeled subsets, F1 scores reached 98.0%, indicating that the model performs exceptionally well when annotator agreement is high. Ablation analysis revealed that dictionary knowledge embedding and neutral feature extraction contribute most significantly to performance improvement, suggesting that architectural innovations beyond model scaling remain valuable for financial sentiment analysis.
 
@@ -293,13 +293,13 @@ Based on the literature review, we hypothesize:
 
 ### 3.1 Data Quality and Preprocessing Considerations
 
-Financial text data from social media and news sources presents unique preprocessing challenges that impact sentiment analysis accuracy. Unlike formal financial documents, social media content contains noise, sarcasm, slang, and bot-generated content that can distort sentiment signals. Kraaijeveld and De Smedt (2020) documented that 1-14% of cryptocurrency-related tweets originate from bot accounts, highlighting data quality concerns specific to social media sentiment analysis.
+Financial text data from social media and news sources presents unique preprocessing challenges that impact sentiment analysis accuracy. Unlike formal financial documents, social media content often contains noise, sarcasm, slang, and bot-generated content, which can distort sentiment signals. Kraaijeveld and De Smedt (2020) documented that 1-14% of cryptocurrency-related tweets originate from bot accounts, highlighting data quality concerns specific to social media sentiment analysis.
 
 **Entity Recognition and Asset Classification:**
-Accurately linking sentiment to specific asset classes requires robust entity recognition. Financial NER differs from general NER due to domain-specific entities (ticker symbols, ISIN codes, currency pairs), ambiguity (e.g., AAPL refers to Apple stock, not the fruit), and context-dependency where the same entity may carry different sentiment implications across asset classes.
+Accurately linking sentiment to specific asset classes requires robust entity recognition. Financial NER differs from general NER due to domain-specific entities (ticker symbols, ISIN codes, currency pairs), ambiguity (e.g., AAPL refers to Apple stock, not the fruit), and context-dependency, where the same entity may carry different sentiment implications across asset classes.
 
 **Multi-Source Data Integration:**
-Integrating sentiment from heterogeneous sources (Reddit, Twitter, financial news) requires careful consideration of source reliability, temporal resolution, and weighting schemes. Mishev et al. (2020) noted that sentiment model performance varies significantly across data sources, with models trained on news performing differently than those trained on social media. This suggests the need for source-specific model ensembles or adaptive weighting mechanisms.
+Integrating sentiment from heterogeneous sources (Reddit, Twitter, financial news) requires careful consideration of source reliability, temporal resolution, and weighting schemes. Mishev et al. (2020) noted that sentiment model performance varies significantly across data sources, with models trained on news performing differently from those trained on social media. This suggests the need for source-specific model ensembles or adaptive weighting mechanisms.
 
 **Temporal Aggregation:**
 Sentiment must be aggregated over appropriate time windows to construct meaningful indices. Daily or weekly aggregation smooths noise while preserving signal, but optimal window size may vary by asset class based on trading volume and information velocity. High-frequency crypto markets may require shorter windows than traditional equity markets.
@@ -360,7 +360,7 @@ We employ an ensemble of two transformer models, following evidence from Mishev 
    - Fine-tuned on Financial PhraseBank dataset
 2. **RoBERTa-base:** General-purpose robustly optimized BERT
    - Broader linguistic understanding
-   - Fine-tuned on Twitter Financial News Sentiment dataset
+   - Fine-tuned on the Twitter Financial News Sentiment dataset
 
 **Ensemble Strategy:**
 
@@ -396,7 +396,7 @@ Where:
 
 - **Equal weight:** All texts contribute equally
 - **Engagement-weighted:** Reddit/Twitter posts weighted by upvotes/retweets
-- **Source-weighted:** News articles weighted higher than anonymous social media
+- **Source-weighted:** News articles are weighted higher than anonymous social media
 - **Temporal decay:** Following Cai et al. (2024), more recent sentiment observations receive higher weights to capture evolving market psychology while preserving historical context
 
 **Feature Engineering:**
@@ -448,7 +448,7 @@ We compare:
 
 - Accuracy, Precision, Recall, F1-score per regime class
 - Confusion matrix analysis
-- Lead time analysis: How many days before VIX-based regime label does sentiment-based model predict transition?
+- Lead time analysis: How many days before the VIX-based regime label does the sentiment-based model predict the transition?
 
 ### 3.7 Dashboard Development
 
@@ -509,7 +509,7 @@ The system will be validated on major historical market events:
 
 This research will establish whether cross-asset sentiment aggregation serves as a leading indicator for market regime transitions. If validated, results will demonstrate that collective market psychology (as expressed in text data) shifts before observable price-based regime changes, supporting the behavioral finance perspective that sentiment drives prices rather than merely reflecting them.
 
-The sentiment divergence hypothesis—that cross-asset sentiment disconnection signals regime instability—builds on Caferra's (2022) finding that sentiment mediates cross-market relationships. Validation would suggest that portfolio-level risk management should monitor not just individual asset sentiment but the coherence of sentiment across asset classes.
+The sentiment divergence hypothesis—that cross-asset sentiment disconnection signals regime instability—builds on Caferra's (2022) finding that sentiment mediates cross-market relationships. Validation suggests that portfolio-level risk management should monitor not only individual asset sentiment but also the coherence of sentiment across asset classes.
 
 ### 5.2 Practical Implications
 
@@ -533,15 +533,15 @@ The sentiment divergence hypothesis—that cross-asset sentiment disconnection s
 
 ### 5.3 Limitations
 
-- **Data quality:** Social media data is noisy, contains sarcasm, bots
+- **Data quality:** Social media data is noisy, contains sarcasm, and bots
 - **Survivorship bias:** Only analyzing publicly available text (not institutional sentiment)
 - **Causality vs. correlation:** Sentiment may reflect rather than predict regime shifts
 - **Computational cost:** Real-time transformer inference expensive
 
 ### 5.4 Ethical Considerations
 
-- **Market manipulation:** Could system be gamed if widely adopted?
-- **Retail vs. institutional:** Does democratizing sentiment analysis level playing field or create new risks?
+- **Market manipulation:** Could the system be gamed if widely adopted?
+- **Retail vs. institutional:** Does democratizing sentiment analysis level the playing field or create new risks?
 - **Data privacy:** Reddit/Twitter users may not consent to sentiment analysis
 
 ### 5.5 Future Work

@@ -30,8 +30,8 @@ sentiment-regime-detector/
 - PostgreSQL container (`sentiment-db`) on port 5432
 - Redis container (`sentiment-redis`) on port 6379
 - Database migrated with 5 tables: `raw_texts`, `sentiment_scores`, `sentiment_indices`, `regime_states`, `regime_transitions`
-- FastAPI running at http://localhost:8000
-- Swagger docs at http://localhost:8000/docs
+- FastAPI running at <http://localhost:8000>
+- Swagger docs at <http://localhost:8000/docs>
 - All API endpoints returning mock data
 
 ### ⏳ What's Next (Priority Order)
@@ -40,7 +40,7 @@ sentiment-regime-detector/
 2. **Test MarketDataCollector** - Verify yfinance pulls VIX and price data
 3. **Create seed script** - Add sample data to database for testing
 4. **Build React Dashboard** - Next.js frontend with sentiment visualization
-5. **Request MANEFRAME access** - Draft email to help@smu.edu
+5. **Request MANEFRAME access** - Draft email to <help@smu.edu>
 
 ## Quick Start Commands
 
