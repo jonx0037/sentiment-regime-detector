@@ -1,0 +1,4 @@
+Feature,Harvard IV Psychosocial Word List,Loughran-McDonald (LM) Financial Dictionary
+Contextual Focus,General social psychology and psychosocial interactions.,Corporate financial disclosures (specifically 10-K filings).
+Primary Limitation,Misclassifies financial terminology; assumes psychological weight is universal across domains.,"73.8% of negative words in the Harvard list are not negative in a financial context (e.g., ""liability,"" ""shares"")."
+Market Impact,1.0 SD change in pessimism correlates to an  8.1 basis point  change in DJIA returns (Tetlock).,"1.0 SD increase in manager sentiment relates to a  1.26 SD decrease  in future aggregate market returns, signaling overvaluation (Jiang et al.)."

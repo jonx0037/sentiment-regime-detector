@@ -1,0 +1,16 @@
+Term,Definition
+Bearish Trend,A market condition where stock prices are expected to fall; defined in the study as the opening price being higher than the closing price.
+BERT,(Bidirectional Encoder Representations from Transformers) A deep learning model designed to capture contextual information from language by looking at words in relation to all other words in a sentence.
+Bullish Trend,A market condition where stock prices are expected to rise; defined in the study as the closing price being higher than the opening price.
+Consumer Price Index (CPI),A macroeconomic indicator that measures the average change over time in the prices paid by urban consumers for a market basket of consumer goods and services.
+F1 Score,"A performance metric that represents the harmonic mean of precision and recall, providing a balance between the two, especially in imbalanced datasets."
+FinBERT,A specialized version of the BERT model that has been further trained on a large corpus of financial data to better understand domain-specific terminology.
+Fine-Tuning,"The process of taking a pre-trained model and training it further on a specific, smaller dataset to adapt it for a particular task (e.g., cryptocurrency news classification)."
+Gradient Boosting,"A machine learning technique for regression and classification that produces a prediction model in the form of an ensemble of weak prediction models, typically decision trees."
+Large Language Models (LLMs),"Advanced AI systems, such as GPT-4, trained on massive datasets to understand, generate, and classify human language with high levels of sophistication."
+Multimodal Classifier,"An AI model that integrates multiple types of input data—such as text, audio, and video—to make a single prediction or classification."
+Natural Language Processing (NLP),"A field of AI focused on the interaction between computers and human language, specifically how to program computers to process and analyze large amounts of natural language data."
+Precision,"A metric representing the ratio of correctly predicted positive observations to the total predicted positives (the accuracy of the ""positive"" label)."
+Recall,Also known as sensitivity; the ratio of correctly predicted positive observations to all observations in the actual class.
+Sentiment Lexicon,"A dictionary where words are pre-assigned sentiment scores (e.g., positive, negative, or neutral) used to quantify the emotional tone of a text."
+Transformer Architecture,A deep learning model structure that relies on self-attention mechanisms to process all parts of an input sequence simultaneously rather than in order.

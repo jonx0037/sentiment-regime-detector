@@ -1,0 +1,4 @@
+Model,Accuracy Score,Optimizer Used
+Fine-tuned GPT-4,86.7%,N/A (API)
+Fine-tuned FinBERT,84.3%,Adam
+Fine-tuned BERT,83.3%,Adam

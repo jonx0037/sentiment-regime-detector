@@ -1,0 +1,3 @@
+Trend Name,Relationship Between Prices
+Bullish Trend,Open Price < Close Price (The market moved upward)
+Bearish Trend,Open Price > Close Price (The market moved downward)

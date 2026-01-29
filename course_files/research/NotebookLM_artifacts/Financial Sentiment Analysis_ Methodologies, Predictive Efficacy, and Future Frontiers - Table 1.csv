@@ -1,0 +1,6 @@
+Model,Accuracy (Bearish),Recall (Bearish),Accuracy (Bullish),Recall (Bullish)
+Random Forest,82%,100%,100%,78%
+Decision Tree,81%,86%,85%,79%
+Gradient Boosting,74%,97%,95%,65%
+Extra Tree,76%,92%,89%,70%
+Naive Bayes,68%,78%,73%,62%

@@ -1,0 +1,7 @@
+Variable Name,Description,Strategic Impact
+TEU_USA,Twitter Economic Uncertainty Index,Acts as a structural bridge between public anxiety and macroeconomic instability.
+ics_all,Index of Consumer Sentiment,Measures the underlying confidence that fuels discretionary tech spending.
+CPIAUCSL,Consumer Price Index,Calibrates signals to account for the discount rates and inflationary pressure on growth stocks.
+unrate,Unemployment Rate,Reflects labor market health and the broader risk-on/risk-off environment.
+Adj_Close_VIX,Stock Market Uncertainty Index,Quantifies the perceived volatility and tail-risk for specific equity tickers.
+Volume,Volume of stock traded,Validates the conviction of price trends and confirms signal strength.

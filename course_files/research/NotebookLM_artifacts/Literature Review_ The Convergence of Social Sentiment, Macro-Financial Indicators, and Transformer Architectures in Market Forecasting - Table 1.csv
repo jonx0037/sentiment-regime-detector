@@ -1,0 +1,5 @@
+Metric/Feature,General-Purpose (Harvard IV),Domain-Specific (Loughran & McDonald)
+Misclassification Rate,High (73.8% error rate in negative words),Low (Context-optimized for 10-K filings)
+Primary Limitation,Fixed sentiment orientation across domains,Finite word counts; lacks semantic context
+Forecasting Utility,Basic directional indicators,"Improved explanatory power (e.g., Henry 2006)"
+Linguistic Focus,Social psychology and psychosocial states,"Financial, litigious, and modal terminology"
