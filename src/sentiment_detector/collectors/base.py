@@ -23,6 +23,8 @@ class DataSource(str, Enum):
     REDDIT = "reddit"
     TWITTER = "twitter"
     NEWS = "news"
+    RSS = "rss"
+    KAGGLE = "kaggle"
     YAHOO_FINANCE = "yahoo_finance"
 
 
