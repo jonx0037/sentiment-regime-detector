@@ -64,6 +64,14 @@ dev/data/*.h5
 *.sqlite
 *.db
 
+# Main data directories (processed batches and outputs)
+data/processed/maneframe_batches/
+data/processed/maneframe_output/
+data/processed/test_sentiment_results/
+data/raw/scheduled/
+data/raw/*.json
+data/processed/*.json
+
 # Model Files
 *.pt
 *.pth
