@@ -24,16 +24,16 @@ echo "Node: $SLURM_NODELIST"
 echo "Start: $(date)"
 echo "=============================================="
 
-# Setup
-PROJECT_DIR="/lustre/scratch/client/users/jarocha/sentiment-detector"
+# Setup - Use the actual uploaded directory name
+PROJECT_DIR="/lustre/scratch/client/users/jarocha/sentiment-detector-hpc-20260131"
 cd $PROJECT_DIR
 
-# Load modules
-module load cuda/11.8
-module load python/3.12
+# Load modules - using the pytorch environment which has CUDA and all dependencies
+module load python/3.11.11/pytorch
 
-# Activate virtual environment
-source $PROJECT_DIR/.venv/bin/activate
+# Add user-installed packages to path
+export PATH="$HOME/.local/bin:$PATH"
+export PYTHONPATH="$PROJECT_DIR/src:$PYTHONPATH"
 
 # Create output directories
 mkdir -p $PROJECT_DIR/logs
@@ -47,14 +47,20 @@ nvidia-smi --query-gpu=name,memory.total,memory.free --format=csv,noheader
 
 # Check Python environment
 echo -e "\n2. Python environment:"
-python --version
-pip show transformers torch | grep -E "Name|Version"
+python3 --version
+python3 -c "import torch; print(f'PyTorch: {torch.__version__}, CUDA: {torch.cuda.is_available()}')"
+pip show transformers | grep -E "Name|Version"
+
+# Verify files exist
+echo -e "\n2b. Verifying files..."
+ls -la scripts/process_kaggle_sentiment.py || echo "ERROR: process_kaggle_sentiment.py not found!"
+ls -la data/kaggle/ | head -5 || echo "ERROR: data/kaggle not found!"
 
 # Run the Kaggle sentiment processing
 echo -e "\n3. Starting Kaggle sentiment processing..."
 echo "Processing all 218,702 items with ensemble (FinBERT + RoBERTa)"
 
-python scripts/process_kaggle_sentiment.py \
+python3 scripts/process_kaggle_sentiment.py \
     --kaggle-dir data/kaggle \
     --output data/processed/kaggle_sentiment_full.json \
     --batch-size 200 \

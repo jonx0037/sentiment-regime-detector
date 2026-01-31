@@ -353,21 +353,41 @@ scripts/hpc/run_llama_sentiment.sh                 # SLURM GPU job script
 ---
 
 ### Batch Processing at Scale
-**Status:** ✅ READY FOR HPC  
+**Status:** ✅ RUNNING ON HPC (Job #22738051)  
 **Tasks:**
 - [x] Create SLURM batch scripts for Kaggle processing
 - [x] Create HPC packaging script
-- [x] Upload full dataset to MANEFRAME
-- [x] Submit Kaggle sentiment batch (Job #22737934)
+- [x] Upload full dataset to MANEFRAME (9 Kaggle subdirectories)
+- [x] Fix HPC script paths and module loading
+- [x] Submit Kaggle sentiment batch (Job #22738051 - resubmitted with fixes)
 - [ ] Run batch sentiment processing with all models
 - [ ] Process Connectedness and Transfer Entropy at scale
 - [ ] Train Jump Model on full historical data
 
+**HPC Script Fixes Applied (Jan 31, 2026):**
+- Fixed PROJECT_DIR: `sentiment-detector-hpc-20260131`
+- Fixed module: `python/3.11.11/pytorch` (not cuda/11.8 + python/3.12)
+- Removed venv activation (using system + user packages)
+- Added PYTHONPATH for src modules
+- Added file verification step
+
 **Files Created:**
 ```
-scripts/hpc/run_kaggle_sentiment.sh   # SLURM job for 218K items (submitted)
+scripts/hpc/run_kaggle_sentiment.sh   # SLURM job for 218K items (fixed)
 scripts/hpc/run_llama_sentiment.sh    # SLURM job for Llama 3 GPU
 scripts/package_for_hpc.sh            # Packaging script for transfer
+```
+
+**Kaggle Data on MANEFRAME:**
+```
+data/kaggle/
+├── crypto-tweets/
+├── financial-news/
+├── social-sentiment/
+├── stock_news/
+├── stocknews/
+├── stock_tweets/
+└── wsb/
 ```
 
 ---
@@ -510,9 +530,10 @@ pip install arch            # GARCH-MIDAS
 4. [x] Accelerate Kaggle data import
 5. [x] Implement ensemble voting mechanism
 6. [x] Implement Statistical Jump Model (Layer 2)
-7. [ ] Monitor Kaggle batch job completion
-8. [ ] Run Llama 3 on MANEFRAME GPU
-9. [ ] Begin hypothesis validation with processed data
+7. [x] Fix HPC scripts and resubmit (Job #22738051 running)
+8. [ ] Monitor Kaggle batch job completion (~24 hrs for 218K items)
+9. [ ] Run Llama 3 on MANEFRAME GPU (after Kaggle completes)
+10. [ ] Begin hypothesis validation with processed data
 
 ### Pre-HPC (Feb 8-10)
 1. [x] Skeleton implementations for Connectedness & Transfer Entropy
@@ -522,4 +543,4 @@ pip install arch            # GARCH-MIDAS
 
 ---
 
-*Last Updated: January 31, 2026 (Session 3 - 11:30 AM CST)*
+*Last Updated: January 31, 2026 (Session 3 - 12:00 PM CST)*
