@@ -474,6 +474,51 @@ class KaggleDataLoader:
         self.logger.info(f"Loaded {len(items)} items from Crypto Tweets")
         return items
     
+    def load_stock_tweets(
+        self,
+        filepath: Union[str, Path],
+        limit: Optional[int] = None,
+    ) -> list[CollectedItem]:
+        """Load Stock Tweets dataset (omer2040/stock-tweets-for-sentiment-analysis)."""
+        filepath = Path(filepath)
+        items = []
+        
+        with open(filepath, 'r', encoding='utf-8', errors='replace') as f:
+            reader = csv.DictReader(f)
+            for i, row in enumerate(reader):
+                if limit and len(items) >= limit:
+                    break
+                
+                content = row.get("Tweet") or ""
+                content = content.strip() if content else ""
+                if not content or len(content) < 10:
+                    continue
+                
+                date_str = row.get("Date") or ""
+                created_at = self._parse_date(date_str) or datetime.utcnow()
+                stock_name = row.get("Stock Name") or ""
+                company_name = row.get("Company Name") or ""
+                
+                # Classify asset based on content
+                asset_class = self._classify_asset(content)
+                
+                items.append(CollectedItem(
+                    source=DataSource.KAGGLE,
+                    source_id=f"stock_tweet_{i}",
+                    asset_class=asset_class,
+                    created_at=created_at,
+                    title=None,
+                    content=content[:10000],
+                    metadata={
+                        "dataset": "stock_tweets",
+                        "stock_name": stock_name,
+                        "company_name": company_name,
+                    },
+                ))
+        
+        self.logger.info(f"Loaded {len(items)} items from Stock Tweets")
+        return items
+    
     def load_all(
         self,
         limit: Optional[int] = None,
@@ -545,6 +590,17 @@ class KaggleDataLoader:
                 all_items.extend(items)
             except Exception as e:
                 self.logger.error(f"Error loading financial news: {e}")
+        
+        # 6. Stock Tweets (omer2040/stock-tweets-for-sentiment-analysis)
+        stock_tweets = self.data_dir / "stock_tweets"
+        for csv_file in stock_tweets.glob("*.csv"):
+            if "yfinance" in csv_file.name:
+                continue  # Skip market data file
+            try:
+                items = self.load_stock_tweets(csv_file, limit=per_dataset_limit)
+                all_items.extend(items)
+            except Exception as e:
+                self.logger.error(f"Error loading stock tweets: {e}")
         
         # Also try loading any JSON files
         for json_file in self.data_dir.glob("**/*.json"):
