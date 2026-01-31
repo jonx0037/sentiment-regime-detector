@@ -296,28 +296,37 @@ scripts/test_garch_midas.py                    # Unit tests
 ---
 
 ### Layer 2: Statistical Jump Model (Section 3.7.2)
-**Status:** 🔴 NOT IMPLEMENTED  
+**Status:** ✅ IMPLEMENTED (Jan 31, 2026)  
 **Reference:** Shu et al. (2024)  
 **Criticality:** Core regime detector
 
 **CRITICAL CLARIFICATION:** Draft-1 specifies Statistical Jump Model, NOT HMM. Code comments mentioning "HMM + Gradient Boosting" are outdated.
 
 **Tasks:**
-- [ ] Research existing Jump Model implementations
-- [ ] If insufficient: Implement custom JM with jump penalty
-- [ ] Integrate GARCH-MIDAS volatility estimates
-- [ ] Add Connectedness and Transfer Entropy features
-- [ ] Tune jump penalty hyperparameter (λ)
+- [x] Research existing Jump Model implementations
+- [x] Implement custom JM with jump penalty (Viterbi-like DP)
+- [x] Integrate GARCH-MIDAS volatility estimates
+- [x] Add Connectedness and Transfer Entropy feature support
+- [x] Tune jump penalty hyperparameter (λ) via turnover/silhouette
+- [x] Unit tests (20 tests passing)
 
-**Libraries to Explore:**
-- `statsmodels` (check for jump model support)
-- `arch` (check for regime-switching models)
-- Custom implementation if needed
+**Files Created:**
+```
+src/sentiment_detector/models/jump_model.py           # StatisticalJumpModel, JumpModelConfig
+src/sentiment_detector/models/tests/test_jump_model.py  # 20 tests
+```
+
+**Key Components:**
+- `StatisticalJumpModel`: Viterbi-like DP with jump penalty
+- `JumpModelConfig`: n_regimes, jump_penalty (λ), init_method
+- `create_feature_matrix()`: Combines volatility, divergence, connectedness
+- `tune_jump_penalty()`: Optimizes λ for target turnover (~44% per Shu et al.)
+- Regime persistence via indicator penalty: λ Σ 𝕀(s_t ≠ s_{t-1})
 
 ---
 
 ### Llama 3 (7B) Integration
-**Status:** ✅ INTERFACE READY (Jan 31, 2026)  
+**Status:** ✅ INTERFACE READY + HPC SCRIPT (Jan 31, 2026)  
 **Decision:** Add to ensemble per Abstract
 
 **Tasks:**
@@ -325,12 +334,14 @@ scripts/test_garch_midas.py                    # Unit tests
 - [x] Multiple backends: transformers, llama.cpp, API
 - [x] Mock mode for testing
 - [x] Ensemble integration function
-- [ ] Set up Llama 3 (7B) on MANEFRAME
+- [x] Create HPC SLURM script for GPU processing
+- [ ] Set up Llama 3 (7B) on MANEFRAME (run script)
 - [ ] Fine-tune on financial corpus (if time permits)
 
 **Files Created:**
 ```
 src/sentiment_detector/models/llama_sentiment.py   # LlamaSentimentModel
+scripts/hpc/run_llama_sentiment.sh                 # SLURM GPU job script
 ```
 
 **Key Components:**
@@ -346,14 +357,16 @@ src/sentiment_detector/models/llama_sentiment.py   # LlamaSentimentModel
 **Tasks:**
 - [x] Create SLURM batch scripts for Kaggle processing
 - [x] Create HPC packaging script
-- [ ] Upload full dataset to MANEFRAME
+- [x] Upload full dataset to MANEFRAME
+- [x] Submit Kaggle sentiment batch (Job #22737934)
 - [ ] Run batch sentiment processing with all models
 - [ ] Process Connectedness and Transfer Entropy at scale
 - [ ] Train Jump Model on full historical data
 
 **Files Created:**
 ```
-scripts/hpc/run_kaggle_sentiment.sh   # SLURM job for 218K items
+scripts/hpc/run_kaggle_sentiment.sh   # SLURM job for 218K items (submitted)
+scripts/hpc/run_llama_sentiment.sh    # SLURM job for Llama 3 GPU
 scripts/package_for_hpc.sh            # Packaging script for transfer
 ```
 
@@ -405,16 +418,16 @@ scripts/package_for_hpc.sh            # Packaging script for transfer
 **Decision:** Unit tests for each methodological component
 
 ### Test Coverage Required
-| Component | Test File | Priority |
-|-----------|-----------|----------|
-| Time-Alignment | test_time_alignment.py | P1 |
-| Connectedness | test_connectedness.py | P1 |
-| Transfer Entropy | test_transfer_entropy.py | P1 |
-| Text Preprocessing | test_preprocessing.py | P2 |
-| Ensemble Voting | test_ensemble.py | P2 |
-| GARCH-MIDAS | test_garch_midas.py | P2 |
-| Jump Model | test_jump_model.py | P2 |
-| Evaluation Metrics | test_evaluation.py | P3 |
+| Component | Test File | Priority | Status |
+|-----------|-----------|----------|--------|
+| Time-Alignment | test_time_alignment.py | P1 | ✅ |
+| Connectedness | test_connectedness.py | P1 | ✅ |
+| Transfer Entropy | test_transfer_entropy.py | P1 | ✅ |
+| Text Preprocessing | test_preprocessing.py | P2 | ✅ |
+| Ensemble Voting | test_ensemble.py | P2 | ✅ |
+| GARCH-MIDAS | test_garch_midas.py | P2 | ✅ |
+| Jump Model | test_jump_model.py | P2 | ✅ (20 tests) |
+| Evaluation Metrics | test_evaluation.py | P3 | ✅ |
 
 ---
 
@@ -486,19 +499,27 @@ pip install arch            # GARCH-MIDAS
 5. ✅ Implement text cleaner with explicit preprocessing
 6. ✅ Implement multi-label asset classification
 7. ✅ Create unit tests (61 tests passing)
+8. ✅ Submit Kaggle sentiment batch to MANEFRAME (Job #22737934)
+9. ✅ Implement Statistical Jump Model (20 tests passing)
+10. ✅ Create Llama 3 HPC SLURM script
 
 ### This Week (Feb 1-7)
 1. [x] Complete time-alignment algorithm
-2. [ ] Implement Granger causality tests (nitime)
-3. [ ] Begin Transfer Entropy implementation (PyInform)
-4. [ ] Accelerate Kaggle data import
-5. [ ] Implement ensemble voting mechanism
+2. [x] Implement Granger causality tests (done in features module)
+3. [x] Begin Transfer Entropy implementation (done in features module)
+4. [x] Accelerate Kaggle data import
+5. [x] Implement ensemble voting mechanism
+6. [x] Implement Statistical Jump Model (Layer 2)
+7. [ ] Monitor Kaggle batch job completion
+8. [ ] Run Llama 3 on MANEFRAME GPU
+9. [ ] Begin hypothesis validation with processed data
 
 ### Pre-HPC (Feb 8-10)
-1. [ ] Skeleton implementations for Connectedness & Transfer Entropy
-2. [ ] Ensemble voting mechanism
-3. [ ] Test all components locally
+1. [x] Skeleton implementations for Connectedness & Transfer Entropy
+2. [x] Ensemble voting mechanism
+3. [x] Test all components locally
+4. [ ] Full end-to-end pipeline integration test
 
 ---
 
-*Last Updated: January 31, 2026 (Session 2)*
+*Last Updated: January 31, 2026 (Session 3 - 11:30 AM CST)*

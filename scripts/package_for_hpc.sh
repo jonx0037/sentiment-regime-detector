@@ -39,22 +39,59 @@ cat > "$PACKAGE_DIR/setup_hpc.sh" << 'EOF'
 
 set -e
 
+echo "=============================================="
 echo "Setting up Sentiment Regime Detector on MANEFRAME"
+echo "=============================================="
 
-# Load modules
-module load python/3.12
-module load cuda/11.8
+# Show available Python versions
+echo ""
+echo "1. Finding Python modules..."
+module spider python 2>&1 | grep -E "python/[0-9]" | head -10 || true
+
+# Try to load Python (try multiple versions)
+echo ""
+echo "2. Loading Python module..."
+if module load python/3.11 2>/dev/null; then
+    echo "   Loaded python/3.11"
+elif module load python/3.10 2>/dev/null; then
+    echo "   Loaded python/3.10"
+elif module load python/3.9 2>/dev/null; then
+    echo "   Loaded python/3.9"
+else
+    echo "   Using system Python"
+fi
+
+# Load CUDA
+echo ""
+echo "3. Loading CUDA module..."
+module load cuda/11.8 2>/dev/null || module load cuda 2>/dev/null || echo "   CUDA not loaded (will use CPU)"
+
+# Show what we loaded
+echo ""
+echo "4. Environment:"
+python3 --version
+which python3
 
 # Create virtual environment
-python -m venv .venv
+echo ""
+echo "5. Creating virtual environment..."
+python3 -m venv .venv
 source .venv/bin/activate
 
 # Install dependencies
+echo ""
+echo "6. Installing dependencies..."
 pip install --upgrade pip
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-pip install -r requirements.txt
+pip install transformers pandas numpy scipy scikit-learn arch yfinance
 
-echo "Setup complete! Activate with: source .venv/bin/activate"
+echo ""
+echo "=============================================="
+echo "Setup complete!"
+echo "=============================================="
+echo ""
+echo "To activate: source .venv/bin/activate"
+echo "To run job:  sbatch scripts/hpc/run_kaggle_sentiment.sh"
 EOF
 chmod +x "$PACKAGE_DIR/setup_hpc.sh"
 
