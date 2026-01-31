@@ -1,0 +1,8 @@
+# Add to crontab with: crontab -e
+# Or run: cat scripts/crontab.txt >> ~/.crontab && crontab ~/.crontab
+
+# Gemini CLI update (existing)
+@daily /Users/jonathanrocha/update-gemini-cli.sh
+
+# Sentiment Regime Detector - Automated data collection (every 4 hours)
+0 */4 * * * /Users/jonathanrocha/Documents/SMU/DS_6210_Capstone/scripts/cron_collect.sh >> /Users/jonathanrocha/Documents/SMU/DS_6210_Capstone/logs/cron_collect.log 2>&1

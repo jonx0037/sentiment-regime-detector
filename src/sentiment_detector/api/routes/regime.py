@@ -3,12 +3,20 @@
 from datetime import datetime, timezone
 from typing import Literal
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Depends
+from sqlalchemy import select, func, text
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from sentiment_detector.api.schemas.regime import (
     RegimeResponse,
     RegimeHistoryResponse,
     RegimeTransition,
+)
+from sentiment_detector.core.database import get_session
+from sentiment_detector.models import SentimentIndex
+from sentiment_detector.services.regime_classifier import (
+    RegimeClassifier,
+    SentimentFeatures,
 )
 
 router = APIRouter()
@@ -16,8 +24,69 @@ router = APIRouter()
 RegimeState = Literal["risk_on", "risk_off", "transition"]
 
 
+async def get_latest_features(session: AsyncSession) -> SentimentFeatures:
+    """Fetch latest sentiment features from database."""
+    
+    # Get latest indices by asset class
+    result = await session.execute(text("""
+        SELECT DISTINCT ON (asset_class)
+            asset_class,
+            mean_compound,
+            std_compound,
+            sentiment_momentum
+        FROM sentiment_indices
+        WHERE source IS NULL
+        ORDER BY asset_class, period_start DESC
+    """))
+    rows = result.fetchall()
+    
+    sentiments = {}
+    for row in rows:
+        sentiments[row[0]] = row[1] or 0.0
+    
+    # Calculate cross-asset metrics
+    values = list(sentiments.values())
+    cross_mean = sum(values) / len(values) if values else 0.0
+    cross_std = (sum((v - cross_mean) ** 2 for v in values) / len(values)) ** 0.5 if len(values) > 1 else 0.0
+    max_divergence = max(values) - min(values) if values else 0.0
+    
+    # Get momentum from latest data
+    result2 = await session.execute(text("""
+        SELECT 
+            period_start,
+            AVG(mean_compound) as mean_sentiment
+        FROM sentiment_indices
+        WHERE source IS NULL
+        GROUP BY period_start
+        ORDER BY period_start DESC
+        LIMIT 14
+    """))
+    historical = result2.fetchall()
+    
+    momentum = 0.0
+    acceleration = 0.0
+    if len(historical) >= 7:
+        recent_avg = sum(h[1] or 0 for h in historical[:7]) / 7
+        older_avg = sum(h[1] or 0 for h in historical[7:14]) / max(len(historical[7:14]), 1)
+        momentum = recent_avg - older_avg
+    
+    return SentimentFeatures(
+        equity_sentiment=sentiments.get('equity', 0.0),
+        crypto_sentiment=sentiments.get('crypto', 0.0),
+        forex_sentiment=sentiments.get('forex', 0.0),
+        commodity_sentiment=sentiments.get('commodity', 0.0),
+        cross_asset_mean=cross_mean,
+        cross_asset_std=cross_std,
+        sentiment_momentum=momentum,
+        sentiment_acceleration=acceleration,
+        max_divergence=max_divergence,
+    )
+
+
 @router.get("/current", response_model=RegimeResponse)
-async def get_current_regime() -> RegimeResponse:
+async def get_current_regime(
+    session: AsyncSession = Depends(get_session),
+) -> RegimeResponse:
     """
     Get the current market regime state.
     
@@ -27,25 +96,32 @@ async def get_current_regime() -> RegimeResponse:
         - Probability distribution across states
         - Key features driving the classification
     """
-    # TODO: Implement real regime classification
-    # For now, return mock data for API structure validation
+    # Get real features from database
+    features = await get_latest_features(session)
+    
+    # Run regime classification
+    classifier = RegimeClassifier()
+    classification = classifier.classify(features)
     
     return RegimeResponse(
         timestamp=datetime.now(timezone.utc),
-        regime="risk_on",
-        confidence=0.72,
+        regime=classification.state.value,
+        confidence=classification.confidence,
         probabilities={
-            "risk_on": 0.72,
-            "risk_off": 0.15,
-            "transition": 0.13,
+            "risk_on": classification.prob_risk_on,
+            "risk_off": classification.prob_risk_off,
+            "transition": classification.prob_transition,
         },
         features={
-            "cross_asset_sentiment_mean": 0.15,
-            "sentiment_momentum_7d": 0.08,
-            "sentiment_volatility": 0.12,
-            "equity_crypto_correlation": 0.65,
+            "equity_sentiment": features.equity_sentiment,
+            "crypto_sentiment": features.crypto_sentiment,
+            "forex_sentiment": features.forex_sentiment,
+            "commodity_sentiment": features.commodity_sentiment,
+            "cross_asset_mean": features.cross_asset_mean,
+            "sentiment_momentum_7d": features.sentiment_momentum,
+            "max_divergence": features.max_divergence,
         },
-        model_version="rule-based-v1",  # Will change to trained model in Phase 2
+        model_version=classification.model_version,
     )
 
 
