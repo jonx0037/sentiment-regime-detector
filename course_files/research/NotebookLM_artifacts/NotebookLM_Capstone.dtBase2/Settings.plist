@@ -19,9 +19,9 @@
 	<key>EnableVersioning</key>
 	<true/>
 	<key>FSEventsStreamEventIdExternal</key>
-	<integer>2238719693</integer>
+	<integer>2274021508</integer>
 	<key>FSEventsStreamEventIdInternal</key>
-	<integer>2238719693</integer>
+	<integer>2274021508</integer>
 	<key>InheritTagsOfGroups</key>
 	<true/>
 	<key>LastBackup</key>
@@ -31,8 +31,6 @@
 	<key>Spotlight</key>
 	<true/>
 	<key>UseUUIDKey</key>
-	<true/>
-	<key>isOpen</key>
 	<true/>
 	<key>uniqueId</key>
 	<string>64A3C75C514945988BBFF8C94148CCFC</string>

@@ -4,6 +4,8 @@ from sentiment_detector.models.base import Base, TimestampMixin
 from sentiment_detector.models.text_record import RawText
 from sentiment_detector.models.sentiment import SentimentScore, SentimentIndex
 from sentiment_detector.models.regime import RegimeState, RegimeTransition
+from sentiment_detector.models.stress_index import StressIndex
+from sentiment_detector.models.market_data import MarketData
 
 # ML Models
 from sentiment_detector.models.garch_midas import (
@@ -28,6 +30,8 @@ __all__ = [
     "SentimentIndex",
     "RegimeState",
     "RegimeTransition",
+    "StressIndex",
+    "MarketData",
     # ML Models - GARCH-MIDAS
     "GARCHMIDASModel",
     "GARCHMIDASResult",
