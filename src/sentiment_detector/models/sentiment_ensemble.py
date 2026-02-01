@@ -196,11 +196,12 @@ class SentimentEnsemble:
                 # Create pipeline for easier inference
                 model_key = self._get_model_key(model_name)
                 
+                # Use top_k=None to get all scores (replaces deprecated return_all_scores)
                 self.models[model_key] = pipeline(
                     "sentiment-analysis",
                     model=model_name,
                     device=0 if self.device == "cuda" else -1,
-                    return_all_scores=True,
+                    top_k=None,  # Returns all class scores
                     truncation=True,
                     max_length=512
                 )
@@ -299,14 +300,34 @@ class SentimentEnsemble:
     ) -> ModelPrediction:
         """Get prediction from a single model."""
         # Run inference
-        result = pipeline_model(text)[0]
+        # With return_all_scores=True, result is [[{label, score}, ...]]
+        raw_result = pipeline_model(text)
+        
+        # Handle different result formats from transformers
+        # Some versions return list of lists, others return list of dicts
+        if isinstance(raw_result, list) and len(raw_result) > 0:
+            result = raw_result[0]
+            # If result is still a list, it's the scores array
+            if isinstance(result, list):
+                scores_list = result
+            elif isinstance(result, dict):
+                # Single top prediction format
+                scores_list = [result]
+            else:
+                logger.warning(f"Unexpected result format: {type(result)}")
+                scores_list = []
+        else:
+            scores_list = []
         
         # Parse results - format varies by model
         probs = [0.0, 0.0, 0.0]  # [neg, neutral, pos]
         
-        for item in result:
-            label = item["label"].lower()
-            score = item["score"]
+        for item in scores_list:
+            if not isinstance(item, dict):
+                logger.warning(f"Skipping non-dict item: {type(item)}")
+                continue
+            label = item.get("label", "").lower()
+            score = item.get("score", 0.0)
             
             if "neg" in label:
                 probs[0] = score

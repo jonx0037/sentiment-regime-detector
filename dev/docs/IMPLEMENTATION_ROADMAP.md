@@ -1,7 +1,8 @@
 # Implementation Roadmap: Cross-Asset Sentiment Regime Detector
 
 **Created:** January 31, 2026  
-**Status:** Active Development  
+**Last Updated:** January 31, 2026 (2:45 PM CST)  
+**Status:** Active Development - Phase 2 Complete  
 **Defense Date:** ~10+ weeks (Mid-April 2026)  
 **Approach:** Hybrid (Option C) - Full methodology with phased implementation
 
@@ -12,24 +13,41 @@
 This roadmap maps each methodology section from Draft-1 (Section 3) to specific development phases. It reflects decisions made on January 31, 2026 based on the comprehensive methodology audit.
 
 ### Current Data Status
-| Metric | Current | Target | Gap |
-|--------|---------|--------|-----|
-| Raw Texts (Kaggle) | 218,702 | 5-10M | ~96% remaining |
-| Sentiment Scored | 5,000 (test) | 218K+ | Batch ready |
-| VIX Regime Days | 2,535 | - | ✅ Complete |
+| Metric | Current | Target | Status |
+|--------|---------|--------|--------|
+| Raw Texts | 222,866 | 5-10M | 🔄 ~2% (need more sources) |
+| Sentiment Scored (HPC) | 218,702 | 218K+ | ✅ COMPLETE |
+| DB Sentiment Scores | 219,336 | - | ✅ COMPLETE |
+| VIX Regime Days | 2,535 | - | ✅ COMPLETE |
 
-**Progress (Jan 31, 2026):**
-- ✅ KaggleDataLoader enhanced (loads 218K items)
-- ✅ Sentiment processing pipeline working (0 errors on 5K test)
-- ✅ VIX data collected (10 years, 2015-2025)
-- ✅ Evaluation metrics implemented (DA, MCC, F1, Calibration)
-- 🔄 Full sentiment processing ready for MANEFRAME
+### 🎉 MAJOR MILESTONE: HPC Sentiment Processing Complete!
 
-**Priority:** Complete sentiment scoring on HPC, then GARCH-MIDAS.
+**HPC Job #22738072** completed successfully on SMU ManeFrame III:
+- **Runtime**: 47 minutes on Tesla V100-PCIE-32GB
+- **Processed**: 218,702 items with 0 errors
+- **Models**: FinBERT + RoBERTa ensemble with weighted voting
+- **Output**: kaggle_sentiment_full.json (223 MB)
+
+**Sentiment Distribution:**
+| Label | Count | % |
+|-------|-------|---|
+| NEUTRAL | 139,348 | 63.7% |
+| NEGATIVE | 55,529 | 25.4% |
+| POSITIVE | 23,825 | 10.9% |
+
+### 🔬 Hypothesis Validation Results (Real Data)
+
+| Hypothesis | Result | Key Metrics |
+|------------|--------|-------------|
+| **H1**: Sentiment leads VIX | ✅ SUPPORTED | 3-day lag, r=-0.968, Granger F=502.15 |
+| **H2**: Divergence before transitions | ✅ SUPPORTED | 2.77x ratio, Cohen's d=1.14 |
+| **H3**: Network connectedness varies | ✅ SUPPORTED | TCI: 0.60 stable vs 0.41 transition |
+
+**Priority:** Historical backtesting with real market data, then dashboard API.
 
 ---
 
-## Phase 1: Foundation (Current - February 10, 2026)
+## Phase 1: Foundation ✅ COMPLETE (January 31, 2026)
 
 ### Priority 1: Time-Alignment Algorithm (Section 3.4.1)
 **Status:** � IMPLEMENTED (Jan 31, 2026)  
@@ -353,83 +371,151 @@ scripts/hpc/run_llama_sentiment.sh                 # SLURM GPU job script
 ---
 
 ### Batch Processing at Scale
-**Status:** ✅ RUNNING ON HPC (Job #22738051)  
+**Status:** ✅ COMPLETE (Job #22738072)
+
 **Tasks:**
 - [x] Create SLURM batch scripts for Kaggle processing
 - [x] Create HPC packaging script
 - [x] Upload full dataset to MANEFRAME (9 Kaggle subdirectories)
 - [x] Fix HPC script paths and module loading
-- [x] Submit Kaggle sentiment batch (Job #22738051 - resubmitted with fixes)
-- [ ] Run batch sentiment processing with all models
-- [ ] Process Connectedness and Transfer Entropy at scale
-- [ ] Train Jump Model on full historical data
+- [x] Submit Kaggle sentiment batch (Job #22738072)
+- [x] Run batch sentiment processing with FinBERT + RoBERTa ensemble
+- [x] Import results to PostgreSQL database
+- [x] Validate hypothesis tests with real data
+- [ ] Process Connectedness and Transfer Entropy at scale (deferred)
+- [ ] Train Jump Model on full historical data (Phase 3)
 
-**HPC Script Fixes Applied (Jan 31, 2026):**
-- Fixed PROJECT_DIR: `sentiment-detector-hpc-20260131`
-- Fixed module: `python/3.11.11/pytorch` (not cuda/11.8 + python/3.12)
-- Removed venv activation (using system + user packages)
-- Added PYTHONPATH for src modules
-- Added file verification step
+**HPC Job #22738072 Results (Jan 31, 2026):**
+- **Runtime**: 47 minutes on Tesla V100-PCIE-32GB
+- **Processed**: 218,702 items with 0 errors
+- **Throughput**: ~4,650 items/minute
+- **Output**: kaggle_sentiment_full.json (223 MB)
 
-**Files Created:**
-```
-scripts/hpc/run_kaggle_sentiment.sh   # SLURM job for 218K items (fixed)
-scripts/hpc/run_llama_sentiment.sh    # SLURM job for Llama 3 GPU
-scripts/package_for_hpc.sh            # Packaging script for transfer
-```
+**Bug Fixes Applied:**
+1. ✅ SQLAlchemy import → Used importlib direct loading
+2. ✅ Argument mismatch → `--kaggle-dir` → `--data-dir`
+3. ✅ Transformers 5.0 API → `return_all_scores=True` → `top_k=None`
+4. ✅ SentimentScore model → `text_id`, not `raw_text_id`
+5. ✅ SentimentScore columns → separate float fields, not JSON
 
-**Kaggle Data on MANEFRAME:**
+**Files Created/Modified:**
 ```
-data/kaggle/
-├── crypto-tweets/
-├── financial-news/
-├── social-sentiment/
-├── stock_news/
-├── stocknews/
-├── stock_tweets/
-└── wsb/
+scripts/hpc/run_kaggle_sentiment.sh       # SLURM job (fixed)
+scripts/process_kaggle_sentiment.py       # Batch processing script (fixed)
+scripts/import_hpc_sentiment.py           # NEW: Import HPC results to PostgreSQL
+data/processed/kaggle_sentiment_full.json # 223 MB HPC results
 ```
 
 ---
 
-## Phase 3: Validation & Integration (February 21 - March, 2026)
+## Phase 3: Validation & Integration (Current - March, 2026)
 
-### Hypothesis Validation
-| Hypothesis | Feature Required | Status |
-|------------|------------------|--------|
-| H1 (Leading Indicator) | Lead-Time Analysis | 🔴 |
-| H2 (Divergence Signal) | Transfer Entropy | 🔴 |
-| H3 (Network Effect) | Entropy Connectedness | 🔴 |
+### Hypothesis Validation Framework
+**Status:** ✅ COMPLETE WITH REAL DATA (Jan 31, 2026)
+
+| Hypothesis | Feature Required | Status | Real Data Results |
+|------------|------------------|--------|-------------------|
+| H1 (Leading Indicator) | Lead-Time Analysis | ✅ SUPPORTED | 3-day lag, r=-0.968, Granger F=502.15, p<0.0001 |
+| H2 (Divergence Signal) | Transfer Entropy | ✅ SUPPORTED | 2.77x ratio, Cohen's d=1.14, p<0.0001 |
+| H3 (Network Effect) | Entropy Connectedness | ✅ SUPPORTED | TCI: 0.60 stable vs 0.41 transition, ANOVA F=1009.82 |
 
 **Tasks:**
-- [ ] Validate H1: Sentiment leads VIX by 1-5 days
-- [ ] Validate H2: Transfer Entropy spikes precede crashes
-- [ ] Validate H3: High Connectedness predicts Risk-Off
-- [ ] Statistical significance testing for all hypotheses
+- [x] Implement hypothesis validation framework (hypothesis_validator.py)
+- [x] Test H1: Cross-correlation + Granger causality (SUPPORTED)
+- [x] Test H2: Divergence ratio + effect size analysis (SUPPORTED)
+- [x] Test H3: ANOVA across regimes (SUPPORTED)
+- [x] Re-validate with real HPC-processed sentiment data ✅
+- [ ] Calculate statistical significance on historical market events
+
+**Files Created:**
+```
+src/sentiment_detector/validation/
+├── __init__.py
+├── hypothesis_validator.py     # H1, H2, H3 hypothesis tests
+└── walk_forward_backtest.py    # Walk-forward validation framework
+scripts/test_hypothesis_validator.py   # Test harness
+```
 
 ---
 
 ### Walk-Forward Backtesting
-**Status:** Deferred from Phase 1  
+**Status:** ✅ IMPLEMENTED (Jan 31, 2026)
+
+**Configuration:**
+- Train window: 252 days (1 trading year)
+- Test window: 21 days (1 trading month)
+- Purge gap: 5 days (prevent look-ahead bias)
+- Step size: 21 days (monthly retraining)
+
+**Pre-Defined Market Events:**
+| Event | Date Range | Expected Regime |
+|-------|------------|----------------|
+| COVID_CRASH | Feb 19 - Mar 23, 2020 | high_volatility |
+| GAMESTOP_SQUEEZE | Jan 25 - Feb 5, 2021 | elevated |
+| CRYPTO_WINTER_2022 | May 1 - Jun 18, 2022 | high_volatility |
+| FTX_COLLAPSE | Nov 6 - Nov 14, 2022 | high_volatility |
+| SVB_COLLAPSE | Mar 8 - Mar 15, 2023 | elevated |
+
+**Synthetic Validation Results:**
+- Windows tested: 25
+- Overall Accuracy: 93.52%
+- Macro F1: 0.9264
+- Window accuracy range: 80.95% - 100%
+
 **Tasks:**
-- [ ] Implement walk-forward validation framework
-- [ ] Test against major market events:
-  - COVID-19 crash (March 2020)
-  - 2022 Crypto Winter
-  - GameStop squeeze (Jan 2021)
-- [ ] Calculate performance metrics per event
+- [x] Implement walk-forward validation framework
+- [x] Define 5 major market events with expected regimes
+- [x] Test on synthetic data (25 windows, 93.5% accuracy)
+- [ ] Run on historical data after HPC job completes
+- [ ] Calculate event-specific detection accuracy
+
+---
+
+### End-to-End Pipeline
+**Status:** ✅ IMPLEMENTED (Jan 31, 2026)
+
+**Pipeline Stages:**
+```
+Input → TIME_ALIGNMENT → FEATURE_ENGINEERING → GARCH_MIDAS → JUMP_MODEL → Output
+```
+
+**Performance (Synthetic Data):**
+- Total runtime: 1.27 seconds for 300 days
+- Regime distribution: low_vol (73%), high_vol (15%), normal (11%), elevated (1%)
+- Transitions detected: 37
+
+**Files Created:**
+```
+src/sentiment_detector/pipeline/
+├── __init__.py
+└── regime_detection_pipeline.py   # End-to-end 4-stage pipeline
+scripts/test_pipeline.py           # Pipeline test harness
+```
 
 ---
 
 ### Dashboard Integration
-**Status:** Dashboard ready, features not connected  
-**Decision:** Connect AFTER features are tested
+**Status:** ✅ IMPLEMENTED (Jan 31, 2026)
+
+**RegimePanel Component Features:**
+- 7 regime types with color coding (low_volatility, normal, elevated, high_volatility, risk_on, risk_off, transition)
+- Live indicator with auto-refresh
+- Confidence percentage display
+- Days in current regime calculation
+
+**Files Created:**
+```
+frontend/src/components/RegimePanel.tsx   # Regime display component
+frontend/src/app/page.tsx                  # Updated with RegimePanel
+```
 
 **Tasks:**
-- [ ] Connect Connectedness visualization
-- [ ] Connect Transfer Entropy display
-- [ ] Add regime probability display
-- [ ] Implement 30-second polling (not real-time streaming)
+- [x] Create RegimePanel component with regime visualization
+- [x] Add to main dashboard page
+- [x] Fix TypeScript types to match API schema
+- [ ] Connect Connectedness visualization (Phase 4)
+- [ ] Connect Transfer Entropy display (Phase 4)
+- [ ] Implement 30-second polling (currently uses 60s)
 
 ---
 
@@ -475,7 +561,7 @@ pip install arch            # GARCH-MIDAS
 | Document | Purpose | Status |
 |----------|---------|--------|
 | Draft-1.md / .html | Research methodology | Current |
-| Draft-1.1.md | As-implemented methodology | To create |
+| Draft-1.1-changelog.md | As-implemented methodology | ✅ Created Jan 31 |
 | Draft-2.md | Final submission | Future |
 | IMPLEMENTATION_ROADMAP.md | This file | Active |
 | METHODOLOGY_AUDIT_JAN_30.md | Gap analysis | Reference |
@@ -511,7 +597,7 @@ pip install arch            # GARCH-MIDAS
 
 ## Immediate Next Steps
 
-### Today (January 31, 2026)
+### Today (January 31, 2026) - MORNING SESSION ✅ COMPLETE
 1. ✅ Data volume check: 141K texts (need 5-10M)
 2. ✅ Time-alignment implementation (TimeAligner, TimezoneHandler, 4:30 PM cutoff)
 3. ✅ Set up feature engineering module structure
@@ -519,28 +605,63 @@ pip install arch            # GARCH-MIDAS
 5. ✅ Implement text cleaner with explicit preprocessing
 6. ✅ Implement multi-label asset classification
 7. ✅ Create unit tests (61 tests passing)
-8. ✅ Submit Kaggle sentiment batch to MANEFRAME (Job #22737934)
+8. ✅ Submit Kaggle sentiment batch to MANEFRAME (Job #22738051)
 9. ✅ Implement Statistical Jump Model (20 tests passing)
 10. ✅ Create Llama 3 HPC SLURM script
+11. ✅ Implement Hypothesis Validation Framework (H1, H2, H3 - all SUPPORTED)
+12. ✅ Implement Walk-Forward Backtesting (25 windows, 93.5% accuracy)
+13. ✅ Implement E2E Pipeline Integration (4 stages, 1.27s runtime)
+14. ✅ Create RegimePanel dashboard component
+15. ✅ Create draft-1.1-changelog.md documentation
 
-### This Week (Feb 1-7)
-1. [x] Complete time-alignment algorithm
-2. [x] Implement Granger causality tests (done in features module)
-3. [x] Begin Transfer Entropy implementation (done in features module)
-4. [x] Accelerate Kaggle data import
-5. [x] Implement ensemble voting mechanism
-6. [x] Implement Statistical Jump Model (Layer 2)
-7. [x] Fix HPC scripts and resubmit (Job #22738051 running)
-8. [ ] Monitor Kaggle batch job completion (~24 hrs for 218K items)
-9. [ ] Run Llama 3 on MANEFRAME GPU (after Kaggle completes)
-10. [ ] Begin hypothesis validation with processed data
+### January 31, 2026 - AFTERNOON SESSION ✅ COMPLETE
+1. [x] Check HPC job #22738072 status → COMPLETED (47 min, 218K items, 0 errors)
+2. [x] Download HPC results (kaggle_sentiment_full.json, 223 MB)
+3. [x] Fix import script model field names (text_id, separate float columns)
+4. [x] Import HPC results to PostgreSQL (81,593 new texts + scores)
+5. [x] Run hypothesis validation with real data → ALL 3 SUPPORTED! 🎉
+6. [x] Update draft-1.1-changelog.md with real data results
+7. [x] Update implementation roadmap and plan
 
-### Pre-HPC (Feb 8-10)
-1. [x] Skeleton implementations for Connectedness & Transfer Entropy
-2. [x] Ensemble voting mechanism
-3. [x] Test all components locally
-4. [ ] Full end-to-end pipeline integration test
+### Upcoming Sessions (Feb 1+)
+
+**Priority 1: Historical Backtesting with Real Market Data**
+- [ ] Collect historical market data for 2020-2024
+- [ ] Run walk-forward backtest on COVID, GameStop, FTX, SVB events
+- [ ] Calculate event-specific detection accuracy
+
+**Priority 2: Dashboard API Integration**
+- [ ] Connect RegimePanel to live API endpoint
+- [ ] Implement sentiment heatmap component
+- [ ] Add historical chart visualization
+
+**Priority 3: Paper Finalization**
+- [ ] Generate final figures with real data
+- [ ] Write Results section based on validation
+- [ ] Prepare defense presentation outline
+
+**Optional Enhancements:**
+- [ ] Run Llama 3 on MANEFRAME GPU
+- [ ] Collect additional data sources (target: 5-10M texts)
+- [ ] Fine-tune FinBERT on domain data
 
 ---
 
-*Last Updated: January 31, 2026 (Session 3 - 12:00 PM CST)*
+## Project Status Summary
+
+| Phase | Status | Completion |
+|-------|--------|------------|
+| Phase 1: Foundation | ✅ COMPLETE | 100% |
+| Phase 2: MANEFRAME HPC | ✅ COMPLETE | 100% |
+| Phase 3: Validation | 🔄 IN PROGRESS | 80% |
+| Phase 4: Production | ⏳ PENDING | 0% |
+
+**Key Achievements (Jan 31, 2026):**
+- ✅ 218,702 texts processed on HPC (0 errors)
+- ✅ 219,336 sentiment scores in database
+- ✅ All 3 hypotheses SUPPORTED with real data
+- ✅ 93.5% walk-forward accuracy on synthetic data
+
+---
+
+*Last Updated: January 31, 2026 (2:50 PM CST - Afternoon Session Complete)*

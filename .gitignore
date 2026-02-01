@@ -140,3 +140,5 @@ cache/
 ~$*
 *.~*
 *.tar.gz
+# Large Kaggle datasets
+data/kaggle/reddit-finance/

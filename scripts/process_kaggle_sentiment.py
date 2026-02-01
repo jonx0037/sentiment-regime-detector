@@ -24,9 +24,19 @@ import sys
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+# Import only what's needed - avoid SQLAlchemy dependency for HPC
+# Using direct file imports instead of package imports
 from sentiment_detector.collectors.kaggle_loader import KaggleDataLoader
-from sentiment_detector.preprocessing import TextCleaner
-from sentiment_detector.models.sentiment_ensemble import SentimentEnsemble, SentimentLabel
+from sentiment_detector.preprocessing.text_cleaner import TextCleaner
+
+# Import sentiment ensemble directly to avoid models/__init__.py SQLAlchemy imports
+import importlib.util
+sentiment_ensemble_path = Path(__file__).parent.parent / "src" / "sentiment_detector" / "models" / "sentiment_ensemble.py"
+spec = importlib.util.spec_from_file_location("sentiment_ensemble", sentiment_ensemble_path)
+sentiment_ensemble_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(sentiment_ensemble_module)
+SentimentEnsemble = sentiment_ensemble_module.SentimentEnsemble
+SentimentLabel = sentiment_ensemble_module.SentimentLabel
 
 logging.basicConfig(
     level=logging.INFO,

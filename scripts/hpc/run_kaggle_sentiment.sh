@@ -61,7 +61,7 @@ echo -e "\n3. Starting Kaggle sentiment processing..."
 echo "Processing all 218,702 items with ensemble (FinBERT + RoBERTa)"
 
 python3 scripts/process_kaggle_sentiment.py \
-    --kaggle-dir data/kaggle \
+    --data-dir data/kaggle \
     --output data/processed/kaggle_sentiment_full.json \
     --batch-size 200 \
     2>&1 | tee logs/kaggle_sentiment_${SLURM_JOB_ID}.log

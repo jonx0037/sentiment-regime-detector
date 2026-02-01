@@ -35,16 +35,13 @@ export interface SentimentHistoryResponse {
   total_count: number
 }
 
-export interface RegimeState {
-  regime_type: string
-  confidence: number
-  features: Record<string, number>
-  timestamp: string
-}
+export type RegimeState = 'risk_on' | 'risk_off' | 'transition'
 
 export interface RegimeResponse {
-  current_regime: RegimeState
-  previous_regime?: RegimeState
-  duration_hours: number
-  volatility_level: string
+  timestamp: string
+  regime: RegimeState
+  confidence: number
+  probabilities: Record<RegimeState, number>
+  features: Record<string, number>
+  model_version: string
 }

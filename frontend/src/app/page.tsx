@@ -6,6 +6,7 @@ import type { SentimentResponse } from '@/types/api'
 import SentimentCard from '@/components/SentimentCard'
 import CrossAssetSummary from '@/components/CrossAssetSummary'
 import SentimentComparisonChart from '@/components/SentimentComparisonChart'
+import RegimePanel from '@/components/RegimePanel'
 import { RefreshCw } from 'lucide-react'
 
 export default function Dashboard() {
@@ -103,6 +104,11 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Regime Detection Panel */}
+        <div className="mb-8">
+          <RegimePanel />
+        </div>
+
         {/* Cross-Asset Summary */}
         <div className="mb-8">
           <CrossAssetSummary data={data} />
