@@ -1,0 +1,154 @@
+date,avg_sentiment,text_count,predicted_regime,vix_regime,vix_value,correct,event
+2010-05-01,-0.18040950546041132,25,normal,unknown,,False,Flash Crash
+2010-05-02,-0.20038485836237668,25,normal,unknown,,False,Flash Crash
+2010-05-03,-0.09808302574002972,26,normal,normal,20.190000534057617,True,Flash Crash
+2010-05-04,-0.22053862954131687,26,elevated,normal,23.84000015258789,False,Flash Crash
+2010-05-05,-0.3841057229930392,26,high_volatility,normal,24.90999984741211,False,Flash Crash
+2010-05-06,-0.3155918559417702,26,elevated,elevated,32.79999923706055,True,Flash Crash
+2010-05-07,-0.04302686650305986,25,normal,high_volatility,40.95000076293945,False,Flash Crash
+2010-05-08,-0.2439489635080099,25,elevated,unknown,,False,Flash Crash
+2010-05-09,-0.33098919421434403,25,elevated,unknown,,False,Flash Crash
+2010-05-10,-0.14325578697025776,26,normal,elevated,28.84000015258789,False,Flash Crash
+2010-05-11,-0.24114280434038776,26,elevated,elevated,28.31999969482422,True,Flash Crash
+2010-05-12,-0.2764839854163046,26,elevated,elevated,25.520000457763672,True,Flash Crash
+2010-05-13,-0.2194148343629562,26,normal,elevated,26.68000030517578,False,Flash Crash
+2010-05-14,-0.2242512246593833,26,normal,elevated,31.239999771118164,False,Flash Crash
+2010-05-15,-0.17531329426914455,25,normal,unknown,,False,Flash Crash
+2010-05-16,-0.32230549342930315,25,elevated,unknown,,False,Flash Crash
+2010-05-17,-0.12821154282070124,26,normal,elevated,30.84000015258789,False,Flash Crash
+2010-05-18,-0.24104130529583648,26,elevated,elevated,33.54999923706055,True,Flash Crash
+2010-05-19,-0.403742557284064,26,high_volatility,high_volatility,35.31999969482422,True,Flash Crash
+2010-05-20,-0.19832825055345893,26,elevated,high_volatility,45.790000915527344,False,Flash Crash
+2010-05-21,-0.10620701732113957,26,normal,high_volatility,40.099998474121094,False,Flash Crash
+2010-05-22,-0.06126316174864769,25,normal,unknown,,False,Flash Crash
+2010-05-23,-0.11077700432389975,25,normal,unknown,,False,Flash Crash
+2010-05-24,-0.3551188415059677,26,high_volatility,high_volatility,38.31999969482422,True,Flash Crash
+2010-05-25,-0.2922692563599692,26,elevated,elevated,34.61000061035156,True,Flash Crash
+2010-05-26,-0.18623031582683325,26,elevated,high_volatility,35.02000045776367,False,Flash Crash
+2010-05-27,-0.02718206115353566,26,normal,elevated,29.68000030517578,False,Flash Crash
+2010-05-28,-0.03247005599909104,26,normal,elevated,32.06999969482422,False,Flash Crash
+2010-05-29,-0.13018897086381911,25,normal,unknown,,False,Flash Crash
+2010-05-30,-0.20780571836978198,25,normal,unknown,,False,Flash Crash
+2011-07-15,-0.31368698401806444,26,elevated,normal,19.530000686645508,False,2011 Debt Ceiling
+2011-07-16,-0.37090399261564017,25,elevated,unknown,,False,2011 Debt Ceiling
+2011-07-17,-0.47564967539316666,24,high_volatility,unknown,,False,2011 Debt Ceiling
+2011-07-18,-0.5741999514329319,26,high_volatility,normal,20.950000762939453,False,2011 Debt Ceiling
+2011-07-19,-0.5193444454254439,26,elevated,normal,19.209999084472656,False,2011 Debt Ceiling
+2011-07-20,-0.49219815651527965,26,elevated,normal,19.09000015258789,False,2011 Debt Ceiling
+2011-07-21,-0.42307526550184077,26,elevated,normal,17.559999465942383,False,2011 Debt Ceiling
+2011-07-22,-0.5879482689600152,26,high_volatility,normal,17.520000457763672,False,2011 Debt Ceiling
+2011-07-23,-0.47266452804207804,25,elevated,unknown,,False,2011 Debt Ceiling
+2011-07-24,-0.20646490264683962,25,elevated,unknown,,False,2011 Debt Ceiling
+2011-07-25,-0.33790264722819513,26,high_volatility,normal,19.350000381469727,False,2011 Debt Ceiling
+2011-07-26,-0.28921149448993116,26,high_volatility,normal,20.229999542236328,False,2011 Debt Ceiling
+2011-07-27,-0.20574369775847748,26,elevated,normal,22.979999542236328,False,2011 Debt Ceiling
+2011-07-28,-0.4682467282534792,26,high_volatility,normal,23.739999771118164,False,2011 Debt Ceiling
+2011-07-29,-0.23330705931696755,26,elevated,elevated,25.25,True,2011 Debt Ceiling
+2011-07-30,-0.42273902006447317,25,high_volatility,unknown,,False,2011 Debt Ceiling
+2011-07-31,-0.3539101038873196,25,elevated,unknown,,False,2011 Debt Ceiling
+2011-08-01,-0.4327236220885355,26,elevated,normal,23.65999984741211,False,2011 Debt Ceiling
+2011-08-02,-0.4038603531483274,26,elevated,normal,24.790000915527344,False,2011 Debt Ceiling
+2011-08-03,-0.38005827399543846,26,elevated,normal,23.3799991607666,False,2011 Debt Ceiling
+2011-08-04,-0.46353347825173,26,elevated,elevated,31.65999984741211,True,2011 Debt Ceiling
+2011-08-05,-0.6300052066620153,26,high_volatility,elevated,32.0,False,2011 Debt Ceiling
+2011-08-06,-0.5098043110966682,25,elevated,unknown,,False,2011 Debt Ceiling
+2011-08-07,-0.41838465698063376,25,elevated,unknown,,False,2011 Debt Ceiling
+2011-08-08,-0.4434791235253215,26,elevated,high_volatility,48.0,False,2011 Debt Ceiling
+2011-08-09,-0.4342089735616285,26,elevated,high_volatility,35.060001373291016,False,2011 Debt Ceiling
+2011-08-10,-0.5082878639491705,26,elevated,high_volatility,42.9900016784668,False,2011 Debt Ceiling
+2011-08-11,-0.40992701021381295,26,elevated,high_volatility,39.0,False,2011 Debt Ceiling
+2011-08-12,-0.33658129514123386,26,elevated,high_volatility,36.36000061035156,False,2011 Debt Ceiling
+2011-08-13,-0.5573337281122803,25,high_volatility,unknown,,False,2011 Debt Ceiling
+2011-08-14,-0.335456382073462,25,elevated,unknown,,False,2011 Debt Ceiling
+2011-08-15,-0.39278354151890826,26,elevated,elevated,31.8700008392334,True,2011 Debt Ceiling
+2011-08-16,-0.4674875378751984,26,elevated,elevated,32.849998474121094,True,2011 Debt Ceiling
+2011-08-17,-0.4592701572423371,26,elevated,elevated,31.579999923706055,True,2011 Debt Ceiling
+2011-08-18,-0.27802382008387494,26,elevated,high_volatility,42.66999816894531,False,2011 Debt Ceiling
+2011-08-19,-0.47155269362032415,25,elevated,high_volatility,43.04999923706055,False,2011 Debt Ceiling
+2011-08-20,-0.438777274005115,25,elevated,unknown,,False,2011 Debt Ceiling
+2011-08-21,-0.30443386744707823,25,elevated,unknown,,False,2011 Debt Ceiling
+2011-08-22,-0.27899565583524794,26,elevated,high_volatility,42.439998626708984,False,2011 Debt Ceiling
+2011-08-23,-0.29976004956719965,26,elevated,high_volatility,36.27000045776367,False,2011 Debt Ceiling
+2011-08-24,-0.28618030142612183,26,elevated,high_volatility,35.900001525878906,False,2011 Debt Ceiling
+2011-08-25,-0.37785802208460295,26,elevated,high_volatility,39.7599983215332,False,2011 Debt Ceiling
+2011-08-26,-0.3642818668785577,26,elevated,high_volatility,35.59000015258789,False,2011 Debt Ceiling
+2011-08-27,-0.4503575334697962,25,elevated,unknown,,False,2011 Debt Ceiling
+2011-08-28,-0.5421693384647369,25,high_volatility,unknown,,False,2011 Debt Ceiling
+2011-08-29,-0.46742247281452787,26,elevated,elevated,32.279998779296875,True,2011 Debt Ceiling
+2011-08-30,-0.395208121671413,26,elevated,elevated,32.88999938964844,True,2011 Debt Ceiling
+2015-08-01,-0.4675529620051384,25,elevated,unknown,,False,2015 China Devaluation
+2015-08-02,-0.38786847665905955,25,elevated,unknown,,False,2015 China Devaluation
+2015-08-03,-0.5489972894653105,26,high_volatility,low_volatility,12.5600004196167,False,2015 China Devaluation
+2015-08-04,-0.318741483363108,26,elevated,low_volatility,13.0,False,2015 China Devaluation
+2015-08-05,-0.43416760170545715,26,elevated,low_volatility,12.510000228881836,False,2015 China Devaluation
+2015-08-06,-0.2765792060213593,26,elevated,low_volatility,13.770000457763672,False,2015 China Devaluation
+2015-08-07,-0.4416609877863756,26,high_volatility,low_volatility,13.390000343322754,False,2015 China Devaluation
+2015-08-08,-0.4589858696237206,25,elevated,unknown,,False,2015 China Devaluation
+2015-08-09,-0.35308322347700594,25,elevated,unknown,,False,2015 China Devaluation
+2015-08-10,-0.26600663231399196,26,elevated,low_volatility,12.229999542236328,False,2015 China Devaluation
+2015-08-11,-0.36796882687709653,26,elevated,low_volatility,13.710000038146973,False,2015 China Devaluation
+2015-08-12,-0.5709752864562548,26,high_volatility,low_volatility,13.609999656677246,False,2015 China Devaluation
+2015-08-13,-0.2720135104469955,25,elevated,low_volatility,13.489999771118164,False,2015 China Devaluation
+2015-08-14,-0.4048038609325886,26,high_volatility,low_volatility,12.829999923706055,False,2015 China Devaluation
+2015-08-15,-0.35539926644414666,25,elevated,unknown,,False,2015 China Devaluation
+2015-08-16,-0.5024456420913339,25,high_volatility,unknown,,False,2015 China Devaluation
+2015-08-17,-0.4471892535399932,26,elevated,low_volatility,13.020000457763672,False,2015 China Devaluation
+2015-08-18,-0.21861811745195434,26,elevated,low_volatility,13.789999961853027,False,2015 China Devaluation
+2015-08-19,-0.38284852975406325,26,high_volatility,normal,15.25,False,2015 China Devaluation
+2015-08-20,-0.34385836797838026,26,elevated,normal,19.139999389648438,False,2015 China Devaluation
+2015-08-21,-0.40986384802426284,26,elevated,elevated,28.030000686645508,True,2015 China Devaluation
+2015-08-22,-0.4092347162589431,25,elevated,unknown,,False,2015 China Devaluation
+2015-08-23,-0.24152285873889923,25,normal,unknown,,False,2015 China Devaluation
+2015-08-24,-0.6205703131496333,26,high_volatility,high_volatility,40.7400016784668,True,2015 China Devaluation
+2015-08-25,-0.298210926192741,26,elevated,high_volatility,36.02000045776367,False,2015 China Devaluation
+2015-08-26,-0.36493294001915133,26,elevated,elevated,30.31999969482422,True,2015 China Devaluation
+2015-08-27,-0.41741339819362533,26,elevated,elevated,26.100000381469727,True,2015 China Devaluation
+2015-08-28,-0.4347924174955831,26,elevated,elevated,26.049999237060547,True,2015 China Devaluation
+2015-08-29,-0.48339355178177357,25,elevated,unknown,,False,2015 China Devaluation
+2015-08-30,-0.432782889008522,25,elevated,unknown,,False,2015 China Devaluation
+2015-08-31,-0.28097544979447353,26,elevated,elevated,28.43000030517578,True,2015 China Devaluation
+2015-09-01,-0.08188092250090379,26,elevated,elevated,31.399999618530273,True,2015 China Devaluation
+2015-09-02,-0.3635495867795096,26,high_volatility,elevated,26.09000015258789,False,2015 China Devaluation
+2015-09-03,-0.37025953096767455,26,elevated,elevated,25.610000610351562,True,2015 China Devaluation
+2015-09-04,-0.18999939519338882,26,elevated,elevated,27.799999237060547,True,2015 China Devaluation
+2015-09-05,-0.17635450962930918,25,elevated,unknown,,False,2015 China Devaluation
+2015-09-06,-0.31833025731146336,25,elevated,unknown,,False,2015 China Devaluation
+2015-09-07,-0.4828559044748545,25,high_volatility,unknown,,False,2015 China Devaluation
+2015-09-08,-0.48817424916733915,26,high_volatility,normal,24.899999618530273,False,2015 China Devaluation
+2015-09-09,-0.2923667699170227,26,elevated,elevated,26.229999542236328,True,2015 China Devaluation
+2015-09-10,-0.4152616297897811,26,elevated,normal,24.3700008392334,False,2015 China Devaluation
+2015-09-11,-0.31378850924710816,26,elevated,normal,23.200000762939453,False,2015 China Devaluation
+2015-09-12,-0.3456035843119025,25,elevated,unknown,,False,2015 China Devaluation
+2015-09-13,-0.3213255696371198,25,elevated,unknown,,False,2015 China Devaluation
+2015-09-14,-0.43154185234855574,26,elevated,normal,24.25,False,2015 China Devaluation
+2016-06-01,-0.4875212048825163,26,elevated,low_volatility,14.199999809265137,False,Brexit
+2016-06-02,-0.39229656429961324,26,elevated,low_volatility,13.630000114440918,False,Brexit
+2016-06-03,-0.3182337246835232,26,elevated,low_volatility,13.470000267028809,False,Brexit
+2016-06-04,-0.33433887343853713,25,elevated,unknown,,False,Brexit
+2016-06-05,-0.41720599330961705,25,elevated,unknown,,False,Brexit
+2016-06-06,-0.4209311089764994,26,elevated,low_volatility,13.649999618530273,False,Brexit
+2016-06-07,-0.2200939142001936,26,normal,low_volatility,14.050000190734863,False,Brexit
+2016-06-08,-0.3972191852159225,26,elevated,low_volatility,14.079999923706055,False,Brexit
+2016-06-09,-0.2997748480679897,26,elevated,low_volatility,14.640000343322754,False,Brexit
+2016-06-10,-0.42895195009903264,26,elevated,normal,17.030000686645508,False,Brexit
+2016-06-11,-0.5170598617196083,25,high_volatility,unknown,,False,Brexit
+2016-06-12,-0.41104495119303464,25,elevated,unknown,,False,Brexit
+2016-06-13,-0.2943868974152093,26,elevated,normal,20.969999313354492,False,Brexit
+2016-06-14,-0.39483684964048177,26,elevated,normal,20.5,False,Brexit
+2016-06-15,-0.47251454554498196,26,elevated,normal,20.139999389648438,False,Brexit
+2016-06-16,-0.2575859531867676,26,elevated,normal,19.3700008392334,False,Brexit
+2016-06-17,-0.44829229881557137,26,elevated,normal,19.40999984741211,False,Brexit
+2016-06-18,-0.29860791031271217,25,elevated,unknown,,False,Brexit
+2016-06-19,-0.22521286487579345,25,elevated,unknown,,False,Brexit
+2016-06-20,-0.5659784405277326,26,high_volatility,normal,18.3700008392334,False,Brexit
+2016-06-21,-0.5445612055392792,26,high_volatility,normal,18.479999542236328,False,Brexit
+2016-06-22,-0.2845112716134351,26,high_volatility,normal,21.170000076293945,False,Brexit
+2016-06-23,-0.3070861188551554,26,high_volatility,normal,17.25,False,Brexit
+2016-06-24,-0.24242390618802837,26,elevated,elevated,25.760000228881836,True,Brexit
+2016-06-25,-0.2554899546504021,25,elevated,unknown,,False,Brexit
+2016-06-26,-0.3285747325047851,25,elevated,unknown,,False,Brexit
+2016-06-27,-0.353759279609808,31,elevated,normal,23.850000381469727,False,Brexit
+2016-06-28,-0.24420983627701173,26,normal,normal,18.75,True,Brexit
+2016-06-29,-0.3447260045723625,26,elevated,normal,16.639999389648438,False,Brexit
+2016-06-30,-0.22122985869762907,26,normal,normal,15.630000114440918,True,Brexit
+2016-07-01,-0.3387515542049767,26,elevated,low_volatility,14.770000457763672,False,Brexit
