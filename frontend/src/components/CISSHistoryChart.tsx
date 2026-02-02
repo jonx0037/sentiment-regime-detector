@@ -1,0 +1,198 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Legend, CartesianGrid } from 'recharts'
+import { TrendingUp, Calendar } from 'lucide-react'
+
+interface CISSDataPoint {
+  date: string
+  ciss: number | null
+  vix: number | null
+}
+
+interface CISSHistoryResponse {
+  start_date: string
+  end_date: string
+  count: number
+  data: CISSDataPoint[]
+}
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+
+export default function CISSHistoryChart() {
+  const [data, setData] = useState<CISSDataPoint[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [days, setDays] = useState(90)
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch(`${API_BASE}/regime/ciss/history?days=${days}`)
+        if (!response.ok) throw new Error('Failed to fetch CISS history')
+        const result: CISSHistoryResponse = await response.json()
+        setData(result.data)
+        setError(null)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchHistory()
+  }, [days])
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-gray-100 rounded"></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-red-200 p-6">
+        <p className="text-red-600">Error loading CISS history: {error}</p>
+      </div>
+    )
+  }
+
+  // Format data for chart - multiply CISS by 100 for percentage
+  const chartData = data.map(d => ({
+    date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    ciss: d.ciss !== null ? d.ciss * 100 : null,
+    vix: d.vix,
+  }))
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-blue-600" />
+          CISS & VIX History
+        </h2>
+        
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-gray-400" />
+          <select
+            value={days}
+            onChange={(e) => setDays(Number(e.target.value))}
+            title="Select time period"
+            aria-label="Select time period for CISS history"
+            className="text-sm border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value={30}>30 days</option>
+            <option value={90}>90 days</option>
+            <option value={180}>180 days</option>
+            <option value={365}>1 year</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Chart */}
+      <div className="h-72">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis 
+              dataKey="date" 
+              tick={{ fontSize: 11 }} 
+              tickLine={false}
+              interval="preserveStartEnd"
+            />
+            <YAxis 
+              yAxisId="ciss"
+              tick={{ fontSize: 11 }}
+              tickFormatter={(v) => `${v}%`}
+              domain={[0, 'auto']}
+              orientation="left"
+            />
+            <YAxis 
+              yAxisId="vix"
+              tick={{ fontSize: 11 }}
+              domain={[0, 'auto']}
+              orientation="right"
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: 'white', 
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '12px'
+              }}
+              formatter={(value: number, name: string) => {
+                if (name === 'ciss') return [`${value.toFixed(1)}%`, 'CISS']
+                return [value?.toFixed(1), 'VIX']
+              }}
+            />
+            <Legend 
+              formatter={(value) => value === 'ciss' ? 'ECB CISS (%)' : 'CBOE VIX'}
+            />
+            
+            {/* Crisis threshold line */}
+            <ReferenceLine 
+              yAxisId="ciss"
+              y={50} 
+              stroke="#ef4444" 
+              strokeDasharray="5 5" 
+              label={{ value: 'Crisis', position: 'right', fill: '#ef4444', fontSize: 10 }}
+            />
+            
+            <Line 
+              yAxisId="ciss"
+              type="monotone" 
+              dataKey="ciss" 
+              stroke="#3b82f6" 
+              strokeWidth={2}
+              dot={false}
+              name="ciss"
+            />
+            <Line 
+              yAxisId="vix"
+              type="monotone" 
+              dataKey="vix" 
+              stroke="#f59e0b" 
+              strokeWidth={1.5}
+              dot={false}
+              name="vix"
+              strokeDasharray="3 3"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Stats */}
+      <div className="mt-4 grid grid-cols-4 gap-4 text-center text-sm">
+        <div className="p-2 bg-gray-50 rounded">
+          <p className="text-gray-500">Data Points</p>
+          <p className="font-semibold text-gray-900">{data.length}</p>
+        </div>
+        <div className="p-2 bg-gray-50 rounded">
+          <p className="text-gray-500">CISS Mean</p>
+          <p className="font-semibold text-gray-900">
+            {(data.filter(d => d.ciss !== null).reduce((a, b) => a + (b.ciss || 0), 0) / data.filter(d => d.ciss !== null).length * 100).toFixed(1)}%
+          </p>
+        </div>
+        <div className="p-2 bg-gray-50 rounded">
+          <p className="text-gray-500">CISS Max</p>
+          <p className="font-semibold text-gray-900">
+            {(Math.max(...data.filter(d => d.ciss !== null).map(d => d.ciss || 0)) * 100).toFixed(1)}%
+          </p>
+        </div>
+        <div className="p-2 bg-gray-50 rounded">
+          <p className="text-gray-500">VIX Mean</p>
+          <p className="font-semibold text-gray-900">
+            {(data.filter(d => d.vix !== null).reduce((a, b) => a + (b.vix || 0), 0) / data.filter(d => d.vix !== null).length).toFixed(1)}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}

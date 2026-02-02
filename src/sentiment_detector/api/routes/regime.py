@@ -208,6 +208,41 @@ async def get_regime_transitions(
     ]
 
 
+@router.get("/ciss/history")
+async def get_ciss_history(
+    days: int = Query(default=90, le=365, description="Number of days of history"),
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    """
+    Get historical CISS values with VIX for charting.
+    
+    Returns daily CISS and VIX values for the specified period.
+    """
+    result = await session.execute(text("""
+        SELECT si.date, si.value as ciss, md.close as vix
+        FROM stress_indices si
+        LEFT JOIN market_data md ON si.date = md.date AND md.symbol = '^VIX'
+        WHERE si.source = 'ecb_ciss'
+          AND si.date >= CURRENT_DATE - :days * INTERVAL '1 day'
+        ORDER BY si.date
+    """), {"days": days})
+    rows = result.fetchall()
+    
+    return {
+        "start_date": str(rows[0][0]) if rows else None,
+        "end_date": str(rows[-1][0]) if rows else None,
+        "count": len(rows),
+        "data": [
+            {
+                "date": str(row[0]),
+                "ciss": float(row[1]) if row[1] else None,
+                "vix": float(row[2]) if row[2] else None,
+            }
+            for row in rows
+        ],
+    }
+
+
 @router.get("/divergence")
 async def get_cross_asset_divergence() -> dict:
     """

@@ -8,6 +8,7 @@ import CrossAssetSummary from '@/components/CrossAssetSummary'
 import SentimentComparisonChart from '@/components/SentimentComparisonChart'
 import RegimePanel from '@/components/RegimePanel'
 import CISSPanel from '@/components/CISSPanel'
+import CISSHistoryChart from '@/components/CISSHistoryChart'
 import { RefreshCw } from 'lucide-react'
 
 export default function Dashboard() {
@@ -117,6 +118,11 @@ export default function Dashboard() {
             cissLevel={regime?.features?.ciss_level as number | undefined}
             vixLevel={regime?.features?.vix_level as number | undefined}
           />
+        </div>
+
+        {/* CISS/VIX History Chart */}
+        <div className="mb-8">
+          <CISSHistoryChart />
         </div>
 
         {/* Cross-Asset Summary */}
