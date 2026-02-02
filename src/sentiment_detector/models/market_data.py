@@ -1,7 +1,6 @@
 """Market Data models for multi-asset price data."""
 
-from datetime import date
-from typing import Optional
+from datetime import date as python_date
 from uuid import UUID, uuid4
 
 from sqlalchemy import BigInteger, Date, Float, Index, String, UniqueConstraint
@@ -50,20 +49,20 @@ class MarketData(Base, TimestampMixin):
         comment="Asset type: index, stock, etf, crypto, commodity, forex",
     )
     
-    exchange: Mapped[Optional[str]] = mapped_column(
+    exchange: Mapped[str | None] = mapped_column(
         String(20),
         nullable=True,
         comment="Exchange: NYSE, NASDAQ, LSE, TYO, etc.",
     )
     
-    region: Mapped[Optional[str]] = mapped_column(
+    region: Mapped[str | None] = mapped_column(
         String(10),
         nullable=True,
         comment="Region: us, eu, uk, jp, cn, etc.",
     )
     
     # Temporal information
-    date: Mapped[date] = mapped_column(
+    date: Mapped[python_date] = mapped_column(
         Date,
         nullable=False,
         index=True,
@@ -71,17 +70,17 @@ class MarketData(Base, TimestampMixin):
     )
     
     # OHLCV data
-    open: Mapped[Optional[float]] = mapped_column(
+    open: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
         comment="Opening price",
     )
-    high: Mapped[Optional[float]] = mapped_column(
+    high: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
         comment="High price",
     )
-    low: Mapped[Optional[float]] = mapped_column(
+    low: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
         comment="Low price",
@@ -91,24 +90,24 @@ class MarketData(Base, TimestampMixin):
         nullable=False,
         comment="Closing price",
     )
-    adj_close: Mapped[Optional[float]] = mapped_column(
+    adj_close: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
         comment="Adjusted closing price (for splits/dividends)",
     )
-    volume: Mapped[Optional[int]] = mapped_column(
+    volume: Mapped[int | None] = mapped_column(
         BigInteger,
         nullable=True,
         comment="Trading volume",
     )
     
     # Computed fields (for convenience)
-    daily_return: Mapped[Optional[float]] = mapped_column(
+    daily_return: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
         comment="Daily return (close-to-close)",
     )
-    volatility: Mapped[Optional[float]] = mapped_column(
+    volatility: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
         comment="Realized volatility (rolling window)",
@@ -150,14 +149,14 @@ class MarketData(Base, TimestampMixin):
         )
     
     @property
-    def intraday_range(self) -> Optional[float]:
+    def intraday_range(self) -> float | None:
         """Calculate intraday price range as percentage."""
         if self.high and self.low and self.low > 0:
             return (self.high - self.low) / self.low * 100
         return None
     
     @property
-    def gap(self) -> Optional[float]:
+    def gap(self) -> float | None:
         """Calculate overnight gap (requires previous close, not stored)."""
         # This would need to be computed in a query with LAG
         return None

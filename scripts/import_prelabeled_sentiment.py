@@ -24,11 +24,11 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Add src directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from src.sentiment_detector.models import Base, RawText, SentimentScore
-from src.sentiment_detector.config import get_settings
+from sentiment_detector.models import Base, RawText, SentimentScore
+from sentiment_detector.core.config import get_settings
 
 # Configure logging
 logging.basicConfig(
@@ -293,13 +293,24 @@ def import_to_database(
                 if not text_content or len(text_content.strip()) < 5:
                     continue
                 
+                # Parse timestamp
+                ts = row.get("date", datetime.now())
+                if pd.notna(ts):
+                    if isinstance(ts, str):
+                        try:
+                            ts = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+                        except:
+                            ts = datetime.now()
+                else:
+                    ts = datetime.now()
+                
                 # Create RawText record
                 raw_text = RawText(
-                    text=text_content[:10000],  # Limit text length
+                    content=text_content[:10000],  # Limit text length
                     source=source_name,
-                    source_type=row.get("source_type", "unknown"),
-                    asset=row.get("asset", "general"),
-                    timestamp=row.get("date", datetime.now()) if pd.notna(row.get("date")) else datetime.now(),
+                    asset_class=row.get("asset", "equity"),  # Default to equity
+                    content_created_at=ts,
+                    collected_at=datetime.now(),
                     metadata_={
                         "prelabeled": True,
                         "original_source": row.get("news_source", row.get("source", source_name)),
@@ -431,7 +442,8 @@ def main():
     if not db_url:
         try:
             settings = get_settings()
-            db_url = settings.database_url
+            # Convert to string and use sync driver
+            db_url = str(settings.database_url).replace("+asyncpg", "+psycopg2")
         except Exception as e:
             logger.error(f"Could not get database URL from settings: {e}")
             logger.info("Use --db-url to specify database connection")

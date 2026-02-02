@@ -1,7 +1,6 @@
 """Stress Index models for systemic risk indicators."""
 
-from datetime import date
-from typing import Optional
+from datetime import date as python_date
 from uuid import UUID, uuid4
 
 from sqlalchemy import Date, Float, Index, String, UniqueConstraint
@@ -42,7 +41,7 @@ class StressIndex(Base, TimestampMixin):
     )
     
     # Temporal information
-    date: Mapped[date] = mapped_column(
+    date: Mapped[python_date] = mapped_column(
         Date,
         nullable=False,
         index=True,
@@ -65,7 +64,7 @@ class StressIndex(Base, TimestampMixin):
     )
     
     # Optional metadata
-    frequency: Mapped[Optional[str]] = mapped_column(
+    frequency: Mapped[str | None] = mapped_column(
         String(10),
         nullable=True,
         default="daily",
@@ -73,27 +72,27 @@ class StressIndex(Base, TimestampMixin):
     )
     
     # Component values (for CISS sub-indices)
-    money_market: Mapped[Optional[float]] = mapped_column(
+    money_market: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
         comment="Money market component",
     )
-    bond_market: Mapped[Optional[float]] = mapped_column(
+    bond_market: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
         comment="Bond market component",
     )
-    equity_market: Mapped[Optional[float]] = mapped_column(
+    equity_market: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
         comment="Equity market component",
     )
-    foreign_exchange: Mapped[Optional[float]] = mapped_column(
+    foreign_exchange: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
         comment="Foreign exchange component",
     )
-    financial_intermediaries: Mapped[Optional[float]] = mapped_column(
+    financial_intermediaries: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
         comment="Financial intermediaries component",

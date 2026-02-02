@@ -27,17 +27,19 @@ This document outlines the complete plan for processing and integrating all new 
 These datasets are small enough to import directly without HPC resources.
 
 #### 1.1 ECB CISS (Systemic Stress Index)
+
 - **Script**: `scripts/import_ecb_ciss.py`
-- **Purpose**: 
+- **Purpose**:
   - Ground truth for regime validation (stress events)
   - Feature for GARCH-MIDAS model (macroeconomic stress)
 - **Fields**: date, CISS_ea, CISS_de, CISS_fr, etc.
 - **Time Range**: 1980-2026 (daily data)
-- **Integration**: 
+- **Integration**:
   - Create `StressIndex` table for storing CISS values
   - Link to regime validation via date alignment
 
 #### 1.2 COVID World Indices
+
 - **Script**: `scripts/import_covid_indices.py`
 - **Purpose**: Global market data for cross-market regime analysis
 - **Fields**: Date, Open, High, Low, Close, Volume per index
@@ -47,6 +49,7 @@ These datasets are small enough to import directly without HPC resources.
   - Key indices: SP500, DJIA, NASDAQ, DAX, FTSE, Nikkei, etc.
 
 #### 1.3 Pre-labeled Sentiment Datasets
+
 - **Script**: `scripts/import_prelabeled_sentiment.py`
 - **Datasets**:
   - Bitcoin Tweets Sentiment (HuggingFace, with labels)
@@ -60,6 +63,7 @@ These datasets are small enough to import directly without HPC resources.
 ### Phase 2: HPC Processing (Evening - Submit to ManeFrame)
 
 #### 2.1 WSB Echo Chamber Dataset
+
 - **Preparation Script**: `scripts/prepare_wsb_echo_chamber.py`
 - **HPC Script**: `scripts/hpc/wsb_echo_chamber.slurm`
 - **Tickers**: GME, AMC, TSLA, AAPL, MSFT, NOK
@@ -117,7 +121,9 @@ prelabeled_source = Column(String(100))  # e.g., 'bitcoin_tweets_hf'
 ## Script Dependencies
 
 ### Required Packages
+
 All packages should be available in the existing environment:
+
 - `pandas`, `polars` - Data processing
 - `sqlalchemy` - Database ORM
 - `pyarrow` - Parquet file reading
@@ -176,11 +182,13 @@ python scripts/import_hpc_sentiment.py --input data/hpc_results/
 ## Validation Checkpoints
 
 ### After Phase 1 (Local Imports)
-- [ ] ECB CISS: 12,030 rows in `stress_index` table
-- [ ] COVID Indices: ~15,000+ rows in `market_data` table
-- [ ] Pre-labeled: Verify sample sentiment scores match labels
+
+- [x] ECB CISS: 12,029 rows in `stress_indices` table ✅
+- [x] COVID Indices: 108,483 rows in `market_data` table ✅
+- [x] Pre-labeled: 45,863 records imported (financial_news + reddit_sentiment) ✅
 
 ### After Phase 2 (HPC Processing)
+
 - [ ] WSB Echo Chamber: All 6 tickers processed
 - [ ] Sentiment scores for ~7,000+ posts
 - [ ] Cross-validate against pre-labeled datasets
@@ -190,6 +198,7 @@ python scripts/import_hpc_sentiment.py --input data/hpc_results/
 ## Integration with Existing Pipeline
 
 ### GARCH-MIDAS Layer
+
 ```python
 # ECB CISS becomes a low-frequency exogenous variable
 garch_midas_model.add_feature(
@@ -201,6 +210,7 @@ garch_midas_model.add_feature(
 ```
 
 ### Regime Detection Layer
+
 ```python
 # Use ECB CISS as ground truth for regime validation
 regime_validator.set_ground_truth(
@@ -216,28 +226,28 @@ regime_validator.set_ground_truth(
 
 | Script | Purpose | Status |
 |--------|---------|--------|
-| `scripts/import_ecb_ciss.py` | Import ECB CISS data | Pending |
-| `scripts/import_covid_indices.py` | Import COVID indices | Pending |
-| `scripts/import_prelabeled_sentiment.py` | Import pre-labeled sentiment | Pending |
-| `scripts/prepare_wsb_echo_chamber.py` | Prepare WSB data for HPC | Pending |
-| `scripts/hpc/wsb_echo_chamber.slurm` | HPC SLURM job script | Pending |
-| `scripts/run_all_imports.py` | Master orchestrator | Pending |
+| `scripts/import_ecb_ciss.py` | Import ECB CISS data | ✅ Complete |
+| `scripts/import_covid_indices.py` | Import COVID indices | ✅ Complete |
+| `scripts/import_prelabeled_sentiment.py` | Import pre-labeled sentiment | ✅ Complete |
+| `scripts/prepare_wsb_echo_chamber.py` | Prepare WSB data for HPC | ✅ Created |
+| `scripts/hpc/wsb_echo_chamber.slurm` | HPC SLURM job script | ✅ Created |
+| `scripts/run_all_imports.py` | Master orchestrator | ✅ Created |
 
 ---
 
-## Timeline
+## Timeline (Updated with Actual Completion Times)
 
-| Time | Task |
-|------|------|
-| 2:00 PM | Create processing plan (this document) ✓ |
-| 2:15 PM | Create database model updates |
-| 2:30 PM | Create ECB CISS import script |
-| 2:45 PM | Create COVID indices import script |
-| 3:00 PM | Create pre-labeled sentiment import script |
-| 3:15 PM | Create WSB Echo Chamber HPC prep script |
-| 3:30 PM | Create SLURM job script |
-| 3:45 PM | Create master orchestrator |
-| 4:00 PM | Test local imports |
+| Time | Task | Status |
+|------|------|--------|
+| 2:00 PM | Create processing plan (this document) | ✅ |
+| Afternoon | Create database model updates | ✅ |
+| Afternoon | Create all import scripts | ✅ |
+| 7:45 PM | Apply Alembic migration for new tables | ✅ |
+| 7:45 PM | Import ECB CISS (12,029 rows) | ✅ |
+| 7:45 PM | Import COVID Indices (108,483 rows) | ✅ |
+| 7:48 PM | Import Pre-labeled Sentiment (45,863 rows) | ✅ |
+| Evening | Package for HPC | Pending |
+| Evening | Submit WSB Echo Chamber to ManeFrame | Pending |
 | 4:30 PM | Package for HPC |
 | 5:00 PM | Break before evening session |
 

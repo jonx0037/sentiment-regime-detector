@@ -23,11 +23,11 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Add src directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from src.sentiment_detector.models import Base, MarketData
-from src.sentiment_detector.config import get_settings
+from sentiment_detector.models import Base, MarketData
+from sentiment_detector.core.config import get_settings
 
 # Configure logging
 logging.basicConfig(
@@ -387,7 +387,8 @@ def main():
     if not db_url:
         try:
             settings = get_settings()
-            db_url = settings.database_url
+            # Convert to string and use sync driver
+            db_url = str(settings.database_url).replace("+asyncpg", "+psycopg2")
         except Exception as e:
             logger.error(f"Could not get database URL from settings: {e}")
             logger.info("Use --db-url to specify database connection")

@@ -1,16 +1,21 @@
 from logging.config import fileConfig
+import sys
+from pathlib import Path
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
 
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
 # Import our models and settings
 from sentiment_detector.core.config import settings
 from sentiment_detector.models.base import Base
 
 # Import all models to ensure they're registered with Base.metadata
-from sentiment_detector.models import text_record, sentiment, regime  # noqa: F401
+from sentiment_detector.models import text_record, sentiment, regime, stress_index, market_data  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
