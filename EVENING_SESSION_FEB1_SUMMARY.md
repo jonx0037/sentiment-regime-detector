@@ -3,8 +3,8 @@
 ## Session Overview
 
 **Date:** February 1, 2026  
-**Time:** ~7:30 PM - 8:00 PM CST  
-**Focus:** Execute Phase 1 local imports from afternoon plan
+**Time:** ~7:30 PM - 9:30 PM CST (ongoing)  
+**Focus:** Execute Phase 1 local imports, then HPC sentiment processing
 
 ---
 
@@ -76,27 +76,59 @@ Sources breakdown:
 
 ## Pending Tasks (Phase 2 - HPC)
 
-### WSB Echo Chamber Processing
+### Phase 1 HPC - IN PROGRESS 🚀
 
-The WSB Echo Chamber dataset is ready for HPC processing:
-- **Location:** `data/kaggle/wsb-echo-chamber/`
-- **Tickers:** GME, AMC, TSLA, AAPL, MSFT, NOK
-- **Format:** JSON files with Reddit posts
-- **Scripts Ready:**
-  - `scripts/prepare_wsb_echo_chamber.py` - Batch preparation
-  - `scripts/hpc/wsb_echo_chamber.slurm` - SLURM job
+**Job #22739605** submitted to ManeFrame M3 at 9:13 PM CST
 
-### To Submit to ManeFrame:
+| Metric | Value |
+|--------|-------|
+| Node | va003 (Tesla V100-SXM2-32GB) |
+| Data | 241,784 texts (News + WSB Echo Chamber) |
+| Estimated Time | ~52 minutes |
+| Status | Running |
+
+**Batch Contents:**
+- News: 14,924 texts (0% coverage → 100%)
+- WSB Echo Chamber: 226,860 posts
+  - GME: 75,095
+  - AMC: 63,357
+  - TSLA: 26,706
+  - AAPL: 55,853
+  - MSFT: 4,599
+  - NOK: 1,250
+
+### Phase 2 - Reddit Backfill (Pending)
+
+After Phase 1 completes:
+- **Texts:** 613,320 reddit posts without sentiment scores
+- **Batches:** 13 x 50,000 texts
+- **Estimated Time:** ~2.2 hours
+- **Script Ready:** `scripts/export_phase2_hpc.py`
+
+---
+
+## Scripts Created This Session
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/export_phase1_hpc.py` | Export News + WSB for HPC |
+| `scripts/export_phase2_hpc.py` | Export Reddit backfill |
+| `scripts/hpc/process_phase1.slurm` | SLURM job for Phase 1 |
+| `scripts/hpc/process_phase2.slurm` | SLURM array job for Phase 2 |
+| `scripts/hpc/process_phase_batch.py` | FinBERT + RoBERTa ensemble processor |
+| `scripts/check_processing_status.py` | Analyze sentiment coverage |
+
+---
+
+## ManeFrame M3 Configuration (Verified Working)
 
 ```bash
-# 1. Prepare HPC batch
-python scripts/prepare_wsb_echo_chamber.py
-
-# 2. Package for transfer
-./scripts/package_for_hpc.sh
-
-# 3. Transfer to M3
-scp hpc_package_*.tar.gz m3.smu.edu:~/capstone/
+# Correct paths and settings
+SCRATCH=/lustre/scratch/client/users/$USER
+PARTITION=gpu-dev
+GPU_RESOURCE=gpu:v100:1
+MODULE=python/3.11.11/pytorch/2025.08.21
+```
 
 # 4. Submit job
 ssh m3.smu.edu
@@ -143,10 +175,14 @@ New files created:
 
 ## Next Steps
 
-1. **HPC Processing** - Submit WSB Echo Chamber to ManeFrame when ready
-2. **Validation** - Test ECB CISS integration with GARCH-MIDAS model
-3. **Backtesting** - Run historical backtests using new ground truth data
+1. **Monitor Phase 1** - Check job #22739605 completion (~10:05 PM CST)
+2. **Download Results** - `scp jarocha@m3.smu.edu:$SCRATCH/results/phase1/*.json ./data/processed/`
+3. **Import Results** - `python scripts/import_hpc_sentiment.py`
+4. **Export Phase 2** - `python scripts/export_phase2_hpc.py` (Reddit backfill)
+5. **Submit Phase 2** - Transfer and submit array job for 613K texts
+6. **Validation** - Verify 100% sentiment coverage achieved
 
 ---
 
-*Session completed: February 1, 2026 ~8:00 PM CST*
+*Session ongoing: February 1, 2026 ~9:15 PM CST*
+*Phase 1 HPC Job #22739605 running on va003*
