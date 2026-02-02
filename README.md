@@ -11,24 +11,71 @@
 
 An automated system for detecting market regime transitions (Risk-On/Risk-Off/Transition) through cross-asset sentiment analysis. Uses ensemble transformer models to analyze financial social media, news, and forum data across equities, crypto, forex, and commodities.
 
-**Key Innovation:** First system to aggregate sentiment across multiple asset classes as a **leading indicator** for regime shifts, preceding traditional price-based detection by 1-5 trading days.
+**Key Innovation:** First system to aggregate sentiment across multiple asset classes as a **leading indicator** for regime shifts, integrating the ECB Composite Indicator of Systemic Stress (CISS) for enhanced crisis detection.
 
 ---
 
 ## 📊 Project Status
 
-**Current Phase:** Week 1 - Draft 0 & Setup  
-**Last Updated:** January 10, 2026
+**Current Phase:** Week 4 - GARCH-MIDAS & Backtesting Complete  
+**Last Updated:** February 2, 2026
 
-### Milestones
+### Key Results
 
-- [ ] **Week 1 (Jan 10-17):** Draft 0 completion + workspace setup
-- [ ] **Weeks 2-3 (Jan 20-31):** Data collection pipeline
-- [ ] **Week 4 (Feb 3-7):** EDA & preprocessing
-- [ ] **Weeks 5-6 (Feb 10-21):** Sentiment model training on MANEFRAME
-- [ ] **Week 7 (Feb 24-28):** Feature engineering
-- [ ] **Weeks 8-9 (Mar 3-14):** Regime classification & backtesting
-- [ ] **Week 10 (Mar 17-20):** Dashboard deployment & final paper
+| Metric | Value |
+|--------|-------|
+| **Texts Processed** | 2.66 million |
+| **Date Coverage** | 2002-2026 |
+| **CISS Records** | 12,029 |
+| **Market Data** | 135,000+ |
+| **VIX-CISS Correlation** | 0.63 |
+
+### GARCH(1,1) Volatility Model
+
+| Parameter | Value | Interpretation |
+|-----------|-------|----------------|
+| α (ARCH) | 0.155 | Shock impact |
+| β (GARCH) | 0.800 | Volatility persistence |
+| α + β | 0.955 | High persistence |
+| AIC | 7027.28 | Model fit |
+
+---
+
+## 📈 Backtest Results
+
+### 2008 Financial Crisis
+
+- **CISS Peak:** 0.9428 (Nov 20, 2008)
+- **Sentiment β:** -0.776 (p=0.0044)
+- **Crisis Days:** 278 (34.6% of period)
+
+### COVID-19 March 2020
+
+- **VIX Peak:** 82.69 (March 16, 2020)
+- **VIX-CISS Correlation:** 0.922
+- **GARCH-MIDAS R²:** 0.7124
+
+### GameStop January 2021
+
+- **VIX Spike:** 37.21 (elevated)
+- **CISS Max:** 0.024 (calm)
+- **Systemic Event?** ❌ Correctly identified as retail-only
+
+### Cross-Asset Performance
+
+- **Gold (COVID to 2024):** +209.2%
+- **Crypto Winter 2022:** BTC -77.3%, ETH -82.1%
+
+---
+
+## 🖼️ Visualizations
+
+| Plot | Description |
+|------|-------------|
+| [CISS vs VIX](results/figures/ciss_vs_vix_timeseries.png) | Time series comparison of systemic stress |
+| [Regime Heatmap](results/figures/regime_heatmap.png) | Monthly stress levels 2010-2026 |
+| [Sentiment-Volatility](results/figures/sentiment_volatility_scatter.png) | Scatter plot with correlation |
+| [Backtest Summary](results/figures/backtest_summary.png) | All backtest results |
 
 ---
 
@@ -52,10 +99,12 @@ DS_6210_Capstone/
 
 ## 🔬 Research Objectives
 
-1. **Sentiment Classification:** Fine-tune FinBERT + RoBERTa ensemble on multi-source financial text
-2. **Sentiment Indices:** Construct daily/weekly asset-class-specific indices
-3. **Regime Detection:** Build ML classifier (RF/XGBoost/LSTM) for Risk-On/Off/Transition states
-4. **Real-time Dashboard:** Deploy React app with live sentiment visualization & regime alerts
+1. **Sentiment Classification:** Fine-tune FinBERT + RoBERTa ensemble on multi-source financial text ✅
+2. **Sentiment Indices:** Construct daily/weekly asset-class-specific indices ✅
+3. **Stress Integration:** Integrate ECB CISS for systemic stress detection ✅
+4. **GARCH-MIDAS:** Volatility modeling with sentiment/CISS as exogenous variables ✅
+5. **Regime Detection:** Build ML classifier for Risk-On/Off/Transition states ⏳
+6. **Real-time Dashboard:** Deploy React app with live sentiment visualization 🔜
 
 ---
 
@@ -63,13 +112,13 @@ DS_6210_Capstone/
 
 | Component        | Technology                                        |
 | ---------------- | ------------------------------------------------- |
-| **Backend**      | Python 3.9+, FastAPI, Transformers (Hugging Face) |
-| **Models**       | FinBERT, RoBERTa, XGBoost/Random Forest           |
-| **Data Sources** | Reddit (PRAW), Twitter/X (Academic API), NewsAPI  |
-| **Database**     | PostgreSQL (time-series data)                     |
-| **Frontend**     | React, Recharts/D3.js                             |
-| **HPC Training** | MANEFRAME (SMU), SLURM job scheduler              |
-| **Deployment**   | GitHub Pages (frontend), Docker (backend)         |
+| **Backend**      | Python 3.11+, FastAPI, async SQLAlchemy           |
+| **Models**       | FinBERT, VADER, GARCH-MIDAS (arch library)        |
+| **Data Sources** | Reddit, Twitter/X, ECB CISS, Yahoo Finance        |
+| **Database**     | PostgreSQL (asyncpg driver)                       |
+| **Frontend**     | Next.js, Tailwind CSS                             |
+| **HPC Training** | ManeFrame III (SMU), SLURM job scheduler          |
+| **Deployment**   | Docker, GitHub Pages                              |
 
 ---
 
@@ -123,27 +172,44 @@ sbatch dev/docs/slurm-job-template.sh
 
 ---
 
-## 📝 Weekly Progress Log
+## 📝 Progress Log
 
-### Week 1 (Jan 10-17, 2026)
+### Week 4 (Feb 1-2, 2026) - GARCH-MIDAS & Backtesting
 
-**Goals:**
+**Completed:**
 
-- [x] Workspace structure setup
-- [x] .gitignore configuration
-- [x] Todoist automation script
-- [ ] Literature review expansion (5-8 papers)
-- [ ] Draft 0 completion (abstract, intro, methods)
-- [ ] MANEFRAME access request
-- [ ] Advisor finalization
+- ✅ ECB CISS integration (12,029 records)
+- ✅ Cross-asset data download (VIX, Gold, Silver, BTC, ETH)
+- ✅ GARCH-MIDAS backtests (2008, COVID, GameStop)
+- ✅ VIX regime validation (50% agreement, 44% F1)
+- ✅ HPC GARCH(1,1) estimation with arch library
+- ✅ Visualization generation
 
-**Blockers:** Waiting on HPC access approval, advisor assignment
+### Week 3 (Jan 27-31, 2026) - Sentiment Processing
 
----
+**Completed:**
 
-### Week 2-3 (Jan 20-31, 2026)
+- ✅ 2.66M texts processed with VADER on HPC
+- ✅ Phased batch processing (Phase 1: 850K, Phase 2: 1.8M)
+- ✅ Sentiment import to PostgreSQL
+- ✅ WSB 2022 data integration
 
-*[To be updated]*
+### Week 2 (Jan 20-26, 2026) - Data Collection
+
+**Completed:**
+
+- ✅ Reddit data collection pipeline
+- ✅ Kaggle dataset integration
+- ✅ Database schema design
+- ✅ HPC job submission system
+
+### Week 1 (Jan 10-17, 2026) - Setup
+
+**Completed:**
+
+- ✅ Workspace structure
+- ✅ Git configuration
+- ✅ ManeFrame access
 
 ---
 

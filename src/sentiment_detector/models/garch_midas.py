@@ -529,3 +529,243 @@ def compute_sentiment_index(
         raise ValueError(f"Unknown aggregation: {aggregation}")
     
     return index
+
+
+class GARCHMIDASWithCISS(GARCHMIDASModel):
+    """
+    Extended GARCH-MIDAS model with ECB CISS stress index integration.
+    
+    This model extends the base GARCH-MIDAS to incorporate:
+    1. Sentiment index (social/news sentiment)
+    2. ECB CISS (systemic stress indicator)
+    
+    The long-run volatility component τ_t is modeled as:
+        log(τ_t) = m + θ_1 × sentiment_midas + θ_2 × ciss_midas
+    
+    Where:
+    - sentiment_midas: MIDAS-weighted sentiment index
+    - ciss_midas: MIDAS-weighted CISS values
+    
+    This allows the model to capture both:
+    - Sentiment-driven volatility (retail/news sentiment)
+    - Systemic stress (institutional/market-wide stress)
+    
+    Example:
+        >>> model = GARCHMIDASWithCISS()
+        >>> result = model.fit_with_ciss(
+        ...     returns=spy_returns,
+        ...     sentiment=sentiment_index,
+        ...     ciss=ciss_series,
+        ... )
+    """
+    
+    def __init__(
+        self,
+        p: int = 1,
+        q: int = 1,
+        midas_lags: int = 22,
+        midas_omega1: float = 1.0,
+        midas_omega2: float = 1.0,
+        distribution: Literal["normal", "t", "skewt"] = "t",
+        ciss_weight: float = 0.5,
+    ):
+        """
+        Initialize GARCH-MIDAS with CISS.
+        
+        Args:
+            p, q: GARCH orders
+            midas_lags: Number of lags for MIDAS weighting
+            midas_omega1, midas_omega2: Beta polynomial parameters
+            distribution: Error distribution
+            ciss_weight: Weight for CISS vs sentiment in combined index
+                         0 = sentiment only, 1 = CISS only
+        """
+        super().__init__(
+            p=p, q=q, 
+            midas_lags=midas_lags,
+            midas_omega1=midas_omega1,
+            midas_omega2=midas_omega2,
+            distribution=distribution,
+        )
+        self.ciss_weight = ciss_weight
+        self._ciss = None
+        self._ciss_coefficient = None
+    
+    def fit_with_ciss(
+        self,
+        returns: pd.Series,
+        sentiment: Optional[pd.Series] = None,
+        ciss: Optional[pd.Series] = None,
+        ciss_transform: Literal["raw", "log", "zscore", "rank"] = "raw",
+    ) -> 'GARCHMIDASWithCISSResult':
+        """
+        Fit GARCH-MIDAS with both sentiment and CISS.
+        
+        Args:
+            returns: Daily returns series
+            sentiment: Sentiment index (-1 to 1)
+            ciss: ECB CISS series (0 to 1)
+            ciss_transform: How to transform CISS before fitting
+            
+        Returns:
+            GARCHMIDASWithCISSResult with extended outputs
+        """
+        self._returns = returns.dropna()
+        self._sentiment = sentiment
+        self._ciss = ciss
+        
+        # Transform CISS if provided
+        if ciss is not None:
+            ciss_aligned = ciss.reindex(self._returns.index, method='ffill')
+            
+            if ciss_transform == "log":
+                ciss_transformed = np.log(ciss_aligned + 0.001)
+            elif ciss_transform == "zscore":
+                ciss_transformed = (ciss_aligned - ciss_aligned.mean()) / ciss_aligned.std()
+            elif ciss_transform == "rank":
+                ciss_transformed = ciss_aligned.rank(pct=True)
+            else:  # raw
+                ciss_transformed = ciss_aligned
+        else:
+            ciss_transformed = None
+        
+        # Compute combined exogenous variable
+        if sentiment is not None and ciss_transformed is not None:
+            # Transform sentiment to risk scale (negative sentiment = high risk)
+            sent_aligned = sentiment.reindex(self._returns.index, method='ffill').fillna(0)
+            sentiment_risk = (1 - sent_aligned) / 2  # Map [-1,1] to [1,0] (inverted)
+            
+            # Combine with CISS using weight
+            combined = (
+                self.ciss_weight * ciss_transformed.fillna(ciss_transformed.mean()) +
+                (1 - self.ciss_weight) * sentiment_risk
+            )
+        elif ciss_transformed is not None:
+            combined = ciss_transformed
+        elif sentiment is not None:
+            combined = sentiment
+        else:
+            combined = None
+        
+        # Fit base model with combined exogenous
+        base_result = self.fit(returns=self._returns, sentiment=combined)
+        
+        # Estimate separate coefficients for CISS
+        ciss_coef = None
+        if ciss is not None and base_result.convergence:
+            try:
+                log_var = np.log(base_result.conditional_volatility ** 2)
+                X = np.column_stack([
+                    np.ones(len(self._returns)),
+                    ciss_aligned.reindex(self._returns.index, method='ffill').fillna(0).values
+                ])
+                y = log_var.values
+                valid = ~(np.isnan(X).any(axis=1) | np.isnan(y))
+                
+                if valid.sum() > 10:
+                    coefs = np.linalg.lstsq(X[valid], y[valid], rcond=None)[0]
+                    ciss_coef = float(coefs[1])
+            except Exception as e:
+                logger.warning(f"Could not estimate CISS coefficient: {e}")
+        
+        self._ciss_coefficient = ciss_coef
+        
+        # Return extended result
+        return GARCHMIDASWithCISSResult(
+            conditional_volatility=base_result.conditional_volatility,
+            long_run_volatility=base_result.long_run_volatility,
+            short_run_volatility=base_result.short_run_volatility,
+            params=base_result.params,
+            sentiment_coefficient=base_result.sentiment_coefficient,
+            ciss_coefficient=ciss_coef,
+            combined_coefficient=base_result.sentiment_coefficient,  # Combined effect
+            aic=base_result.aic,
+            bic=base_result.bic,
+            log_likelihood=base_result.log_likelihood,
+            residuals=base_result.residuals,
+            midas_weights=base_result.midas_weights,
+            convergence=base_result.convergence,
+            ciss_weight=self.ciss_weight,
+        )
+    
+    def get_volatility_decomposition(self) -> pd.DataFrame:
+        """
+        Decompose volatility into sentiment and CISS contributions.
+        
+        Returns:
+            DataFrame with columns:
+            - total_vol: Total conditional volatility
+            - short_run: GARCH component
+            - long_run: MIDAS component
+            - sentiment_contrib: Estimated sentiment contribution
+            - ciss_contrib: Estimated CISS contribution
+        """
+        if self._result is None:
+            raise ValueError("Model must be fitted first")
+        
+        result = pd.DataFrame(index=self._result.conditional_volatility.index)
+        result['total_vol'] = self._result.conditional_volatility
+        result['short_run'] = self._result.short_run_volatility
+        result['long_run'] = self._result.long_run_volatility
+        
+        # Estimate contributions using fitted coefficients
+        if self._sentiment is not None:
+            sent_aligned = self._sentiment.reindex(result.index, method='ffill').fillna(0)
+            sent_coef = self._result.sentiment_coefficient or 0
+            result['sentiment_contrib'] = sent_aligned * sent_coef * (1 - self.ciss_weight)
+        
+        if self._ciss is not None:
+            ciss_aligned = self._ciss.reindex(result.index, method='ffill').fillna(0)
+            ciss_coef = self._ciss_coefficient or 0
+            result['ciss_contrib'] = ciss_aligned * ciss_coef * self.ciss_weight
+        
+        return result
+
+
+@dataclass
+class GARCHMIDASWithCISSResult(GARCHMIDASResult):
+    """Extended result with CISS-specific outputs."""
+    
+    ciss_coefficient: Optional[float] = None
+    combined_coefficient: Optional[float] = None
+    ciss_weight: float = 0.5
+    
+    def to_dict(self) -> dict:
+        """Convert to dictionary for serialization."""
+        base = super().to_dict()
+        base.update({
+            "ciss_coefficient": self.ciss_coefficient,
+            "combined_coefficient": self.combined_coefficient,
+            "ciss_weight": self.ciss_weight,
+        })
+        return base
+    
+    def summary(self) -> str:
+        """Generate model summary."""
+        lines = [
+            "GARCH-MIDAS with CISS Model Results",
+            "=" * 45,
+            "",
+            "GARCH Parameters:",
+            f"  ω (omega):  {self.params.get('omega', 'N/A'):.6f}",
+            f"  α (alpha):  {self.params.get('alpha', 'N/A'):.6f}",
+            f"  β (beta):   {self.params.get('beta', 'N/A'):.6f}",
+            "",
+            "MIDAS Exogenous Coefficients:",
+            f"  Sentiment:  {self.sentiment_coefficient or 'N/A'}",
+            f"  CISS:       {self.ciss_coefficient or 'N/A'}",
+            f"  Combined:   {self.combined_coefficient or 'N/A'}",
+            f"  CISS Weight: {self.ciss_weight:.2f}",
+            "",
+            "Model Fit:",
+            f"  Log-Likelihood: {self.log_likelihood:.2f}",
+            f"  AIC: {self.aic:.2f}",
+            f"  BIC: {self.bic:.2f}",
+            f"  Converged: {self.convergence}",
+            "",
+            "Volatility Statistics:",
+            f"  Mean: {self.conditional_volatility.mean():.4f}",
+            f"  Std:  {self.conditional_volatility.std():.4f}",
+            f"  Max:  {self.conditional_volatility.max():.4f}",
+        ]
+        return "\n".join(lines)
