@@ -176,6 +176,7 @@ The baseline GARCH confirms arch library works on HPC - volatility persistence (
 ### Task: ML Regime Classifier ✅ COMPLETED
 
 **Created Files:**
+
 - `scripts/train_regime_classifier.py` - Full training pipeline
 - `scripts/test_regime_classifier.py` - Validation tests
 - `models/regime_classifier_best.pkl` - Best trained model
@@ -184,11 +185,13 @@ The baseline GARCH confirms arch library works on HPC - volatility persistence (
 - `models/training_summary.json` - Training metrics
 
 **Training Data:**
+
 - 4,203 samples (2010-01-01 to 2026-01-29)
 - Train: 3,658 samples (up to 2023-12-31)
 - Validation: 545 samples (2024-01-31)
 
 **Label Distribution:**
+
 | Regime | Count | Percentage |
 |--------|-------|------------|
 | risk_on | 2,712 | 64.5% |
@@ -203,6 +206,7 @@ The baseline GARCH confirms arch library works on HPC - volatility persistence (
 | **GradientBoosting** | **99.45%** | **99.44%** |
 
 **Top Features (GradientBoosting):**
+
 1. `ciss_lag1`: 98.83%
 2. `ciss_ma5`: 0.31%
 3. `ciss_change_5d`: 0.19%
@@ -210,12 +214,14 @@ The baseline GARCH confirms arch library works on HPC - volatility persistence (
 5. `ciss_change`: 0.09%
 
 **Service Integration:**
+
 - Added `MLRegimeClassifier` to `src/sentiment_detector/services/regime_classifier.py`
 - Added `ciss_level` field to `SentimentFeatures` dataclass
 - Model auto-loads from `models/regime_classifier_best.pkl`
 - Falls back to rule-based if model not found
 
 **Test Results:**
+
 | Scenario | CISS | VIX | Predicted | Confidence |
 |----------|------|-----|-----------|------------|
 | Risk-on | 0.08 | 14 | ✅ risk_on | 88.14% |
@@ -226,51 +232,154 @@ The baseline GARCH confirms arch library works on HPC - volatility persistence (
 
 ---
 
-## 🔄 Mid-Afternoon Session Prompt (Feb 2, 2026)
+### Task: Fix MIDAS Data Alignment ✅ COMPLETED
+
+**Problem:** NASDAQ data only covered 2010-2020, causing gaps in MIDAS alignment.
+
+**Solution:** Downloaded SPY data from Yahoo Finance (2010-2026).
+
+**Created Files:**
+
+- `scripts/download_spy_data.py` - SPY data downloader
+- `data/midas_aligned/daily_aligned.csv` - 3,898 daily records
+- `data/midas_aligned/weekly_midas.csv` - 810 weekly MIDAS records
+
+**Data Coverage:**
+
+| Dataset | Start | End | Records |
+|---------|-------|-----|---------|
+| SPY | 2010-01-04 | 2026-01-31 | 4,045 |
+| Daily Aligned | 2010-01-05 | 2026-01-29 | 3,898 |
+| Weekly MIDAS | 2010-01-10 | 2026-01-26 | 810 |
+
+**Git Commit:** `7fcd747` - feat: Fix MIDAS alignment with SPY data
+
+---
+
+### Task: Frontend Dashboard Updates ✅ COMPLETED
+
+**Backend Changes:**
+
+- Updated `/regime/current` endpoint to use `MLRegimeClassifier`
+- Added CISS/VIX fetching from database to regime response
+- Added `/regime/ciss/history` endpoint for historical data
+- Fixed PostgreSQL interval syntax error
+
+**Frontend Components Created:**
+
+- `frontend/src/components/CISSPanel.tsx` - Gauges for current CISS/VIX
+- `frontend/src/components/CISSHistoryChart.tsx` - Historical line chart
+
+**Dashboard Features:**
+
+| Component | Description |
+|-----------|-------------|
+| RegimePanel | ML-based regime classification (88% confidence) |
+| CISSPanel | Current CISS (0.0436) and VIX (17.44) gauges |
+| CISSHistoryChart | 30/90/180/365-day historical chart |
+| SentimentCards | 4 asset class sentiment displays |
+| CrossAssetSummary | Aggregate sentiment metrics |
+
+**API Endpoints Working:**
+
+| Endpoint | Status |
+|----------|--------|
+| `/api/v1/regime/current` | ✅ ML model, CISS, VIX |
+| `/api/v1/regime/ciss/history` | ✅ Historical data |
+| `/api/v1/sentiment/current` | ✅ 4 asset classes |
+| `/api/v1/health` | ✅ Healthy |
+
+**Git Commit:** `9011094` - Add CISS history chart and fix PostgreSQL interval syntax
+
+---
+
+## 📊 Afternoon Session Summary
+
+| Task | Status | Commit |
+|------|--------|--------|
+| ML Regime Classifier | ✅ 99.45% F1 | bfbb071 |
+| MIDAS Data Alignment | ✅ 810 weeks | 7fcd747 |
+| Frontend Dashboard | ✅ CISS/VIX panels | 9011094 |
+
+**Total Files Modified/Created:** 12+
+**Total Git Commits:** 3
+
+---
+
+*Session completed: ~5:00 PM, February 2, 2026*
+
+---
+
+## 🌙 EVENING SESSION PROMPT (Feb 2, 2026)
 
 Copy and paste this prompt to continue:
 
 ---
 
-**Context:** February 2, 2026 morning session complete. Week 4 GARCH-MIDAS work finished.
+**Context:** February 2, 2026 afternoon session complete. Frontend dashboard work in progress.
 
-**Completed today:**
+**Completed Today (Feb 2):**
 
-- ✅ HPC GARCH(1,1) on ManeFrame (AIC: 7027.28, α+β=0.955)
-- ✅ 2008 Crisis backtest: CISS peak 0.94, sentiment β=-0.78 (p=0.004)
-- ✅ COVID backtest: VIX peak 82.69, VIX-CISS corr 0.92, R²=0.71
-- ✅ GameStop: Correctly identified as non-systemic (CISS=0.02)
-- ✅ Cross-asset: Gold +209%, BTC -77%
-- ✅ 4 visualizations generated (results/figures/)
-- ✅ README updated with all results
-- ✅ Git synced: commit f5a90a7
+- ✅ ML Regime Classifier: GradientBoosting, 99.45% F1, `models/regime_classifier_best.pkl`
+- ✅ MIDAS Data Alignment: SPY data (2010-2026), 810 weeks aligned
+- ✅ Frontend Dashboard: CISSPanel, CISSHistoryChart, RegimePanel integration
+- ✅ Backend API: `/regime/current` uses ML model, returns CISS/VIX
+- ✅ CISS History API: `/regime/ciss/history` with 30/90/180/365-day options
 
-**Key data in PostgreSQL:**
+**Servers (start these first):**
 
-- 2.66M texts with sentiment scores (2002-2026)
-- 12,029 ECB CISS records (1999-2026)
-- 135K+ market data records (VIX, Gold, Crypto, etc.)
+```bash
+# Terminal 1 - Backend API
+cd /Users/jonathanrocha/Documents/SMU/DS_6210_Capstone
+PYTHONPATH=src .venv/bin/python -m uvicorn sentiment_detector.main:create_app --factory --host 0.0.0.0 --port 8000
 
-**GARCH(1,1) Parameters (from HPC):**
+# Terminal 2 - Frontend
+cd /Users/jonathanrocha/Documents/SMU/DS_6210_Capstone/frontend
+npm run dev
+```
 
-| Param | Value |
-|-------|-------|
-| α (ARCH) | 0.155 |
-| β (GARCH) | 0.800 |
-| α + β | 0.955 |
+**Current Dashboard State:**
 
-**Potential next steps:**
+| Component | Status | Notes |
+|-----------|--------|-------|
+| RegimePanel | ✅ | Shows risk_on/off/transition with ML confidence |
+| CISSPanel | ✅ | Gauges for CISS (0.0436) and VIX (17.44) |
+| CISSHistoryChart | ✅ | Line chart with period selector |
+| SentimentCards | ✅ | 4 asset classes |
+| GARCH Results Panel | ❌ | Not started |
+| Sentiment History Chart | ❌ | Not started |
 
-1. Regime classification model (RF/XGBoost/LSTM) for Risk-On/Off
-2. Fix MIDAS component data alignment for full GARCH-MIDAS
-3. Start frontend dashboard development
-4. Begin final paper writing
+**Key Files:**
 
-**Files created this session:**
+- `src/sentiment_detector/api/routes/regime.py` - Regime endpoints
+- `src/sentiment_detector/services/regime_classifier.py` - ML classifier
+- `frontend/src/app/page.tsx` - Main dashboard
+- `frontend/src/components/CISSPanel.tsx` - CISS/VIX gauges
+- `frontend/src/components/CISSHistoryChart.tsx` - History chart
 
-- `scripts/hpc/run_garch_midas_hpc.py` - HPC GARCH estimation
-- `scripts/generate_visualizations.py` - Chart generation
-- `results/figures/*.png` - 4 visualization charts
-- `results/garch_midas_results_20260202_113920.json` - HPC results
+**Database (PostgreSQL - Docker container `sentiment-db`):**
+
+- 2.66M texts with sentiment
+- 12,029 ECB CISS records
+- 4,045 SPY records
+- 4,044 VIX records
+
+**Remaining Dashboard Tasks:**
+
+1. Add GARCH Results Panel (display volatility forecasts from HPC results)
+2. Add Sentiment History Chart (time series of cross-asset sentiment)
+3. Add Regime Transition Timeline (when regimes changed)
+4. Polish styling and responsiveness
+
+**Git Status:** All committed and pushed (main branch)
+
+- Latest: `9011094` - Add CISS history chart and fix PostgreSQL interval syntax
+
+**Evening Goals (choose one or more):**
+
+1. Continue frontend enhancements (GARCH panel, sentiment history chart)
+2. Start final paper outline/writing
+3. Re-run GARCH-MIDAS with properly aligned data on HPC
+4. Add alert/notification system to dashboard
 
 ---
