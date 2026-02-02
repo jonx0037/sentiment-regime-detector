@@ -37,11 +37,23 @@ export interface SentimentHistoryResponse {
 
 export type RegimeState = 'risk_on' | 'risk_off' | 'transition'
 
+export interface RegimeFeatures {
+  equity_sentiment?: number
+  crypto_sentiment?: number
+  forex_sentiment?: number
+  commodity_sentiment?: number
+  cross_asset_mean?: number
+  sentiment_momentum_7d?: number
+  max_divergence?: number
+  ciss_level?: number | null
+  vix_level?: number | null
+}
+
 export interface RegimeResponse {
   timestamp: string
   regime: RegimeState
   confidence: number
   probabilities: Record<RegimeState, number>
-  features: Record<string, number>
+  features: RegimeFeatures
   model_version: string
 }

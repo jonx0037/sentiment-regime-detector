@@ -1,16 +1,18 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { sentimentApi } from '@/services/api'
-import type { SentimentResponse } from '@/types/api'
+import { sentimentApi, regimeApi } from '@/services/api'
+import type { SentimentResponse, RegimeResponse } from '@/types/api'
 import SentimentCard from '@/components/SentimentCard'
 import CrossAssetSummary from '@/components/CrossAssetSummary'
 import SentimentComparisonChart from '@/components/SentimentComparisonChart'
 import RegimePanel from '@/components/RegimePanel'
+import CISSPanel from '@/components/CISSPanel'
 import { RefreshCw } from 'lucide-react'
 
 export default function Dashboard() {
   const [data, setData] = useState<SentimentResponse | null>(null)
+  const [regime, setRegime] = useState<RegimeResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
@@ -19,8 +21,12 @@ export default function Dashboard() {
     try {
       setLoading(true)
       setError(null)
-      const response = await sentimentApi.getCurrentSentiment()
-      setData(response)
+      const [sentimentResponse, regimeResponse] = await Promise.all([
+        sentimentApi.getCurrentSentiment(),
+        regimeApi.getCurrentRegime(),
+      ])
+      setData(sentimentResponse)
+      setRegime(regimeResponse)
       setLastUpdate(new Date())
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch data')
@@ -104,9 +110,13 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Regime Detection Panel */}
-        <div className="mb-8">
+        {/* Regime and CISS Panel Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <RegimePanel />
+          <CISSPanel 
+            cissLevel={regime?.features?.ciss_level as number | undefined}
+            vixLevel={regime?.features?.vix_level as number | undefined}
+          />
         </div>
 
         {/* Cross-Asset Summary */}

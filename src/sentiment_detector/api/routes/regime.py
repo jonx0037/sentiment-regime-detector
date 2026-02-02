@@ -16,6 +16,7 @@ from sentiment_detector.core.database import get_session
 from sentiment_detector.models import SentimentIndex
 from sentiment_detector.services.regime_classifier import (
     RegimeClassifier,
+    MLRegimeClassifier,
     SentimentFeatures,
 )
 
@@ -70,6 +71,26 @@ async def get_latest_features(session: AsyncSession) -> SentimentFeatures:
         older_avg = sum(h[1] or 0 for h in historical[7:14]) / max(len(historical[7:14]), 1)
         momentum = recent_avg - older_avg
     
+    # Get latest CISS value
+    ciss_result = await session.execute(text("""
+        SELECT value FROM stress_indices 
+        WHERE source = 'ecb_ciss' 
+        ORDER BY date DESC 
+        LIMIT 1
+    """))
+    ciss_row = ciss_result.fetchone()
+    ciss_level = float(ciss_row[0]) if ciss_row else None
+    
+    # Get latest VIX value
+    vix_result = await session.execute(text("""
+        SELECT close FROM market_data 
+        WHERE symbol = '^VIX' 
+        ORDER BY date DESC 
+        LIMIT 1
+    """))
+    vix_row = vix_result.fetchone()
+    vix_level = float(vix_row[0]) if vix_row else None
+    
     return SentimentFeatures(
         equity_sentiment=sentiments.get('equity', 0.0),
         crypto_sentiment=sentiments.get('crypto', 0.0),
@@ -80,6 +101,8 @@ async def get_latest_features(session: AsyncSession) -> SentimentFeatures:
         sentiment_momentum=momentum,
         sentiment_acceleration=acceleration,
         max_divergence=max_divergence,
+        vix_level=vix_level,
+        ciss_level=ciss_level,
     )
 
 
@@ -99,9 +122,13 @@ async def get_current_regime(
     # Get real features from database
     features = await get_latest_features(session)
     
-    # Run regime classification
-    classifier = RegimeClassifier()
-    classification = classifier.classify(features)
+    # Try ML classifier first, fall back to rule-based
+    try:
+        classifier = MLRegimeClassifier()
+        classification = classifier.classify(features)
+    except Exception:
+        classifier = RegimeClassifier()
+        classification = classifier.classify(features)
     
     return RegimeResponse(
         timestamp=datetime.now(timezone.utc),
@@ -120,6 +147,8 @@ async def get_current_regime(
             "cross_asset_mean": features.cross_asset_mean,
             "sentiment_momentum_7d": features.sentiment_momentum,
             "max_divergence": features.max_divergence,
+            "ciss_level": features.ciss_level,
+            "vix_level": features.vix_level,
         },
         model_version=classification.model_version,
     )
