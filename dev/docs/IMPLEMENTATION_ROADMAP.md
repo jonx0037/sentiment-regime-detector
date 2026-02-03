@@ -146,7 +146,7 @@ src/sentiment_detector/features/
 - ✅ FinBERT (ProsusAI/finbert)
 - ✅ RoBERTa (cardiffnlp/twitter-roberta-base-sentiment-latest)
 - ✅ DistilBERT (development)
-- 🔴 Llama 3 (7B) - To be added in Phase 2
+- 🔴  3 (7B) - To be added in Phase 2
 
 **Ensemble Strategy:** Weighted voting with asset-class specific adjustments
 
@@ -155,7 +155,7 @@ src/sentiment_detector/features/
 - [x] Create weight learning infrastructure (calibrate method)
 - [x] Add model confidence calibration
 - [x] Asset-class specific weight adjustments
-- [ ] Prepare Llama 3 integration interface (Phase 2)
+- [ ] Prepare  3 integration interface (Phase 2)
 
 **Note on Source-Dependent Weighting:**  
 *This is NOT contradictory to ensemble strategy. Source-dependent weighting adjusts the ensemble weights based on the text source (e.g., RoBERTa weighted higher for Twitter/crypto, FinBERT for news/equity). The final ensemble still combines all models, but the weight coefficients vary by source type.*
@@ -343,29 +343,29 @@ src/sentiment_detector/models/tests/test_jump_model.py  # 20 tests
 
 ---
 
-### Llama 3 (7B) Integration
+###  3 (7B) Integration
 **Status:** ✅ INTERFACE READY + HPC SCRIPT (Jan 31, 2026)  
 **Decision:** Add to ensemble per Abstract
 
 **Tasks:**
-- [x] Create Llama sentiment model interface
-- [x] Multiple backends: transformers, llama.cpp, API
+- [x] Create  sentiment model interface
+- [x] Multiple backends: transformers, .cpp, API
 - [x] Mock mode for testing
 - [x] Ensemble integration function
 - [x] Create HPC SLURM script for GPU processing
-- [ ] Set up Llama 3 (7B) on MANEFRAME (run script)
+- [ ] Set up  3 (7B) on MANEFRAME (run script)
 - [ ] Fine-tune on financial corpus (if time permits)
 
 **Files Created:**
 ```
-src/sentiment_detector/models/llama_sentiment.py   # LlamaSentimentModel
-scripts/hpc/run_llama_sentiment.sh                 # SLURM GPU job script
+src/sentiment_detector/models/_sentiment.py   # SentimentModel
+scripts/hpc/run__sentiment.sh                 # SLURM GPU job script
 ```
 
 **Key Components:**
-- `LlamaSentimentModel`: Multi-backend Llama inference
-- `LlamaBackend`: Enum for transformers/llama_cpp/api/mock
-- `create_llama_for_ensemble()`: Factory for ensemble integration
+- `SentimentModel`: Multi-backend  inference
+- `Backend`: Enum for transformers/_cpp/api/mock
+- `create__for_ensemble()`: Factory for ensemble integration
 - Prompt templates for zero-shot sentiment
 
 ---
@@ -581,7 +581,7 @@ pip install arch            # GARCH-MIDAS
 5. **Text preprocessing:** Explicit cleaning with finance-aware stop words
 6. **Asset classification:** Multi-label required
 7. **Ensemble:** Learned weights, source-dependent weighting OK
-8. **Llama 3 (7B):** Add to ensemble per Abstract
+8. ** 3 (7B):** Add to ensemble per Abstract
 9. **Features (3.6.2, 3.6.3):** Priority 1 (H2, H3 validation)
 10. **Granger causality:** Implement before correlation networks
 11. **Transfer Entropy:** PyInform first, alternatives if needed
@@ -607,7 +607,7 @@ pip install arch            # GARCH-MIDAS
 7. ✅ Create unit tests (61 tests passing)
 8. ✅ Submit Kaggle sentiment batch to MANEFRAME (Job #22738051)
 9. ✅ Implement Statistical Jump Model (20 tests passing)
-10. ✅ Create Llama 3 HPC SLURM script
+10. ✅ Create  3 HPC SLURM script
 11. ✅ Implement Hypothesis Validation Framework (H1, H2, H3 - all SUPPORTED)
 12. ✅ Implement Walk-Forward Backtesting (25 windows, 93.5% accuracy)
 13. ✅ Implement E2E Pipeline Integration (4 stages, 1.27s runtime)
@@ -641,7 +641,7 @@ pip install arch            # GARCH-MIDAS
 - [ ] Prepare defense presentation outline
 
 **Optional Enhancements:**
-- [ ] Run Llama 3 on MANEFRAME GPU
+- [ ] Run  3 on MANEFRAME GPU
 - [ ] Collect additional data sources (target: 5-10M texts)
 - [ ] Fine-tune FinBERT on domain data
 

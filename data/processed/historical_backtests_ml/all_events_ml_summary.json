@@ -1,0 +1,108 @@
+{
+  "generated_at": "2026-02-03T02:49:33.303631",
+  "model_version": "ml-best-v1",
+  "events": [
+    {
+      "event": "COVID Market Crash",
+      "event_key": "covid",
+      "period": {
+        "start": "2020-02-15",
+        "end": "2020-04-15",
+        "peak": "2020-03-16",
+        "vix_peak": 82.69
+      },
+      "metrics": {
+        "accuracy": 0.8048780487804879,
+        "exact_match_days": 33,
+        "total_days": 41,
+        "texts_analyzed": 77063,
+        "avg_confidence": 0.6744519026096856
+      },
+      "detection": {
+        "peak_detected": true,
+        "early_warning_days": 17
+      },
+      "regime_counts": {
+        "actual": {
+          "risk_off": 32,
+          "transition": 5,
+          "risk_on": 4
+        },
+        "predicted": {
+          "risk_off": 27,
+          "risk_on": 8,
+          "transition": 6
+        }
+      }
+    },
+    {
+      "event": "FTX Collapse",
+      "event_key": "ftx",
+      "period": {
+        "start": "2022-11-01",
+        "end": "2022-11-30",
+        "peak": "2022-11-10",
+        "vix_peak": 33.43
+      },
+      "metrics": {
+        "accuracy": 0.0,
+        "exact_match_days": 0,
+        "total_days": 21,
+        "texts_analyzed": 70942,
+        "avg_confidence": 0.6134460417469884
+      },
+      "detection": {
+        "peak_detected": true,
+        "early_warning_days": 9
+      },
+      "regime_counts": {
+        "actual": {
+          "risk_on": 16,
+          "transition": 5
+        },
+        "predicted": {
+          "risk_off": 17,
+          "transition": 4
+        }
+      }
+    },
+    {
+      "event": "Silicon Valley Bank",
+      "event_key": "svb",
+      "period": {
+        "start": "2023-03-01",
+        "end": "2023-03-31",
+        "peak": "2023-03-13",
+        "vix_peak": 28.0
+      },
+      "metrics": {
+        "accuracy": 0.4782608695652174,
+        "exact_match_days": 11,
+        "total_days": 23,
+        "texts_analyzed": 31584,
+        "avg_confidence": 0.6972857140346731
+      },
+      "detection": {
+        "peak_detected": true,
+        "early_warning_days": 0
+      },
+      "regime_counts": {
+        "actual": {
+          "risk_on": 20,
+          "transition": 3
+        },
+        "predicted": {
+          "transition": 12,
+          "risk_on": 8,
+          "risk_off": 3
+        }
+      }
+    }
+  ],
+  "overall_stats": {
+    "avg_accuracy": 0.4277129727819018,
+    "avg_confidence": 0.661727886130449,
+    "total_texts": 179589,
+    "total_days": 85
+  }
+}

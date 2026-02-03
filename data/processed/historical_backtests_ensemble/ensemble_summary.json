@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-02-03T02:55:51.941523",
+  "method": "ensemble_weighted_voting",
+  "events": [
+    {
+      "event": "COVID Market Crash",
+      "event_key": "covid",
+      "metrics": {
+        "ensemble_accuracy": 0.8048780487804879,
+        "ml_only_accuracy": 0.8048780487804879,
+        "rule_only_accuracy": 0.04878048780487805,
+        "agreement_rate": 0.14634146341463414,
+        "avg_confidence": 0.5169175243006331,
+        "exact_match_days": 33,
+        "total_days": 41
+      },
+      "detection": {
+        "peak_detected": true,
+        "early_warning_days": 17
+      }
+    },
+    {
+      "event": "FTX Collapse",
+      "event_key": "ftx",
+      "metrics": {
+        "ensemble_accuracy": 0.0,
+        "ml_only_accuracy": 0.0,
+        "rule_only_accuracy": 0.23809523809523808,
+        "agreement_rate": 0.19047619047619047,
+        "avg_confidence": 0.45203350782966384,
+        "exact_match_days": 0,
+        "total_days": 21
+      },
+      "detection": {
+        "peak_detected": true,
+        "early_warning_days": 9
+      }
+    },
+    {
+      "event": "Silicon Valley Bank",
+      "event_key": "svb",
+      "metrics": {
+        "ensemble_accuracy": 0.4782608695652174,
+        "ml_only_accuracy": 0.4782608695652174,
+        "rule_only_accuracy": 0.30434782608695654,
+        "agreement_rate": 0.391304347826087,
+        "avg_confidence": 0.5829255222358368,
+        "exact_match_days": 11,
+        "total_days": 23
+      },
+      "detection": {
+        "peak_detected": true,
+        "early_warning_days": 0
+      }
+    }
+  ],
+  "overall_stats": {
+    "avg_ensemble_accuracy": 0.4277129727819018,
+    "avg_ml_only": 0.4277129727819018,
+    "avg_rule_only": 0.19707451732902423,
+    "avg_agreement": 0.24270733390563723
+  }
+}
