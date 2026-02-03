@@ -9,6 +9,9 @@ import SentimentComparisonChart from '@/components/SentimentComparisonChart'
 import RegimePanel from '@/components/RegimePanel'
 import CISSPanel from '@/components/CISSPanel'
 import CISSHistoryChart from '@/components/CISSHistoryChart'
+import SentimentHistoryChart from '@/components/SentimentHistoryChart'
+import GARCHResultsPanel from '@/components/GARCHResultsPanel'
+import RegimeTimeline from '@/components/RegimeTimeline'
 import { RefreshCw } from 'lucide-react'
 
 export default function Dashboard() {
@@ -110,56 +113,100 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Regime and CISS Panel Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <RegimePanel />
-          <CISSPanel 
-            cissLevel={regime?.features?.ciss_level as number | undefined}
-            vixLevel={regime?.features?.vix_level as number | undefined}
-          />
-        </div>
-
-        {/* CISS/VIX History Chart */}
-        <div className="mb-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Section 1: Regime & Market Stress */}
+        <section>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <span className="text-2xl">📊</span>
+            Current Market Regime
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <RegimePanel />
+            <CISSPanel
+              cissLevel={regime?.features?.ciss_level as number | undefined}
+              vixLevel={regime?.features?.vix_level as number | undefined}
+            />
+          </div>
           <CISSHistoryChart />
-        </div>
+        </section>
 
-        {/* Cross-Asset Summary */}
-        <div className="mb-8">
+        {/* Section 2: Cross-Asset Sentiment */}
+        <section>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <span className="text-2xl">💭</span>
+            Cross-Asset Sentiment Analysis
+          </h2>
           <CrossAssetSummary data={data} />
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+            {data.asset_classes
+              .sort((a, b) => a.asset_class.localeCompare(b.asset_class))
+              .map((sentiment) => (
+                <SentimentCard key={sentiment.asset_class} sentiment={sentiment} />
+              ))}
+          </div>
+          <div className="mt-6">
+            <SentimentComparisonChart data={data.asset_classes} />
+          </div>
+          <div className="mt-6">
+            <SentimentHistoryChart />
+          </div>
+        </section>
 
-        {/* Sentiment Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {data.asset_classes
-            .sort((a, b) => a.asset_class.localeCompare(b.asset_class))
-            .map((sentiment) => (
-              <SentimentCard key={sentiment.asset_class} sentiment={sentiment} />
-            ))}
-        </div>
-
-        {/* Comparison Chart */}
-        <div className="mb-8">
-          <SentimentComparisonChart data={data.asset_classes} />
-        </div>
+        {/* Section 3: Volatility & Transitions */}
+        <section>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <span className="text-2xl">📈</span>
+            Volatility Modeling & Regime History
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <GARCHResultsPanel />
+            <RegimeTimeline />
+          </div>
+        </section>
 
         {/* Footer Info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <div className="text-blue-600 text-xl">ℹ️</div>
-            <div className="flex-1">
-              <h3 className="text-sm font-semibold text-blue-900 mb-1">
-                About This Dashboard
-              </h3>
-              <p className="text-xs text-blue-800">
-                This dashboard displays real-time sentiment analysis across major asset classes using 
-                DistilBERT NLP models. Sentiment scores range from -100 (extremely bearish) to +100 
-                (extremely bullish). Data is aggregated from Reddit, news sources, and social media.
-              </p>
+        <section className="mt-8">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+            <div className="flex items-start gap-4">
+              <div className="text-blue-600 text-2xl">ℹ️</div>
+              <div className="flex-1">
+                <h3 className="text-base font-semibold text-blue-900 mb-2">
+                  About This Dashboard
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+                  <div>
+                    <p className="font-medium mb-1">Sentiment Analysis</p>
+                    <p className="text-xs">
+                      DistilBERT NLP models analyze sentiment across equity, crypto, forex, and commodity markets.
+                      Scores range from -1 (bearish) to +1 (bullish). Data from Reddit, news, and social media.
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-medium mb-1">Regime Detection</p>
+                    <p className="text-xs">
+                      ML-based classifier (99.45% accuracy) uses CISS, VIX, and sentiment features to identify
+                      risk-on, risk-off, and transition regimes in real-time.
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-medium mb-1">Volatility Modeling</p>
+                    <p className="text-xs">
+                      GARCH(1,1) models forecast market volatility with high persistence (α+β=0.955),
+                      combining ARCH effects and historical volatility memory.
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-medium mb-1">Data Sources</p>
+                    <p className="text-xs">
+                      ECB CISS (systemic stress), CBOE VIX (implied volatility), and 2.66M+ sentiment texts
+                      from multiple sources provide comprehensive market coverage.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
       </main>
     </div>
   )

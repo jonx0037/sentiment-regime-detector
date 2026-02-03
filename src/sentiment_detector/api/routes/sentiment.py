@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Literal
 
 from fastapi import APIRouter, Query, Depends
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from sentiment_detector.api.schemas.sentiment import (
@@ -108,17 +109,57 @@ async def get_sentiment_history(
     )
 
 
+@router.get("/cross-asset/history")
+async def get_cross_asset_sentiment_history(
+    days: int = Query(default=90, le=365, description="Number of days of history"),
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    """
+    Get historical cross-asset sentiment data for all asset classes.
+
+    Returns time-series sentiment data for equity, crypto, forex, and commodity.
+    """
+    result = await session.execute(text("""
+        SELECT
+            DATE(period_start) as date,
+            asset_class,
+            AVG(mean_compound) as avg_sentiment,
+            COUNT(*) as count
+        FROM sentiment_indices
+        WHERE source IS NULL
+          AND period_start >= CURRENT_DATE - :days * INTERVAL '1 day'
+        GROUP BY DATE(period_start), asset_class
+        ORDER BY date, asset_class
+    """), {"days": days})
+    rows = result.fetchall()
+
+    # Organize data by date
+    data_by_date = {}
+    for row in rows:
+        date_str = str(row[0])
+        if date_str not in data_by_date:
+            data_by_date[date_str] = {"date": date_str}
+        data_by_date[date_str][row[1]] = float(row[2]) if row[2] else None
+
+    return {
+        "start_date": str(rows[0][0]) if rows else None,
+        "end_date": str(rows[-1][0]) if rows else None,
+        "count": len(data_by_date),
+        "data": list(data_by_date.values()),
+    }
+
+
 @router.get("/by-source")
 async def get_sentiment_by_source(
     asset_class: AssetClass = Query(..., description="Asset class to filter"),
 ) -> dict:
     """
     Get sentiment breakdown by data source (Reddit, Twitter, News).
-    
+
     Useful for identifying divergence between retail and news sentiment.
     """
     # TODO: Implement source-level breakdown
-    
+
     return {
         "asset_class": asset_class,
         "sources": {

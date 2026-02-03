@@ -174,38 +174,76 @@ async def get_regime_history(
     )
 
 
-@router.get("/transitions", response_model=list[RegimeTransition])
+@router.get("/transitions")
 async def get_regime_transitions(
     start_date: datetime = Query(default=None, description="Start date filter"),
     limit: int = Query(default=10, le=100, description="Max transitions to return"),
-) -> list[RegimeTransition]:
+    session: AsyncSession = Depends(get_session),
+) -> dict:
     """
     Get list of regime transitions.
-    
+
     Each transition includes:
         - From/to regime states
         - Transition timestamp
-        - Duration
-        - Trigger features (what drove the change)
-        - Validation status (confirmed by price action)
+        - CISS and VIX levels at transition
     """
-    # TODO: Implement transition history retrieval
-    
-    return [
-        RegimeTransition(
-            id="trans_001",
-            from_regime="risk_on",
-            to_regime="transition",
-            transition_start=datetime(2024, 1, 15, 14, 30, tzinfo=timezone.utc),
-            transition_end=datetime(2024, 1, 16, 9, 0, tzinfo=timezone.utc),
-            duration_hours=18.5,
-            trigger_features={
-                "crypto_sentiment_drop": -0.35,
-                "equity_crypto_divergence": 0.42,
-            },
-            validated=True,
+    # Calculate regime transitions from historical CISS data
+    query = text("""
+        WITH regime_data AS (
+            SELECT
+                si.date,
+                si.value as ciss,
+                md.close as vix,
+                CASE
+                    WHEN si.value < 0.2 AND md.close < 20 THEN 'risk_on'
+                    WHEN si.value > 0.4 OR md.close > 30 THEN 'risk_off'
+                    ELSE 'transition'
+                END as regime
+            FROM stress_indices si
+            LEFT JOIN market_data md ON si.date = md.date AND md.symbol = '^VIX'
+            WHERE si.source = 'ecb_ciss'
+            ORDER BY si.date
         ),
-    ]
+        transitions AS (
+            SELECT
+                date,
+                regime,
+                LAG(regime) OVER (ORDER BY date) as prev_regime,
+                ciss,
+                vix
+            FROM regime_data
+        )
+        SELECT
+            date,
+            prev_regime as from_regime,
+            regime as to_regime,
+            ciss,
+            vix
+        FROM transitions
+        WHERE prev_regime IS NOT NULL
+          AND prev_regime != regime
+        ORDER BY date DESC
+        LIMIT :limit
+    """)
+
+    result = await session.execute(query, {"limit": limit})
+    rows = result.fetchall()
+
+    transitions = []
+    for row in rows:
+        transitions.append({
+            "date": str(row[0]),
+            "from_regime": row[1],
+            "to_regime": row[2],
+            "ciss": float(row[3]) if row[3] else None,
+            "vix": float(row[4]) if row[4] else None,
+        })
+
+    return {
+        "count": len(transitions),
+        "transitions": transitions,
+    }
 
 
 @router.get("/ciss/history")

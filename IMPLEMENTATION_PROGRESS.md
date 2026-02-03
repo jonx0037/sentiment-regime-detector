@@ -9,6 +9,7 @@
 ## 🎉 Latest Achievements (Jan 31, 2026 Evening)
 
 ### Historical Backtesting - GameStop Squeeze ✅
+
 | Metric | Value |
 |--------|-------|
 | Accuracy | 61.1% (11/18 days) |
@@ -17,11 +18,13 @@
 | Texts Analyzed | 91,104 |
 
 ### Dashboard API Integration ✅
+
 - FastAPI backend connected to PostgreSQL
 - RegimePanel showing live regime with 30s refresh
 - Cross-asset sentiment features displayed
 
 ### Data Expansion ✅
+
 - Imported 50,833 new WSB posts (Jan 20-27, 2021)
 - Total raw texts: 281,251 (+58,385)
 - Total sentiment scores: 277,721
@@ -31,6 +34,7 @@
 ## Completed Components
 
 ### 1. Time Alignment (Dakalbab et al., 2024/2025)
+
 **Location:** `src/sentiment_detector/preprocessing/`
 
 | File | Description | Tests |
@@ -39,12 +43,14 @@
 | `timezone_handler.py` | TimezoneHandler, 4:30 PM EST cutoff (Kengmegni, 2024) | 17 |
 
 **Key Features:**
+
 - ✅ Three alignment cases: PERFECT_MATCH, FORWARD_FILL, AGGREGATED
 - ✅ Forward-fill with configurable decay factor
 - ✅ Aggregated Index of Sentiment (AIS_t) computation
 - ✅ Trading date range generation (excludes weekends/holidays)
 
 ### 2. Text Preprocessing
+
 **Location:** `src/sentiment_detector/preprocessing/`
 
 | File | Description | Tests |
@@ -54,12 +60,14 @@
 | `asset_classifier.py` | MultiLabelAssetClassifier, AssetClass enum | Incl. above |
 
 **Key Features:**
+
 - ✅ Finance-aware stop words preserving bullish/bearish terms
 - ✅ Emoji preservation (BULLISH_EMOJIS, BEARISH_EMOJIS)
 - ✅ Source-specific cleaning (Reddit, Twitter, News)
 - ✅ Multi-label asset classification with weighted keywords
 
 ### 3. Feature Engineering (Cao et al., 2025; Caferra, 2022)
+
 **Location:** `src/sentiment_detector/features/`
 
 | File | Description | Tests |
@@ -69,6 +77,7 @@
 | `connectedness.py` | ConnectednessAnalyzer, DynamicConnectedness | 14 |
 
 **Key Features:**
+
 - ✅ Pairwise Granger causality with BIC lag selection
 - ✅ Transfer Entropy with permutation significance testing
 - ✅ Manual TE fallback for ARM/Apple Silicon (pyinform compatibility)
@@ -78,6 +87,7 @@
 - ✅ Centrality measures (in-degree, out-degree, eigenvector)
 
 ### 4. Sentiment Ensemble
+
 **Location:** `src/sentiment_detector/models/`
 
 | File | Description | Tests |
@@ -85,6 +95,7 @@
 | `sentiment_ensemble.py` | SentimentEnsemble, weighted voting | 25 |
 
 **Key Features:**
+
 - ✅ Weighted voting across FinBERT + RoBERTa
 - ✅ Asset-class specific weight adjustments
 - ✅ Confidence-weighted soft voting
@@ -94,6 +105,7 @@
 ## Module Exports
 
 ### `src/sentiment_detector/preprocessing/__init__.py`
+
 ```python
 from .time_alignment import TimeAligner, AlignmentCase, AlignmentResult
 from .timezone_handler import TimezoneHandler, MarketTimezone, MARKET_CUTOFF_TIME
@@ -103,6 +115,7 @@ from .asset_classifier import MultiLabelAssetClassifier, AssetClassification, As
 ```
 
 ### `src/sentiment_detector/features/__init__.py`
+
 ```python
 from .granger_causality import GrangerCausalityAnalyzer, GrangerResult, CausalityNetwork
 from .transfer_entropy import TransferEntropyAnalyzer, TransferEntropyResult, InformationFlowNetwork
