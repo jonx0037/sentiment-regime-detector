@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "sentiment-regime-detector"
 version = "0.1.0"
 description = "Cross-Asset Sentiment Regime Detector: Automating Market Psychology Analysis Through Multi-Source NLP"
-readme = "README.md"
+# readme = "README.md"  # Optional - disabled for deployment
 license = { text = "MIT" }
 requires-python = ">=3.11,<3.14"
 authors = [
@@ -28,34 +28,54 @@ dependencies = [
     "uvicorn[standard]>=0.27.0",
     "pydantic>=2.5.0",
     "pydantic-settings>=2.1.0",
-    
+
     # Database
     "sqlalchemy>=2.0.25",
     "asyncpg>=0.29.0",
     "alembic>=1.13.0",
     "redis>=5.0.0",
-    
-    # ML/NLP
+
+    # ML/NLP - Core
     "transformers>=4.37.0",
     "torch>=2.1.0",
     "datasets>=2.16.0",
+    "sentence-transformers>=2.2.0",
     "scikit-learn>=1.4.0",
     "scipy>=1.12.0",
-    
-    # Data Collection
-    "praw>=7.7.0",
-    "httpx>=0.26.0",
-    "aiohttp>=3.9.0",
+
+    # ML/NLP - Financial Domain
+    "finbert-embedding>=0.1.4",
+
+    # ML/NLP - Traditional Tools
+    "nltk>=3.8.0",
+    "spacy>=3.6.0",
+    "textblob>=0.17.0",
+    "vaderSentiment>=3.3.2",
+
+    # Data Collection - Social Media & News
+    "praw>=7.7.0",           # Reddit
+    "tweepy>=4.14.0",         # Twitter/X
+    "newsapi-python>=0.2.7",  # News aggregation
+    "httpx>=0.26.0",          # Async HTTP
+    "aiohttp>=3.9.0",         # Async HTTP alternative
+    "beautifulsoup4>=4.12.0", # Web scraping
+
+    # Data Collection - Financial Markets
     "yfinance>=0.2.35",
-    
-    # Data Processing
+    "pandas-datareader>=0.10.0",
+
+    # Data Processing & Analysis
     "pandas>=2.2.0",
     "numpy>=1.26.0",
-    
+    "statsmodels>=0.14.0",  # Time series analysis
+
     # Utilities
     "python-dotenv>=1.0.0",
     "structlog>=24.1.0",
     "tenacity>=8.2.0",
+    "tqdm>=4.65.0",         # Progress bars
+    "joblib>=1.3.0",        # Parallel processing
+    "jsonschema>=4.18.0",   # Data validation
 ]
 
 [project.optional-dependencies]
@@ -76,11 +96,18 @@ notebook = [
     "plotly>=5.18.0",
 ]
 hpc = [
-    # Additional packages for MANEFRAME training
+    # Additional packages for MANEFRAME HPC training
     "wandb>=0.16.0",
     "optuna>=3.5.0",
     "hmmlearn>=0.3.0",
     "xgboost>=2.0.0",
+    "pyspark>=3.5.0",  # Distributed processing
+]
+# CPU-only variant for systems without GPU
+cpu = [
+    # This group modifies torch to use CPU-only version
+    # Install with: pip install -e .[cpu] --find-links https://download.pytorch.org/whl/torch_stable.html
+    # Note: Manually override torch with: torch==2.0.0+cpu
 ]
 
 [project.scripts]
