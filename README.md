@@ -17,7 +17,8 @@ An automated system for detecting market regime transitions (Risk-On/Risk-Off/Tr
 
 ## 📊 Project Status
 
-**Current Phase:** Week 4 - GARCH-MIDAS & Backtesting Complete  
+**Current Phase:** Week 4 - GARCH-MIDAS & Backtesting Complete
+**Deployment:** Production deployment active on Railway (backend) + Vercel (frontend)  
 **Last Updated:** February 2, 2026
 
 ### Key Results
@@ -83,15 +84,35 @@ An automated system for detecting market regime transitions (Risk-On/Risk-Off/Tr
 
 ```text
 DS_6210_Capstone/
-├── course_files/              # SMU templates, syllabus, guidelines
-├── dev/
-│   ├── code/                  # Source code (Python backend, React frontend)
-│   ├── config/                # Configuration templates, requirements
-│   ├── data/                  # Data collection scripts (raw data git-ignored)
-│   ├── docs/                  # Technical documentation (Docker, K8s, etc.)
-│   ├── research/              # Draft papers, literature notes
-│   └── results/               # Model outputs, backtesting results, visualizations
-├── .gitignore                 # Git ignore rules (data, secrets, models)
+├── src/                       # Core application code
+│   └── sentiment_detector/    # Main Python package
+│       ├── api/               # FastAPI REST endpoints
+│       ├── collectors/        # Data collection (Reddit, Twitter, RSS)
+│       ├── core/              # Core models and database
+│       ├── features/          # Feature engineering
+│       ├── models/            # ML models (GARCH, classifiers)
+│       ├── pipeline/          # Data processing pipeline
+│       ├── preprocessing/     # Text preprocessing
+│       ├── services/          # Business logic services
+│       ├── spark/             # PySpark distributed processing
+│       └── validation/        # Data validation
+├── frontend/                  # React/Next.js dashboard
+│   ├── src/                   # Frontend source code
+│   └── public/                # Static assets
+├── tests/                     # Test suite
+├── scripts/                   # Utility scripts (data import, HPC, analysis)
+├── data/                      # Data storage (gitignored)
+│   ├── kaggle/                # Kaggle datasets
+│   ├── processed/             # Processed results
+│   └── raw/                   # Raw collected data
+├── alembic/                   # Database migrations
+├── archive/                   # Historical documentation
+├── course_files/              # SMU academic materials
+├── docs/                      # Project documentation
+├── models/                    # Trained model artifacts
+├── results/                   # Analysis results and figures
+├── pyproject.toml             # Project dependencies and config
+├── docker-compose.yml         # Docker infrastructure
 └── README.md                  # This file
 ```
 
@@ -140,34 +161,82 @@ DS_6210_Capstone/
 
 ### Prerequisites
 
-```bash
-# Python environment
-conda create -n sentiment python=3.9
-conda activate sentiment
-pip install -r dev/config/requirements.md
+- Python 3.11 or 3.12 (3.13 compatible)
+- Docker and Docker Compose (for infrastructure)
+- PostgreSQL 15+ and Redis 7+ (via Docker or local)
+- Node.js 18+ (for frontend development)
 
-# API Credentials (see dev/config/config-template.md)
-export REDDIT_CLIENT_ID="your_id"
-export REDDIT_CLIENT_SECRET="your_secret"
-export TWITTER_BEARER_TOKEN="your_token"
-export NEWSAPI_KEY="your_key"
+### Environment Setup
+
+```bash
+# 1. Clone repository
+git clone https://github.com/[your-username]/sentiment-regime-detector.git
+cd sentiment-regime-detector
+
+# 2. Create Python virtual environment
+python3.11 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -e .[dev]  # Install with development tools
+
+# 4. Configure API credentials
+cp .env.example .env
+# Edit .env with your API keys (see .env.example for required keys)
+
+# 5. Start infrastructure (PostgreSQL + Redis)
+docker compose up -d
 ```
 
 ### Quick Start
 
 ```bash
-# Clone repository
-git clone https://github.com/[your-username]/sentiment-regime-detector.git
-cd sentiment-regime-detector
+# Run database migrations
+alembic upgrade head
 
-# Set up environment
-make setup  # (see dev/docs/makefile-commands.md)
+# Start the API server
+uvicorn sentiment_detector.main:app --reload
 
-# Run data collection pipeline
-python dev/code/data-pipeline-orchestrator.py --start-date 2020-01-01 --end-date 2024-12-31
+# In another terminal, start the frontend (optional)
+cd frontend
+npm install
+npm run dev
 
-# Train sentiment model on MANEFRAME
-sbatch dev/docs/slurm-job-template.sh
+# Access the application
+# - API: http://localhost:8000
+# - API Docs: http://localhost:8000/docs
+# - Frontend: http://localhost:3000
+```
+
+### Data Collection
+
+```bash
+# Collect multi-source data
+python scripts/collect_multi_source.py --sources twitter,rss,reddit
+
+# Import Kaggle datasets
+python scripts/import_kaggle_datasets.py
+
+# Process historical backtests
+python scripts/run_historical_backtests.py
+```
+
+### HPC Deployment (MANEFRAME III)
+
+```bash
+# Package for HPC
+./scripts/package_for_hpc.sh
+
+# Transfer to MANEFRAME
+scp sentiment-detector-hpc-*.tar.gz username@m3.smu.edu:/path/
+
+# On MANEFRAME: extract and setup
+tar -xzf sentiment-detector-hpc-*.tar.gz
+cd sentiment-detector-hpc-*
+./setup_hpc.sh
+
+# Submit Spark job
+sbatch scripts/hpc/run_kaggle_sentiment.sh
 ```
 
 ---
