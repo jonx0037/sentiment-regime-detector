@@ -123,9 +123,10 @@ export default function SentimentHistoryChart() {
                 borderRadius: '8px',
                 fontSize: '12px'
               }}
-              formatter={(value: number | null) => {
-                if (value === null) return ['N/A', '']
-                return [value.toFixed(3), '']
+              formatter={(value) => {
+                if (value === null || value === undefined) return ['N/A', '']
+                if (typeof value === 'number') return [value.toFixed(3), '']
+                return [String(value), '']
               }}
             />
             <Legend
