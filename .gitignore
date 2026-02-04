@@ -12,6 +12,7 @@ eggs/
 .eggs/
 lib/
 lib64/
+!frontend/**/lib/
 parts/
 sdist/
 var/
@@ -49,9 +50,6 @@ venv.bak/
 .env.*.local
 *.key
 *.pem
-config/api_keys.json
-config/credentials.json
-config/secrets.json
 
 # Data Files (Large Datasets)
 dev/data/raw/
