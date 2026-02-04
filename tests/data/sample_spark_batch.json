@@ -1,0 +1,139 @@
+{
+  "collection_timestamp": "2026-02-02T19:30:00Z",
+  "items": [
+    {
+      "id": "reddit_wsb_001",
+      "source": "reddit",
+      "asset_class": "equity",
+      "created_at": "2026-02-02T15:45:00Z",
+      "title": "GME Discussion Thread",
+      "content": "Just bought 100 shares of GME, holding strong! Diamond hands forever. To the moon!",
+      "metadata": {
+        "subreddit": "wallstreetbets",
+        "score": "1500",
+        "author": "diamond_hands_420",
+        "num_comments": "250"
+      }
+    },
+    {
+      "id": "reddit_wsb_002",
+      "source": "reddit",
+      "asset_class": "equity",
+      "created_at": "2026-02-02T14:30:00Z",
+      "title": "Market Crash Incoming?",
+      "content": "Fed meeting tomorrow. Expecting volatility. Market looks weak, might go cash gang.",
+      "metadata": {
+        "subreddit": "wallstreetbets",
+        "score": "850",
+        "author": "bear_market_guy",
+        "num_comments": "120"
+      }
+    },
+    {
+      "id": "twitter_crypto_001",
+      "source": "twitter",
+      "asset_class": "crypto",
+      "created_at": "2026-02-02T16:20:00Z",
+      "title": null,
+      "content": "Bitcoin breaking $100k resistance! Bull run confirmed. ETH following strong. This is just the beginning!",
+      "metadata": {
+        "username": "crypto_whale",
+        "retweets": "2400",
+        "likes": "8500"
+      }
+    },
+    {
+      "id": "twitter_crypto_002",
+      "source": "twitter",
+      "asset_class": "crypto",
+      "created_at": "2026-02-02T15:10:00Z",
+      "title": null,
+      "content": "Another exchange hack reported. 50M in crypto stolen. When will people learn? Not your keys, not your coins.",
+      "metadata": {
+        "username": "security_expert",
+        "retweets": "1200",
+        "likes": "4500"
+      }
+    },
+    {
+      "id": "news_reuters_001",
+      "source": "news",
+      "asset_class": "equity",
+      "created_at": "2026-02-02T13:00:00Z",
+      "title": "Tech Stocks Rally on Strong Earnings",
+      "content": "Major tech companies reported better-than-expected earnings. NASDAQ up 2.5%. Investors optimistic about AI growth prospects.",
+      "metadata": {
+        "publisher": "Reuters",
+        "category": "business",
+        "url": "https://reuters.com/tech-rally"
+      }
+    },
+    {
+      "id": "reddit_crypto_001",
+      "source": "reddit",
+      "asset_class": "crypto",
+      "created_at": "2026-02-02T12:45:00Z",
+      "title": "Should I sell my ETH?",
+      "content": "Bought ETH at $4500, now it's at $3800. Should I hold or sell? Need advice from the community.",
+      "metadata": {
+        "subreddit": "CryptoCurrency",
+        "score": "45",
+        "author": "nervous_holder",
+        "num_comments": "78"
+      }
+    },
+    {
+      "id": "news_bloomberg_001",
+      "source": "news",
+      "asset_class": "forex",
+      "created_at": "2026-02-02T11:30:00Z",
+      "title": "Dollar Strengthens on Fed Minutes",
+      "content": "USD gains against major currencies as Fed signals continued hawkish stance. EUR/USD falls below 1.05.",
+      "metadata": {
+        "publisher": "Bloomberg",
+        "category": "markets",
+        "url": "https://bloomberg.com/forex-analysis"
+      }
+    },
+    {
+      "id": "twitter_forex_001",
+      "source": "twitter",
+      "asset_class": "forex",
+      "created_at": "2026-02-02T10:15:00Z",
+      "title": null,
+      "content": "EUR/USD looking oversold on daily chart. Expecting bounce from 1.04 support. Good risk/reward for long position.",
+      "metadata": {
+        "username": "forex_trader_pro",
+        "retweets": "320",
+        "likes": "1200"
+      }
+    },
+    {
+      "id": "reddit_commodities_001",
+      "source": "reddit",
+      "asset_class": "commodity",
+      "created_at": "2026-02-02T09:00:00Z",
+      "title": "Gold prices surge amid uncertainty",
+      "content": "Gold hit $2400/oz this morning. Geopolitical tensions driving safe haven demand. Silver also climbing.",
+      "metadata": {
+        "subreddit": "investing",
+        "score": "560",
+        "author": "gold_bug_2026",
+        "num_comments": "95"
+      }
+    },
+    {
+      "id": "news_cnbc_001",
+      "source": "news",
+      "asset_class": "commodity",
+      "created_at": "2026-02-02T08:30:00Z",
+      "title": "Oil Prices Fall on Demand Concerns",
+      "content": "Crude oil drops 3% on fears of economic slowdown. OPEC+ production cut not enough to offset weak demand outlook.",
+      "metadata": {
+        "publisher": "CNBC",
+        "category": "energy",
+        "url": "https://cnbc.com/oil-market"
+      }
+    }
+  ]
+}

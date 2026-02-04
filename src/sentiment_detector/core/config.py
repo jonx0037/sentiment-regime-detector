@@ -73,7 +73,11 @@ class Settings(BaseSettings):
         description="Logging level",
     )
     api_host: str = Field(default="0.0.0.0", description="API host")
-    api_port: int = Field(default=8000, description="API port")
+    api_port: int = Field(
+        default=8000,
+        description="API port (also accepts PORT environment variable from Railway)",
+        alias="PORT",  # Railway uses PORT instead of API_PORT
+    )
     api_reload: bool = Field(default=True, description="Enable auto-reload in development")
     cors_origins: str = Field(
         default="http://localhost:3000",
