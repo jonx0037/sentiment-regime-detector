@@ -13,6 +13,7 @@
 **Implementation:** [run_2022_crypto_winter_backtest.py](../../scripts/backtesting/run_2022_crypto_winter_backtest.py)
 
 **Three-Phase Analysis:**
+
 - **Luna/Terra Collapse** (May 7-15, 2022)
   - Risk-Off Detection: 44.4% of period
   - Peak Risk-Off: 57.1% around peak
@@ -32,12 +33,14 @@
   - Average VIX: 27.0
 
 **Key Findings:**
+
 - Model successfully detected sector-specific crypto crisis despite moderate VIX levels
 - Outperformed traditional risk indicators for crypto-specific events
 - Demonstrated ability to provide early warning signals
 - Crypto-equity divergence correctly identified isolated sector stress
 
 **Outputs Generated:**
+
 - `results/crypto_winter_2022/crypto_winter_2022-05.png` (Luna/Terra + Full period viz)
 - `results/crypto_winter_2022/crypto_winter_2022-06.png` (Celsius/3AC viz)
 - `results/crypto_winter_2022/*_results.json` (3 JSON files with metrics)
@@ -50,6 +53,7 @@
 **Implementation:** [run_2024_2025_backtest.py](../../scripts/backtesting/run_2024_2025_backtest.py)
 
 **Three-Period Analysis:**
+
 - **2024 Full Year**
   - Regime Distribution: 97.0% risk-on, 3.0% transition
   - Average Confidence: 0.87 (very high)
@@ -66,6 +70,7 @@
   - Days Analyzed: 602
 
 **Key Findings:**
+
 - **True out-of-sample validation** - data not used in model training
 - Model correctly identified 2024-2026 bull market (Bitcoin ETF, AI boom)
 - High confidence (0.86-0.87) demonstrates model isn't overfitted
@@ -73,12 +78,14 @@
 - Validates model can be deployed in production
 
 **Academic Significance:**
+
 - Demonstrates generalization to unseen data
 - Proves model robustness beyond training period
 - Critical for publication credibility
 - Shows model relevance for current markets
 
 **Outputs Generated:**
+
 - `results/out_of_sample_2024_2026/out_of_sample_2024.png` (2024 + full period viz)
 - `results/out_of_sample_2024_2026/out_of_sample_2025.png` (2025-2026 viz)
 - `results/out_of_sample_2024_2026/*_daily_results.csv` (3 CSV files)
@@ -90,6 +97,7 @@
 ### Strengthened Results Section
 
 **New Evidence Added:**
+
 1. **Crisis-Specific Validation**
    - 2022 Crypto Winter demonstrates sector-specific detection
    - Early warning capability (5-44 days before peak)
@@ -103,6 +111,7 @@
 ### Publication-Quality Figures
 
 **6 New Visualizations Created:**
+
 1. Luna/Terra phase analysis
 2. Celsius/3AC phase analysis
 3. Full 2022 crypto winter
@@ -111,6 +120,7 @@
 6. Full 2024-2026 validation
 
 Each figure includes:
+
 - Cross-asset sentiment divergence
 - Regime detection with confidence
 - Regime probability distributions
@@ -122,11 +132,11 @@ Each figure includes:
 
 ### Not Yet Implemented
 
-3. **SHAP/LIME Explainability** - Would add ML interpretability
-4. **Cross-Asset Lead-Lag Analysis** - Could reveal novel findings
-5. **Real-Time API Visualization** - Utilize current data APIs
-6. **Publication Figures Compilation** - Organize all visualizations
-7. **Results Documentation** - Update paper results section
+1. **SHAP/LIME Explainability** - Would add ML interpretability
+2. **Cross-Asset Lead-Lag Analysis** - Could reveal novel findings
+3. **Real-Time API Visualization** - Utilize current data APIs
+4. **Publication Figures Compilation** - Organize all visualizations
+5. **Results Documentation** - Update paper results section
 
 **Decision:** Pause here, document, and deploy current work before continuing.
 
@@ -135,14 +145,17 @@ Each figure includes:
 ## 📁 Files Created/Modified
 
 ### New Backtest Scripts
+
 - `scripts/backtesting/run_2022_crypto_winter_backtest.py` (606 lines)
 - `scripts/backtesting/run_2024_2025_backtest.py` (247 lines)
 
 ### Results Directories
+
 - `results/crypto_winter_2022/` (9 files: 3 PNGs, 3 JSONs, 3 CSVs)
 - `results/out_of_sample_2024_2026/` (6 files: 3 PNGs, 3 CSVs)
 
 ### Documentation
+
 - This summary file
 
 **Total New Code:** ~850 lines of analysis code
@@ -174,18 +187,21 @@ Each figure includes:
 ## 💡 Key Takeaways
 
 **Academic Contributions:**
+
 - Strong out-of-sample validation (critical for peer review)
 - Novel crypto crisis detection capability
 - Early warning system demonstrated
 - Model generalization proven
 
 **Technical Achievements:**
+
 - Reusable backtest infrastructure
 - Publication-ready visualizations
 - Comprehensive JSON/CSV outputs
 - Reproducible analysis pipeline
 
 **Paper Strength:**
+
 - Results section now has 2 major validation studies
 - Clear demonstration of practical value
 - Superior performance vs traditional indicators
