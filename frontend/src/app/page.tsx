@@ -17,7 +17,9 @@ import ErrorMessage from '@/components/ErrorMessage'
 import LoadingSkeleton from '@/components/LoadingSkeleton'
 import { NoSentimentData } from '@/components/EmptyState'
 import FadeIn from '@/components/FadeIn'
-import { RefreshCw } from 'lucide-react'
+import { InlineTooltip } from '@/components/Tooltip'
+import HelpModal from '@/components/HelpModal'
+import { RefreshCw, HelpCircle } from 'lucide-react'
 
 export default function Dashboard() {
   const [data, setData] = useState<SentimentResponse | null>(null)
@@ -25,6 +27,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
+  const [helpModalOpen, setHelpModalOpen] = useState(false)
 
   const fetchData = async () => {
     try {
@@ -88,6 +91,7 @@ export default function Dashboard() {
 
   return (
     <ErrorBoundary onReset={fetchData}>
+      <HelpModal isOpen={helpModalOpen} onClose={() => setHelpModalOpen(false)} />
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <header className="bg-white border-b border-gray-200">
@@ -101,15 +105,26 @@ export default function Dashboard() {
                 Cross-Asset Sentiment Analysis Dashboard
               </p>
             </div>
-            <button
-              type="button"
-              onClick={fetchData}
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setHelpModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                aria-label="Open help guide"
+              >
+                <HelpCircle className="w-4 h-4" />
+                <span className="hidden sm:inline">Help</span>
+              </button>
+              <button
+                type="button"
+                onClick={fetchData}
+                disabled={loading}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                Refresh
+              </button>
+            </div>
           </div>
           <div className="mt-2 text-xs text-gray-500">
             Last updated: {lastUpdate.toLocaleTimeString()}
@@ -189,22 +204,40 @@ export default function Dashboard() {
                   <div>
                     <p className="font-medium mb-1">Sentiment Analysis</p>
                     <p className="text-xs">
-                      DistilBERT NLP models analyze sentiment across equity, crypto, forex, and commodity markets.
+                      <InlineTooltip
+                        term="DistilBERT"
+                        definition="A distilled version of BERT (Bidirectional Encoder Representations from Transformers) - a fast, efficient transformer model for natural language understanding. 40% smaller and 60% faster than BERT while retaining 97% of its language understanding."
+                      /> NLP models analyze sentiment across equity, crypto, forex, and commodity markets.
                       Scores range from -1 (bearish) to +1 (bullish). Data from Reddit, news, and social media.
                     </p>
                   </div>
                   <div>
                     <p className="font-medium mb-1">Regime Detection</p>
                     <p className="text-xs">
-                      ML-based classifier (99.45% accuracy) uses CISS, VIX, and sentiment features to identify
+                      ML-based classifier (99.45% accuracy) uses <InlineTooltip
+                        term="CISS"
+                        definition="Composite Indicator of Systemic Stress from the European Central Bank"
+                      />, <InlineTooltip
+                        term="VIX"
+                        definition="CBOE Volatility Index - the market's expectation of 30-day volatility"
+                      />, and sentiment features to identify
                       risk-on, risk-off, and transition regimes in real-time.
                     </p>
                   </div>
                   <div>
                     <p className="font-medium mb-1">Volatility Modeling</p>
                     <p className="text-xs">
-                      GARCH(1,1) models forecast market volatility with high persistence (α+β=0.955),
-                      combining ARCH effects and historical volatility memory.
+                      <InlineTooltip
+                        term="GARCH(1,1)"
+                        definition="Generalized Autoregressive Conditional Heteroskedasticity - models time-varying volatility by combining recent shocks (ARCH) with historical volatility patterns"
+                      /> models forecast market volatility with high <InlineTooltip
+                        term="persistence"
+                        definition="α+β near 1.0 means volatility shocks decay very slowly - current volatility strongly predicts future volatility"
+                      /> (α+β=0.955),
+                      combining <InlineTooltip
+                        term="ARCH effects"
+                        definition="Autoregressive Conditional Heteroskedasticity - how recent market shocks impact current volatility levels"
+                      /> and historical volatility memory.
                     </p>
                   </div>
                   <div>

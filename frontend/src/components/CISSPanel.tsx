@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Area, ComposedChart } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, Tooltip as ChartTooltip, ResponsiveContainer, ReferenceLine, Area, ComposedChart } from 'recharts'
 import { Activity, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react'
+import Tooltip from './Tooltip'
 
 interface CISSData {
   date: string
@@ -75,13 +76,17 @@ export default function CISSPanel({ cissLevel, vixLevel, className = '' }: CISSP
       <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
         <Activity className="w-5 h-5 text-blue-600" />
         Systemic Stress Indicators
+        <Tooltip content="Metrics measuring financial system stress and market volatility expectations" />
       </h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* ECB CISS */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-600">ECB CISS Index</span>
+            <span className="text-sm font-medium text-gray-600 flex items-center gap-1">
+              ECB CISS Index
+              <Tooltip content="Composite Indicator of Systemic Stress - measures stress in European financial markets across money, bond, equity, and foreign exchange segments. Range: 0 (calm) to 1 (extreme stress)." />
+            </span>
             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${cissStatus.bgColor} ${cissStatus.color}`}>
               {cissStatus.label}
             </span>
@@ -119,7 +124,10 @@ export default function CISSPanel({ cissLevel, vixLevel, className = '' }: CISSP
         {/* VIX */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-600">CBOE VIX</span>
+            <span className="text-sm font-medium text-gray-600 flex items-center gap-1">
+              CBOE VIX
+              <Tooltip content="Chicago Board Options Exchange Volatility Index - the 'fear gauge' measuring expected 30-day volatility of the S&P 500 based on option prices. Higher values indicate greater expected market volatility." />
+            </span>
             <span className={`px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 ${vixStatus.color}`}>
               {vixStatus.label}
             </span>

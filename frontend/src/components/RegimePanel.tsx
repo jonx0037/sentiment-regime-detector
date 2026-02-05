@@ -6,6 +6,7 @@ import type { RegimeResponse } from '@/types/api'
 import { Activity, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react'
 import ErrorMessage from './ErrorMessage'
 import { RegimePanelSkeleton } from './LoadingSkeleton'
+import Tooltip from './Tooltip'
 
 interface RegimePanelProps {
   className?: string
@@ -128,8 +129,9 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
     <div className={`p-6 bg-white rounded-xl shadow-sm border ${config.borderColor} ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">
+        <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wider flex items-center gap-1">
           Current Regime
+          <Tooltip content="Market regime classification based on sentiment, CISS, and VIX. Identifies Risk-On (bullish), Risk-Off (bearish), or Transition states." />
         </h2>
         <div className="flex items-center gap-2">
           <span className="inline-flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -159,19 +161,28 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
             <p className="text-2xl font-bold text-gray-900">
               {(confidence * 100).toFixed(0)}%
             </p>
-            <p className="text-xs text-gray-500">Confidence</p>
+            <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
+              Confidence
+              <Tooltip content="ML model confidence in the predicted regime (99.45% accuracy on test data)" />
+            </p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <p className="text-2xl font-bold text-gray-900">
               {((regime.probabilities?.risk_on || 0) * 100).toFixed(0)}%
             </p>
-            <p className="text-xs text-gray-500">Risk On</p>
+            <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
+              Risk On
+              <Tooltip content="Probability of bullish regime - investors seeking higher returns, positive sentiment, lower stress" />
+            </p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <p className="text-2xl font-bold text-gray-900">
               {((regime.probabilities?.risk_off || 0) * 100).toFixed(0)}%
             </p>
-            <p className="text-xs text-gray-500">Risk Off</p>
+            <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
+              Risk Off
+              <Tooltip content="Probability of bearish regime - flight to safety, negative sentiment, elevated stress" />
+            </p>
           </div>
         </div>
       )}
