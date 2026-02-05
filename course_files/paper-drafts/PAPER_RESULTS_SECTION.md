@@ -2,7 +2,7 @@
 
 ## 4.1 Overview
 
-We evaluated four regime classification approaches on three major financial crises spanning 2020-2023: the COVID-19 market crash, FTX cryptocurrency exchange collapse, and Silicon Valley Bank failure. Each approach was tested on its ability to accurately classify market regimes (risk-on, transition, risk-off) based on cross-asset sentiment features and external stress indicators (VIX, CISS).
+We evaluated four regime classification approaches on three major financial crises spanning 2020-2023: the COVID-19 market crash, FTX cryptocurrency exchange collapse, and Silicon Valley Bank failure. Each approach was tested for its ability to accurately classify market regimes (risk-on, transition, risk-off) using cross-asset sentiment features and external stress indicators (VIX, CISS).
 
 The four approaches compared were:
 
@@ -18,18 +18,21 @@ The four approaches compared were:
 Three crisis events were selected to represent diverse stress manifestations:
 
 **COVID Market Crash (February-March 2020)**
+
 - Duration: 60 trading days
 - VIX peak: 82.69 (March 16, 2020)
 - Characteristic: Extreme systemic crisis with unprecedented volatility spike
 - Cross-asset impact: Broad market selloff across all asset classes
 
 **FTX Collapse (November 2022)**
+
 - Duration: 30 trading days
 - VIX peak: 26.09
 - Characteristic: Sector-specific contagion (cryptocurrency)
 - Cross-asset impact: Isolated to crypto markets, minimal equity volatility
 
 **Silicon Valley Bank (March 2023)**
+
 - Duration: 31 trading days
 - VIX peak: 26.52
 - Characteristic: Regional banking stress with moderate systemic spillover
@@ -50,6 +53,7 @@ This approach provides consistent, objective labels but has limitations for sect
 All classifiers used the following features derived from 281,251 social media texts:
 
 **Cross-Asset Sentiment Features:**
+
 - Equity sentiment (mean compound score)
 - Cryptocurrency sentiment
 - Foreign exchange sentiment
@@ -58,10 +62,12 @@ All classifiers used the following features derived from 281,251 social media te
 - Maximum divergence (max - min across asset classes)
 
 **Momentum Features:**
+
 - Sentiment momentum (3-day rate of change)
 - Sentiment acceleration (momentum derivative)
 
 **External Indicators:**
+
 - VIX level and rate of change
 - CISS (ECB Composite Indicator of Systemic Stress)
 
@@ -88,14 +94,14 @@ Figure 1 (see `data/processed/comparative_visualizations/accuracy_comparison.png
 
 **COVID Market Crash**
 
-The COVID crash represented an extreme systemic event with VIX reaching 82.69 and a rapid 3-day spike of 24.86 points. ML-based approaches excelled in this environment:
+The COVID crash was an extreme systemic event, with the VIX reaching 82.69 and a 3-day spike of 24.86 points. ML-based approaches excelled in this environment:
 
 - ML-Only: 80.5% accuracy (33/41 days correct)
 - Ensemble: 80.5% accuracy (matched ML)
 - Conditional: 76.7% accuracy (46/60 days correct)
 - Rule-Based: 4.9% accuracy (complete failure)
 
-The rule-based classifier's failure stems from fixed thresholds inadequate for unprecedented volatility levels. The ML classifier, trained on historical stress patterns including the 2008 financial crisis, successfully recognized extreme CISS and VIX signals. Conditional routing correctly selected the ML classifier based on VIX > 30 and rapid spike > 5 criteria.
+The rule-based classifier's failure stems from fixed thresholds that are inadequate for unprecedented volatility. The ML classifier, trained on historical stress patterns including the 2008 financial crisis, successfully recognized extreme CISS and VIX signals. Conditional routing correctly selected the ML classifier based on VIX > 30 and rapid spike > 5 criteria.
 
 **FTX Collapse**
 
@@ -106,7 +112,7 @@ The FTX collapse presented the greatest challenge, with VIX remaining at moderat
 - ML-Only: 0.0% accuracy (complete failure)
 - Ensemble: 0.0% accuracy (ML confidence dominated)
 
-ML's catastrophic failure resulted from training on traditional stress indices (VIX, CISS) that did not capture crypto-specific contagion. The VIX-based ground truth also failed to reflect the true stress state, showing predominantly "risk-on" labels while crypto markets experienced crisis conditions. This highlights a fundamental limitation: traditional stress indicators may not generalize to emerging asset class disruptions.
+ML's catastrophic failure resulted from training on traditional stress indices (VIX, CISS) that did not capture crypto-specific contagion. The VIX-based ground truth also failed to reflect the true stress state, showing predominantly "risk-on" labels even as crypto markets were in crisis. This highlights a fundamental limitation: traditional stress indicators may not generalize to disruptions in emerging asset classes.
 
 **Silicon Valley Bank**
 
@@ -117,7 +123,7 @@ SVB represented a mixed event with moderate VIX (26.52), moderate spike (5.69), 
 - Ensemble: 47.8% accuracy
 - Rule-Based: 30.4% accuracy
 
-Conditional routing selected the ensemble approach and achieved substantially better results than the standalone ensemble (64.5% vs 47.8%), suggesting the routing decision itself provided valuable signal. The high divergence indicated sector-specific stress (banking) with broader market implications, making ensemble's multi-signal integration effective.
+Conditional routing selected the ensemble approach and achieved substantially better results than the standalone ensemble (64.5% vs 47.8%), suggesting the routing decision itself provided a valuable signal. The high divergence indicated sector-specific stress (banking) with broader market implications, making the ensemble's multi-signal integration effective.
 
 ### 4.3.3 Confidence Analysis
 
@@ -134,7 +140,7 @@ Table 2 presents average confidence scores across approaches and events.
 
 *Rule-based confidence estimated at 60% (not recorded in original backtest)
 
-ML-only exhibited problematic overconfidence, maintaining 61.3% confidence on FTX despite 0% accuracy. This suggests the model's uncertainty estimates are poorly calibrated for out-of-distribution events. Conditional routing showed appropriate confidence modulation: high (73.8%) on successful COVID detection, lower (48.7%) on challenging FTX predictions.
+ML-only exhibited problematic overconfidence, maintaining 61.3% confidence on FTX despite 0% accuracy. This suggests the model's uncertainty estimates are poorly calibrated for out-of-distribution events. Conditional routing showed appropriate confidence modulation: high (73.8%) for successful COVID detection and lower (48.7%) for challenging FTX predictions.
 
 ## 4.4 Early Warning Performance
 
@@ -148,9 +154,9 @@ Early detection of impending crises is critical for risk management applications
 | FTX | 2022-11-11 | 9 days | 9 days | 9 days | 10 days |
 | SVB | 2023-03-10 | No | No | No | No |
 
-All approaches successfully detected COVID and FTX crises before peak stress, with warning periods ranging from 7-17 days. The shorter warning for conditional routing on COVID (7 vs 17 days) reflects different test periods (60 vs 41 days). None of the approaches detected the SVB peak, likely due to:
+All approaches successfully detected COVID and FTX crises before peak stress, with warning periods ranging from 7 to 17 days. The shorter warning for conditional routing on COVID (7 vs 17 days) reflects different test periods (60 vs 41 days). None of the approaches detected the SVB peak, likely due to:
 
-1. Federal intervention dampening systemic spillover
+1. Federal intervention dampens systemic spillover
 2. Regional vs systemic distinction not captured by VIX
 3. Rapid resolution limiting stress signal propagation
 
@@ -199,7 +205,7 @@ Routing decisions proved effective for extreme (COVID) and mixed (SVB) events bu
 
 **COVID**: ML selection appropriate - achieved 76.7% accuracy vs rule-based 4.9%
 
-**FTX**: Ensemble selection suboptimal - achieved 20.0% vs rule-based 23.8%. However, ensemble still substantially outperformed ML-only (0%). The challenge highlights need for crypto-specific routing criteria.
+**FTX**: Ensemble selection suboptimal - achieved 20.0% vs rule-based 23.8%. However, the ensemble still substantially outperformed ML-only (0%). The challenge highlights the need for crypto-specific routing criteria.
 
 **SVB**: Ensemble selection optimal - achieved 64.5% vs ML 47.8% and rule-based 30.4%
 
@@ -207,7 +213,7 @@ Routing decisions proved effective for extreme (COVID) and mixed (SVB) events bu
 
 ### 4.6.1 Comparative Performance Analysis
 
-The results demonstrate that no single classification approach excels across all crisis types. Rule-based classifiers struggle with extreme volatility events where fixed thresholds become inadequate. ML classifiers fail catastrophically on events outside their training distribution (e.g., crypto contagion). Ensemble approaches improve robustness but inherit ML's weaknesses when ML confidence dominates voting.
+The results demonstrate that no single classification approach excels across all crisis types. Rule-based classifiers struggle with extreme-volatility events, where fixed thresholds become inadequate. ML classifiers fail catastrophically on events outside their training distribution (e.g., crypto contagion). Ensemble approaches improve robustness but inherit ML's weaknesses when ML confidence dominates voting.
 
 Conditional routing addresses these limitations by meta-learning: the system learns which classifier to use based on observable event characteristics. This achieves:
 
@@ -228,13 +234,14 @@ VIX-based labeling exhibits sector bias toward equity market volatility. The FTX
 **Feature Coverage Gaps**
 
 Current features lack sector-specific indicators:
+
 - Cryptocurrency: Bitcoin dominance, DeFi TVL, stablecoin depegging
 - Banking: Credit spreads, interbank lending rates, deposit flows
 - Energy: Supply chain metrics, commodity storage levels
 
 **Sample Size**
 
-Only three crisis events provide limited statistical power. Validation on 10+ historical crises spanning multiple decades would strengthen generalizability claims.
+Only three crisis events provide limited statistical power. Validation across 10+ historical crises spanning multiple decades would strengthen claims of generalizability.
 
 **Routing Threshold Optimization**
 

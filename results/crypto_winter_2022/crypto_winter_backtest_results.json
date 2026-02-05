@@ -1,0 +1,13 @@
+{
+  "luna_terra": {
+    "phase_info": {
+      "name": "Luna/Terra Collapse",
+      "start_date": "2022-05-07",
+      "end_date": "2022-05-15",
+      "peak_date": "2022-05-12",
+      "description": "UST depeg and Luna hyperinflation - $40B destroyed"
+    },
+    "metrics": {
+      "risk_off_pct": 44.44444444444444,
+      "peak_risk_off_pct": 57.14285714285714,
+      "early_warning": 

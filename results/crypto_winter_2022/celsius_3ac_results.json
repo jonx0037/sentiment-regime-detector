@@ -1,0 +1,26 @@
+{
+  "phase_info": {
+    "name": "Celsius/3AC Contagion",
+    "start_date": "2022-06-12",
+    "end_date": "2022-06-27",
+    "peak_date": "2022-06-18",
+    "description": "Major crypto lenders collapse, DeFi liquidation cascade"
+  },
+  "metrics": {
+    "risk_off_pct": 93.75,
+    "peak_risk_off_pct": 100.0,
+    "early_warning": true,
+    "days_before_peak": 5,
+    "crypto_equity_divergence": 0.013819521309772103,
+    "avg_confidence": 0.6404539356090064,
+    "avg_crypto_sentiment": 0.0036885633268511435,
+    "avg_vix": 28.164374828338623
+  },
+  "results_summary": {
+    "total_days": 16,
+    "regime_distribution": {
+      "risk_off": 15,
+      "risk_on": 1
+    }
+  }
+}

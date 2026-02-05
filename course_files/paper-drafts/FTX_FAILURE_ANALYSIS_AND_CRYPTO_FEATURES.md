@@ -15,6 +15,7 @@ The FTX collapse exposed fundamental limitations in our current regime classific
 3. **Feature Gap**: No cryptocurrency-specific stress indicators in model
 
 This document provides:
+
 - Root cause analysis of the failure
 - Crypto-specific feature recommendations
 - Implementation roadmap for enhanced detection
@@ -27,6 +28,7 @@ This document provides:
 ### 1.1 What Happened
 
 **Event Timeline:**
+
 - **Nov 2, 2022**: CoinDesk reveals FTX's balance sheet issues
 - **Nov 6, 2022**: Binance announces FTX token (FTT) liquidation
 - **Nov 8, 2022**: Bank run begins - $6B withdrawal requests
@@ -34,6 +36,7 @@ This document provides:
 - **Nov 12-30, 2022**: Contagion spreads to other crypto firms
 
 **Classification Results:**
+
 - **ML Predictions**: 100% "risk-off" classification (17/17 days)
 - **Ground Truth Labels**: 76% "risk-on", 24% "transition" (based on VIX)
 - **Accuracy**: 0/21 days correct
@@ -44,13 +47,16 @@ This document provides:
 **Problem 1: Training Distribution Mismatch**
 
 The ML classifier was trained on traditional financial crises where:
+
 - **Systemic stress** → **VIX spike** → **CISS elevation** → **Risk-off regime**
 - Examples: 2008 Financial Crisis (VIX 80.86), 2020 COVID (VIX 82.69)
 
 FTX broke this pattern:
+
 - **Crypto stress** → **No VIX spike** → **Low CISS** → **ML predicts risk-off anyway** → **Wrong**
 
 The model learned "if crypto sentiment plummets, predict risk-off" from training data, but during FTX:
+
 - Crypto sentiment WAS negative (model input: correct signal)
 - VIX remained low (ground truth: labeled as "risk-on")
 - **Result**: Model was technically correct about crypto stress, but labeled as "wrong" due to VIX-only ground truth
@@ -58,6 +64,7 @@ The model learned "if crypto sentiment plummets, predict risk-off" from training
 **Problem 2: Feature Coverage Gap**
 
 Current features:
+
 ```python
 - equity_sentiment: 0.15 (positive during FTX period)
 - crypto_sentiment: -0.42 (very negative - ✓ detected stress)
@@ -68,6 +75,7 @@ Current features:
 ```
 
 Missing crypto-specific features:
+
 - Bitcoin dominance (BTC.D market share)
 - DeFi Total Value Locked (TVL)
 - Stablecoin depegging indicators
@@ -80,12 +88,14 @@ Missing crypto-specific features:
 **VIX Limitation**: VIX measures S&P 500 implied volatility, not cryptocurrency stress.
 
 During FTX collapse:
+
 - **S&P 500**: Relatively stable (+2.3% for November)
 - **Bitcoin**: -16.5% for November
 - **FTT Token**: -93% collapse
 - **Crypto Market Cap**: -$200B evaporated
 
 **The Mismatch**:
+
 ```
 Traditional Finance (VIX) ≠ Cryptocurrency Stress
 ```
@@ -109,6 +119,7 @@ These features directly measure cryptocurrency market stress and should be added
 **Data Source**: Deribit Exchange API (free, public data)
 
 **Implementation**:
+
 ```python
 # Add to feature set
 features["crypto_dvol"] = deribit_api.get_volatility_index("BTC")
@@ -130,6 +141,7 @@ features["dvol_spike"] = features["crypto_dvol"].diff(3)  # 3-day change
 **Data Source**: CoinGecko API or CryptoCompare API
 
 **Implementation**:
+
 ```python
 # Calculate depegging score
 usdt_price = get_price("USDT")
@@ -160,6 +172,7 @@ features["stablecoin_depeg_bps"] = depeg_severity
 **Data Source**: CoinMarketCap API or TradingView
 
 **Implementation**:
+
 ```python
 btc_market_cap = get_market_cap("BTC")
 total_crypto_market_cap = get_total_market_cap("crypto")
@@ -187,6 +200,7 @@ These features measure blockchain activity and provide early stress signals.
 **Data Source**: Glassnode, CryptoQuant
 
 **Implementation**:
+
 ```python
 # Exchange reserves as % of circulating supply
 btc_on_exchanges = glassnode_api.get("btc_exchange_balance")
@@ -211,6 +225,7 @@ features["reserve_change_7d"] = features["exchange_reserve_ratio"].pct_change(7)
 **Data Source**: Blockchain.com API, Glassnode
 
 **Implementation**:
+
 ```python
 daily_tx_volume = blockchain_api.get_transaction_volume("BTC")
 avg_30d = daily_tx_volume.rolling(30).mean()
@@ -237,6 +252,7 @@ These features capture decentralized finance (DeFi) stress.
 **Data Source**: DeFiLlama API (free, comprehensive)
 
 **Implementation**:
+
 ```python
 total_tvl = defillama_api.get_total_tvl()
 tvl_7d_change = (total_tvl / total_tvl.shift(7) - 1) * 100
@@ -260,6 +276,7 @@ features["tvl_change_7d_pct"] = tvl_7d_change
 **Data Source**: DeFi protocols (Aave, Compound) or aggregators
 
 **Implementation**:
+
 ```python
 daily_liquidations = get_liquidation_volume(["aave", "compound", "makerdao"])
 avg_liquidations = daily_liquidations.rolling(30).mean()
@@ -323,11 +340,13 @@ def generate_hybrid_ground_truth(vix, dvol, ciss, sector="auto"):
 ### 3.2 Expected FTX Results with Hybrid Ground Truth
 
 **Current (VIX-only)**:
+
 - Ground Truth: 76% risk-on, 24% transition
 - ML Predictions: 100% risk-off
 - Accuracy: 0%
 
 **Hybrid (VIX + DVOL + CISS)**:
+
 - Ground Truth: 15% risk-on, 35% transition, 50% risk-off (crypto sector detected)
 - ML Predictions: 100% risk-off
 - **Expected Accuracy: ~50%** (vs 0% currently)
@@ -339,6 +358,7 @@ def generate_hybrid_ground_truth(vix, dvol, ciss, sector="auto"):
 ### Phase 1: Core Crypto Features (2-3 weeks)
 
 **Deliverables:**
+
 1. DVOL data collection pipeline
 2. Stablecoin depegging monitor
 3. Bitcoin dominance tracker
@@ -352,6 +372,7 @@ def generate_hybrid_ground_truth(vix, dvol, ciss, sector="auto"):
 ### Phase 2: On-Chain Indicators (3-4 weeks)
 
 **Deliverables:**
+
 1. Exchange reserve monitoring (Glassnode/CryptoQuant integration)
 2. Transaction volume spike detection
 3. Feature engineering for on-chain metrics
@@ -364,6 +385,7 @@ def generate_hybrid_ground_truth(vix, dvol, ciss, sector="auto"):
 ### Phase 3: DeFi Integration (4-6 weeks)
 
 **Deliverables:**
+
 1. DeFiLlama TVL tracking
 2. Liquidation monitoring across major protocols
 3. DeFi stress composite index
@@ -376,6 +398,7 @@ def generate_hybrid_ground_truth(vix, dvol, ciss, sector="auto"):
 ### Phase 4: Hybrid Ground Truth (2 weeks)
 
 **Deliverables:**
+
 1. Multi-index ground truth generator
 2. Sector detection algorithm
 3. Re-label all historical events
@@ -422,11 +445,13 @@ def route_classifier_v2(features_df):
 **Purpose**: Dedicated model for cryptocurrency-specific crises
 
 **Training Data**:
+
 - Historical crypto crashes: MT Gox (2014), 2018 bear market, Terra/LUNA (2022), FTX (2022)
 - Features: Crypto-heavy (DVOL, dominance, exchange reserves, sentiment)
 - Ground Truth: DVOL-based (not VIX)
 
 **Expected FTX Routing**:
+
 - Current: Routes to Ensemble (20% accuracy)
 - Enhanced: Routes to Crypto-Specialized (Expected 60-70% accuracy)
 
@@ -451,11 +476,13 @@ def route_classifier_v2(features_df):
 ### 6.2 Expected Benefits
 
 **Performance Improvements**:
+
 - FTX accuracy: 0% → 50-70% (+50-70 pp)
 - Crypto-crisis routing: Currently misses → Correctly routes (new capability)
 - Overall accuracy: 53.7% → 62-68% (+8-14 pp estimated)
 
 **Risk Management Value**:
+
 - Earlier detection of crypto contagion (FTX-type events)
 - Reduced false negatives on sector-specific crises
 - Better calibrated confidence in crypto stress scenarios
@@ -489,12 +516,14 @@ To validate crypto-specific features, backtest on:
 ### 7.2 Success Metrics
 
 **Target Performance** (after crypto features):
+
 - FTX Accuracy: ≥ 50% (currently 0%)
 - Terra/LUNA Accuracy: ≥ 60%
 - MT Gox Accuracy: ≥ 55%
 - Average Crypto Crisis: ≥ 55%
 
 **Routing Accuracy**:
+
 - Crypto-specific events correctly route to crypto classifier: ≥ 80%
 - No degradation on traditional crisis detection (COVID, etc.)
 
@@ -521,18 +550,21 @@ Implementing the proposed crypto-specific features and hybrid ground truth appro
 ## References
 
 **Data Sources:**
-- Deribit: https://www.deribit.com/api/
-- CoinGecko: https://www.coingecko.com/api
-- DeFiLlama: https://defillama.com/docs/api
-- Glassnode: https://glassnode.com/
-- Blockchain.com: https://www.blockchain.com/api
+
+- Deribit: <https://www.deribit.com/api/>
+- CoinGecko: <https://www.coingecko.com/api>
+- DeFiLlama: <https://defillama.com/docs/api>
+- Glassnode: <https://glassnode.com/>
+- Blockchain.com: <https://www.blockchain.com/api>
 
 **FTX Timeline:**
-- CoinDesk FTX Coverage: https://www.coindesk.com/tag/ftx/
+
+- CoinDesk FTX Coverage: <https://www.coindesk.com/tag/ftx/>
 - "The FTX Collapse: What Went Wrong?" (2023), Financial Times
 - Binance FTX Acquisition Announcement (Nov 8, 2022)
 
 **Crypto Stress Indicators:**
+
 - "Cryptocurrency Volatility: A Comparison with VIX" (2021), Journal of Financial Markets
 - "Stablecoin Depegging Events and Systemic Risk" (2023), Bank for International Settlements
 - "Bitcoin Dominance as a Safe Haven Indicator" (2022), Crypto Research Quarterly
