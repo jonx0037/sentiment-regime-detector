@@ -1,6 +1,6 @@
 'use client'
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import type { AssetClassSentiment } from '@/types/api'
 import { formatAssetClass } from '@/lib/utils'
 import ExportButton from '@/components/ExportButton'
@@ -32,14 +32,14 @@ export default function SentimentComparisonChart({ data }: SentimentComparisonCh
       </div>
       
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData}>
+        <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-          <XAxis 
-            dataKey="name" 
+          <XAxis
+            dataKey="name"
             tick={{ fill: '#6b7280', fontSize: 12 }}
             stroke="#9ca3af"
           />
-          <YAxis 
+          <YAxis
             tick={{ fill: '#6b7280', fontSize: 12 }}
             stroke="#9ca3af"
             label={{ value: 'Sentiment Score (%)', angle: -90, position: 'insideLeft', fill: '#6b7280' }}
@@ -53,38 +53,28 @@ export default function SentimentComparisonChart({ data }: SentimentComparisonCh
             }}
             formatter={(value: number) => `${value.toFixed(1)}%`}
           />
-          <Legend 
+          <Legend
             wrapperStyle={{ paddingTop: '20px' }}
-            iconType="line"
           />
-          <Line
-            type="monotone"
+          <Bar
             dataKey="score"
-            stroke="#059669"
-            strokeWidth={2}
+            fill="#059669"
             name="Compound Score"
-            dot={{ r: 4 }}
-            activeDot={{ r: 6 }}
+            radius={[4, 4, 0, 0]}
           />
-          <Line
-            type="monotone"
+          <Bar
             dataKey="positive"
-            stroke="#10b981"
-            strokeWidth={1.5}
-            strokeDasharray="5 5"
+            fill="#10b981"
             name="Positive %"
-            dot={{ r: 3 }}
+            radius={[4, 4, 0, 0]}
           />
-          <Line
-            type="monotone"
+          <Bar
             dataKey="negative"
-            stroke="#dc2626"
-            strokeWidth={1.5}
-            strokeDasharray="5 5"
+            fill="#dc2626"
             name="Negative %"
-            dot={{ r: 3 }}
+            radius={[4, 4, 0, 0]}
           />
-        </LineChart>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   )
