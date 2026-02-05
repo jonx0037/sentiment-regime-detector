@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/sentiment_detector/main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "src/sentiment_detector/main.py"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": "/var/task/src"
+  }
+}

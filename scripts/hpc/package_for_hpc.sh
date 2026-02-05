@@ -21,7 +21,6 @@ echo "1. Copying source code..."
 cp -r "$PROJECT_DIR/src" "$PACKAGE_DIR/"
 cp -r "$PROJECT_DIR/scripts" "$PACKAGE_DIR/"
 cp "$PROJECT_DIR/pyproject.toml" "$PACKAGE_DIR/"
-cp "$PROJECT_DIR/requirements.txt" "$PACKAGE_DIR/"
 
 echo "2. Copying Kaggle data..."
 mkdir -p "$PACKAGE_DIR/data/kaggle"
@@ -82,8 +81,10 @@ source .venv/bin/activate
 echo ""
 echo "6. Installing dependencies..."
 pip install --upgrade pip
+# Install PyTorch with CUDA 11.8 support
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-pip install transformers pandas numpy scipy scikit-learn arch yfinance
+# Install project with HPC extras
+pip install -e .[hpc]
 
 echo ""
 echo "=============================================="

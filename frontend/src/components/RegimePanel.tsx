@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { regimeApi } from '@/services/api'
 import type { RegimeResponse } from '@/types/api'
 import { Activity, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react'
+import ErrorMessage from './ErrorMessage'
+import { RegimePanelSkeleton } from './LoadingSkeleton'
 
 interface RegimePanelProps {
   className?: string
@@ -80,21 +82,21 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchRegime = async () => {
-      try {
-        setLoading(true)
-        const response = await regimeApi.getCurrentRegime()
-        setRegime(response)
-        setError(null)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch regime')
-        console.error('Error fetching regime:', err)
-      } finally {
-        setLoading(false)
-      }
+  const fetchRegime = async () => {
+    try {
+      setLoading(true)
+      const response = await regimeApi.getCurrentRegime()
+      setRegime(response)
+      setError(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch regime')
+      console.error('Error fetching regime:', err)
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchRegime()
 
     // Auto-refresh every 30 seconds
@@ -103,25 +105,17 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
   }, [])
 
   if (loading && !regime) {
-    return (
-      <div className={`p-6 bg-white rounded-xl shadow-sm border border-gray-200 ${className}`}>
-        <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-8 bg-gray-200 rounded w-2/3 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-        </div>
-      </div>
-    )
+    return <RegimePanelSkeleton className={className} />
   }
 
   if (error) {
     return (
-      <div className={`p-6 bg-white rounded-xl shadow-sm border border-red-200 ${className}`}>
-        <div className="text-red-600">
-          <p className="font-medium">Failed to load regime</p>
-          <p className="text-sm">{error}</p>
-        </div>
-      </div>
+      <ErrorMessage
+        error={error}
+        onRetry={fetchRegime}
+        variant="card"
+        className={className}
+      />
     )
   }
 

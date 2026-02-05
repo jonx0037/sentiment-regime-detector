@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Legend, CartesianGrid } from 'recharts'
 import { TrendingUp, Calendar } from 'lucide-react'
+import ErrorMessage from './ErrorMessage'
+import { ChartSkeleton } from './LoadingSkeleton'
+import { NoHistoricalData } from './EmptyState'
 
 interface CISSDataPoint {
   date: string
@@ -25,41 +28,45 @@ export default function CISSHistoryChart() {
   const [error, setError] = useState<string | null>(null)
   const [days, setDays] = useState(90)
 
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch(`${API_BASE}/regime/ciss/history?days=${days}`)
-        if (!response.ok) throw new Error('Failed to fetch CISS history')
-        const result: CISSHistoryResponse = await response.json()
-        setData(result.data)
-        setError(null)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error')
-      } finally {
-        setLoading(false)
-      }
+  const fetchHistory = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch(`${API_BASE}/regime/ciss/history?days=${days}`)
+      if (!response.ok) throw new Error('Failed to fetch CISS history')
+      const result: CISSHistoryResponse = await response.json()
+      setData(result.data)
+      setError(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchHistory()
   }, [days])
 
   if (loading) {
-    return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-64 bg-gray-100 rounded"></div>
-        </div>
-      </div>
-    )
+    return <ChartSkeleton />
   }
 
   if (error) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-red-200 p-6">
-        <p className="text-red-600">Error loading CISS history: {error}</p>
-      </div>
+      <ErrorMessage
+        error={error}
+        onRetry={fetchHistory}
+        variant="card"
+      />
+    )
+  }
+
+  if (data.length === 0) {
+    return (
+      <NoHistoricalData
+        period={`the last ${days} days`}
+        onRefresh={fetchHistory}
+      />
     )
   }
 

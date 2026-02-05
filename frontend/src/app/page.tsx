@@ -12,6 +12,11 @@ import CISSHistoryChart from '@/components/CISSHistoryChart'
 import SentimentHistoryChart from '@/components/SentimentHistoryChart'
 import GARCHResultsPanel from '@/components/GARCHResultsPanel'
 import RegimeTimeline from '@/components/RegimeTimeline'
+import ErrorBoundary from '@/components/ErrorBoundary'
+import ErrorMessage from '@/components/ErrorMessage'
+import LoadingSkeleton from '@/components/LoadingSkeleton'
+import { NoSentimentData } from '@/components/EmptyState'
+import FadeIn from '@/components/FadeIn'
 import { RefreshCw } from 'lucide-react'
 
 export default function Dashboard() {
@@ -49,44 +54,43 @@ export default function Dashboard() {
   }, [])
 
   if (loading && !data) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading sentiment data...</p>
-        </div>
-      </div>
-    )
+    return <LoadingSkeleton variant="page" message="Loading dashboard..." />
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <div className="text-red-600 text-5xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Unable to Load Data
-          </h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={fetchData}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        <ErrorMessage
+          error={error}
+          onRetry={fetchData}
+          variant="full"
+        />
       </div>
     )
   }
 
-  if (!data) {
-    return null
+  if (!data || !data.asset_classes || data.asset_classes.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <h1 className="text-3xl font-bold text-gray-900">
+              Sentiment Regime Detector
+            </h1>
+          </div>
+        </header>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <NoSentimentData onRefresh={fetchData} />
+        </main>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+    <ErrorBoundary onReset={fetchData}>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -98,6 +102,7 @@ export default function Dashboard() {
               </p>
             </div>
             <button
+              type="button"
               onClick={fetchData}
               disabled={loading}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
@@ -115,6 +120,7 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Section 1: Regime & Market Stress */}
+        <FadeIn delay={0}>
         <section>
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <span className="text-2xl">📊</span>
@@ -129,8 +135,10 @@ export default function Dashboard() {
           </div>
           <CISSHistoryChart />
         </section>
+        </FadeIn>
 
         {/* Section 2: Cross-Asset Sentiment */}
+        <FadeIn delay={100}>
         <section>
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <span className="text-2xl">💭</span>
@@ -151,8 +159,10 @@ export default function Dashboard() {
             <SentimentHistoryChart />
           </div>
         </section>
+        </FadeIn>
 
         {/* Section 3: Volatility & Transitions */}
+        <FadeIn delay={200}>
         <section>
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <span className="text-2xl">📈</span>
@@ -163,8 +173,10 @@ export default function Dashboard() {
             <RegimeTimeline />
           </div>
         </section>
+        </FadeIn>
 
         {/* Footer Info */}
+        <FadeIn delay={300}>
         <section className="mt-8">
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
             <div className="flex items-start gap-4">
@@ -207,7 +219,9 @@ export default function Dashboard() {
             </div>
           </div>
         </section>
+        </FadeIn>
       </main>
-    </div>
+      </div>
+    </ErrorBoundary>
   )
 }

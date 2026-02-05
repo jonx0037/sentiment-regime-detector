@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(DATABASE_URL=\"postgresql://postgres:rUxfHXftLGrOpqvQTbQynXfHXfnQrJOV@yamabiko.proxy.rlwy.net:19328/railway\" alembic upgrade:*)"
+    ]
+  }
+}

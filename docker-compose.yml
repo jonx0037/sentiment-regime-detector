@@ -1,8 +1,22 @@
 version: '3.8'
 
+# =============================================================================
+# Docker Compose Configuration for Sentiment Regime Detector
+# =============================================================================
+# Usage:
+#   - Infrastructure only (db + redis):    docker compose up
+#   - With API service:                     docker compose --profile api up
+#   - Full stack:                           docker compose --profile all up
+#
+# Profiles:
+#   - (default): PostgreSQL + Redis only (for local API development)
+#   - api: Adds the FastAPI backend service
+#   - all: Same as api (includes everything)
+# =============================================================================
+
 services:
   # ==========================================================================
-  # PostgreSQL Database
+  # PostgreSQL Database (always runs)
   # ==========================================================================
   db:
     image: postgres:15-alpine
@@ -22,9 +36,10 @@ services:
       retries: 5
     networks:
       - sentiment-network
+    restart: unless-stopped
 
   # ==========================================================================
-  # Redis Cache
+  # Redis Cache (always runs)
   # ==========================================================================
   redis:
     image: redis:7-alpine
@@ -40,11 +55,13 @@ services:
       retries: 5
     networks:
       - sentiment-network
+    restart: unless-stopped
 
   # ==========================================================================
-  # Backend API (Development)
+  # Backend API (optional, enabled with --profile api or --profile all)
   # ==========================================================================
   api:
+    profiles: ["api", "all"]
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -70,6 +87,7 @@ services:
         condition: service_healthy
     networks:
       - sentiment-network
+    restart: unless-stopped
 
 volumes:
   postgres_data:
