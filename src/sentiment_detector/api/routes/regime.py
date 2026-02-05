@@ -130,6 +130,21 @@ async def get_current_regime(
         classifier = RegimeClassifier()
         classification = classifier.classify(features)
     
+    # Build features dict, filtering out None values
+    features_dict = {
+        "equity_sentiment": features.equity_sentiment,
+        "crypto_sentiment": features.crypto_sentiment,
+        "forex_sentiment": features.forex_sentiment,
+        "commodity_sentiment": features.commodity_sentiment,
+        "cross_asset_mean": features.cross_asset_mean,
+        "sentiment_momentum_7d": features.sentiment_momentum,
+        "max_divergence": features.max_divergence,
+    }
+    if features.ciss_level is not None:
+        features_dict["ciss_level"] = features.ciss_level
+    if features.vix_level is not None:
+        features_dict["vix_level"] = features.vix_level
+
     return RegimeResponse(
         timestamp=datetime.now(timezone.utc),
         regime=classification.state.value,
@@ -139,17 +154,7 @@ async def get_current_regime(
             "risk_off": classification.prob_risk_off,
             "transition": classification.prob_transition,
         },
-        features={
-            "equity_sentiment": features.equity_sentiment,
-            "crypto_sentiment": features.crypto_sentiment,
-            "forex_sentiment": features.forex_sentiment,
-            "commodity_sentiment": features.commodity_sentiment,
-            "cross_asset_mean": features.cross_asset_mean,
-            "sentiment_momentum_7d": features.sentiment_momentum,
-            "max_divergence": features.max_divergence,
-            "ciss_level": features.ciss_level,
-            "vix_level": features.vix_level,
-        },
+        features=features_dict,
         model_version=classification.model_version,
     )
 
