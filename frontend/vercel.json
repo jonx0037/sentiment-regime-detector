@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://sentiment-regime-detector.up.railway.app/api/:path*"
+      "destination": "https://sentiment-regime-detector-production.up.railway.app/api/:path*"
     }
   ]
 }
