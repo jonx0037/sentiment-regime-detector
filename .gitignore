@@ -61,6 +61,7 @@ dev/data/*.pkl
 dev/data/*.h5
 *.sqlite
 *.db
+*.dump
 
 # Main data directories (processed batches and outputs)
 data/processed/maneframe_batches/
@@ -147,3 +148,7 @@ data/hpc_batches/
 course_files/research/reference-repos/
 data/reference-repos/
 .vercel
+
+# Database Backup & Restore
+railway-restore/
+sentiment_db_backup.dump
