@@ -19,15 +19,19 @@ import { NoSentimentData } from '@/components/EmptyState'
 import FadeIn from '@/components/FadeIn'
 import { InlineTooltip } from '@/components/Tooltip'
 import HelpModal from '@/components/HelpModal'
+import ExportMenu from '@/components/ExportMenu'
+import { ToastContainer, useToast } from '@/components/Toast'
 import { RefreshCw, HelpCircle } from 'lucide-react'
 
 export default function Dashboard() {
   const [data, setData] = useState<SentimentResponse | null>(null)
   const [regime, setRegime] = useState<RegimeResponse | null>(null)
+  const [garch, setGarch] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
   const [helpModalOpen, setHelpModalOpen] = useState(false)
+  const { toasts, showToast, removeToast } = useToast()
 
   const fetchData = async () => {
     try {
@@ -106,6 +110,12 @@ export default function Dashboard() {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <ExportMenu
+                sentiment={data}
+                regime={regime}
+                garch={garch}
+                onToast={showToast}
+              />
               <button
                 type="button"
                 onClick={() => setHelpModalOpen(true)}
@@ -255,6 +265,7 @@ export default function Dashboard() {
         </FadeIn>
       </main>
       </div>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </ErrorBoundary>
   )
 }

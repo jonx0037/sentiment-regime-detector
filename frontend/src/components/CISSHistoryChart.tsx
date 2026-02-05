@@ -6,6 +6,8 @@ import { TrendingUp, Calendar } from 'lucide-react'
 import ErrorMessage from './ErrorMessage'
 import { ChartSkeleton } from './LoadingSkeleton'
 import { NoHistoricalData } from './EmptyState'
+import ExportButton from '@/components/ExportButton'
+import { exportChartAsPNG, exportChartAsSVG } from '@/utils/exportChart'
 
 interface CISSDataPoint {
   date: string
@@ -78,15 +80,19 @@ export default function CISSHistoryChart() {
   }))
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div id="ciss-history-chart" className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-blue-600" />
           CISS & VIX History
         </h2>
-        
+
         <div className="flex items-center gap-2">
+          <ExportButton
+            onExportPNG={() => exportChartAsPNG('ciss-history-chart', 'ciss-history')}
+            onExportSVG={() => exportChartAsSVG('ciss-history-chart', 'ciss-history')}
+          />
           <Calendar className="w-4 h-4 text-gray-400" />
           <select
             value={days}

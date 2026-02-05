@@ -3,6 +3,8 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import type { AssetClassSentiment } from '@/types/api'
 import { formatAssetClass } from '@/lib/utils'
+import ExportButton from '@/components/ExportButton'
+import { exportChartAsPNG, exportChartAsSVG } from '@/utils/exportChart'
 
 interface SentimentComparisonChartProps {
   data: AssetClassSentiment[]
@@ -18,10 +20,16 @@ export default function SentimentComparisonChart({ data }: SentimentComparisonCh
   }))
 
   return (
-    <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        Sentiment Comparison
-      </h3>
+    <div id="sentiment-comparison-chart" className="bg-white rounded-lg border-2 border-gray-200 p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-900">
+          Sentiment Comparison
+        </h3>
+        <ExportButton
+          onExportPNG={() => exportChartAsPNG('sentiment-comparison-chart', 'sentiment-comparison')}
+          onExportSVG={() => exportChartAsSVG('sentiment-comparison-chart', 'sentiment-comparison')}
+        />
+      </div>
       
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>

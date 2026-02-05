@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { Clock, ArrowRight, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import ExportButton from '@/components/ExportButton'
+import { exportChartAsPNG, exportChartAsSVG } from '@/utils/exportChart'
 
 interface RegimeTransition {
   date: string
@@ -98,12 +100,16 @@ export default function RegimeTimeline() {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div id="regime-timeline-chart" className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
         <Clock className="w-5 h-5 text-blue-600" />
         <h2 className="text-lg font-semibold text-gray-900">Regime Transition History</h2>
         <span className="ml-auto text-sm text-gray-500">{transitions.length} recent changes</span>
+        <ExportButton
+          onExportPNG={() => exportChartAsPNG('regime-timeline-chart', 'regime-timeline')}
+          onExportSVG={() => exportChartAsSVG('regime-timeline-chart', 'regime-timeline')}
+        />
       </div>
 
       {/* Timeline */}

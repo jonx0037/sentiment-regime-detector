@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Legend, CartesianGrid } from 'recharts'
 import { TrendingUp, Calendar } from 'lucide-react'
+import ExportButton from '@/components/ExportButton'
+import { exportChartAsPNG, exportChartAsSVG } from '@/utils/exportChart'
 
 interface SentimentDataPoint {
   date: string
@@ -75,7 +77,7 @@ export default function SentimentHistoryChart() {
   }))
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div id="sentiment-history-chart" className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -84,6 +86,10 @@ export default function SentimentHistoryChart() {
         </h2>
 
         <div className="flex items-center gap-2">
+          <ExportButton
+            onExportPNG={() => exportChartAsPNG('sentiment-history-chart', 'sentiment-history')}
+            onExportSVG={() => exportChartAsSVG('sentiment-history-chart', 'sentiment-history')}
+          />
           <Calendar className="w-4 h-4 text-gray-400" />
           <select
             value={days}
