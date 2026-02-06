@@ -19,6 +19,7 @@ This document outlines the integration of the completed SHAP explainability syst
 2. **Phase 2 (Optional):** Historical crisis events explorer - 5-7 hours
 
 **User Value:**
+
 - Practitioners see "why risk-off now?" explanations
 - Academic committee sees model interpretability in action
 - Builds trust through transparency
@@ -28,6 +29,7 @@ This document outlines the integration of the completed SHAP explainability syst
 ## Background
 
 The SHAP explainability system was built in `.worktrees/explainability-implementation` over 9 days and includes:
+
 - ✅ Core explainer with SHAP TreeExplainer
 - ✅ Two-tier caching (Redis L1 + PostgreSQL L2)
 - ✅ 5 API endpoints at `/api/v1/explainability/*`
@@ -45,12 +47,14 @@ The SHAP explainability system was built in `.worktrees/explainability-implement
 ### Integration Scope
 
 **Phase 1: Current Prediction Explainability (Required)**
+
 - Add "Explain This Prediction" button to RegimePanel
 - Modal shows SHAP waterfall plot + feature contributions table
 - Answers "why did the model predict risk-off today?"
 - Most valuable feature - explains what users are actively viewing
 
 **Phase 2: Historical Events Explorer (Optional)**
+
 - New page/route showing 6 crisis events
 - Educational gallery: 2008 Crisis, COVID-19, GameStop, Luna, Celsius, Out-of-Sample
 - Each event has detailed explanation showing model behavior during extremes
@@ -59,24 +63,28 @@ The SHAP explainability system was built in `.worktrees/explainability-implement
 ### UI Approach
 
 **Modal Popup (Chosen)**
+
 - Keeps main dashboard clean and uncluttered
 - Shows detailed visualizations on demand
 - Easy to dismiss and return to monitoring
 - Follows common dashboard pattern
 
 **Alternatives Rejected:**
+
 - ❌ Expandable section - takes too much vertical space
 - ❌ Dedicated tab only - requires navigation away from context
 
 ### Backend Integration
 
 **Merge to Main Branch (Chosen)**
+
 - Copy explainability module to main `src/sentiment_detector/explainability/`
 - Use existing 5 API endpoints immediately
 - Leverages existing caching infrastructure
 - Clean integration with current architecture
 
 **Alternatives Rejected:**
+
 - ❌ Separate microservice - overkill for capstone, complex deployment
 - ❌ Static pre-generated - inflexible, can't explain current prediction
 
@@ -127,6 +135,7 @@ The SHAP explainability system was built in `.worktrees/explainability-implement
    - Display model metadata (version, timestamp)
 
 **Performance Expectations:**
+
 - Cached response: 5-20ms (99% of requests after warm-up)
 - Cold computation: 100-300ms (acceptable for user-initiated action)
 - Cache hit rate: >90% in steady state
@@ -138,6 +147,7 @@ The SHAP explainability system was built in `.worktrees/explainability-implement
 ### Backend Changes
 
 **Files to Merge:**
+
 ```
 Source: .worktrees/explainability-implementation/
 Target: main branch
@@ -160,6 +170,7 @@ Verify:
 ```
 
 **Dependencies Check:**
+
 ```toml
 # Ensure pyproject.toml includes:
 shap = ">=0.44.0"
@@ -168,6 +179,7 @@ matplotlib = ">=3.8.0"
 ```
 
 **No Router Changes Needed:**
+
 - Explainability router already built in worktree
 - Should be registered in main FastAPI app
 - Endpoints follow existing `/api/v1/*` convention
@@ -177,6 +189,7 @@ matplotlib = ">=3.8.0"
 **New Files:**
 
 **`frontend/src/types/explainability.ts`**
+
 ```typescript
 export interface ExplanationResponse {
   predicted_regime: 'risk_on' | 'risk_off' | 'transition'
@@ -212,6 +225,7 @@ export interface CrisisEvent {
 **`frontend/src/components/ExplainabilityModal.tsx`**
 
 **Component Structure:**
+
 ```tsx
 interface Props {
   isOpen: boolean
@@ -224,6 +238,7 @@ export function ExplainabilityModal({ isOpen, onClose, regime, confidence }: Pro
 ```
 
 **Layout:**
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │ Why Risk-Off? (Confidence: 87%)              [X]    │
@@ -251,6 +266,7 @@ export function ExplainabilityModal({ isOpen, onClose, regime, confidence }: Pro
 ```
 
 **Features:**
+
 - Responsive: 2-column on desktop, stacked on mobile
 - Waterfall plot: Full-width image with loading skeleton
 - Table: Sortable by contribution, color-coded (green/red)
@@ -261,6 +277,7 @@ export function ExplainabilityModal({ isOpen, onClose, regime, confidence }: Pro
 **Modified Files:**
 
 **`frontend/src/services/api.ts`**
+
 ```typescript
 // Add new export
 export const explainabilityApi = {
@@ -288,6 +305,7 @@ export const explainabilityApi = {
 ```
 
 **`frontend/src/components/RegimePanel.tsx`**
+
 ```typescript
 // Add state
 const [explainModalOpen, setExplainModalOpen] = useState(false)
@@ -316,11 +334,13 @@ const [explainModalOpen, setExplainModalOpen] = useState(false)
 ### Caching Strategy
 
 **Frontend:**
+
 - Cache current explanation for 60 seconds (matches dashboard refresh)
 - Invalidate on regime change detection
 - Use React Query or simple state management
 
 **Backend:**
+
 - Already implemented in merged code
 - Redis L1: 5-minute TTL
 - PostgreSQL L2: Permanent with model version key
@@ -329,17 +349,20 @@ const [explainModalOpen, setExplainModalOpen] = useState(false)
 ### Error Handling
 
 **API Call Failures:**
+
 - If `/explainability/current` returns 503: Show toast "Explanation temporarily unavailable"
 - If returns 404: Disable "Explain" button (model not ready)
 - If returns 500: Log error, show generic message
 - Retry logic: 2 attempts with exponential backoff (1s, 2s)
 
 **Graceful Degradation:**
+
 - Dashboard continues working if explainability fails
 - "Explain" button shows loading state during fetch
 - Clear error messages guide user (not technical jargon)
 
 **Edge Cases:**
+
 - Model not loaded: Disable button with tooltip "Explainability loading..."
 - No recent prediction: Gray out button
 - Very old prediction (>1 hour): Warning in modal "Explaining outdated prediction"
@@ -353,6 +376,7 @@ const [explainModalOpen, setExplainModalOpen] = useState(false)
 **URL:** `/explainability` or new tab in dashboard navigation
 
 **Purpose:**
+
 - Educational: Show how model behaved during historical crises
 - Committee demo: Quick access to interesting events
 - Paper figures: Same visualizations shown in dashboard
@@ -360,6 +384,7 @@ const [explainModalOpen, setExplainModalOpen] = useState(false)
 ### UI Design
 
 **Gallery View:**
+
 ```
 ┌────────────────────────────────────────────────────────┐
 │  Historical Crisis Events                              │
@@ -390,6 +415,7 @@ const [explainModalOpen, setExplainModalOpen] = useState(false)
 ```
 
 **Event Card Design:**
+
 - Event name and date (prominent)
 - Key indicators badge: CISS peak, VIX peak
 - Predicted regime with icon (✓ correct, ⚠️ stress detected)
@@ -399,6 +425,7 @@ const [explainModalOpen, setExplainModalOpen] = useState(false)
 **Event Detail Modal:**
 
 Similar to Phase 1 modal but enhanced:
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │ COVID-19 Market Crash (March 16, 2020)        [X]   │
@@ -418,6 +445,7 @@ Similar to Phase 1 modal but enhanced:
 ```
 
 **Differences from Phase 1:**
+
 - Add "What Happened?" context section (from events.py descriptions)
 - Show event date instead of "Computed" timestamp
 - Optional: Compare predicted vs. actual regime if ground truth available
@@ -425,11 +453,13 @@ Similar to Phase 1 modal but enhanced:
 ### Implementation
 
 **New Files:**
+
 - `frontend/src/app/explainability/page.tsx` (Next.js page)
 - `frontend/src/components/EventCard.tsx` (event card component)
 - `frontend/src/components/EventDetailModal.tsx` (or reuse ExplainabilityModal)
 
 **Backend:**
+
 - Already built: `GET /api/v1/explainability/events`
 - Already built: `GET /api/v1/explainability/events/{event_id}`
 - Events defined in `events.py`:
@@ -441,6 +471,7 @@ Similar to Phase 1 modal but enhanced:
   - out_of_sample_validation
 
 **Navigation:**
+
 - Add link in dashboard header or sidebar
 - Footer link: "View Historical Events" in Phase 1 modal
 
@@ -485,6 +516,7 @@ def test_event_detail_returns_explanation():
 ```
 
 **Integration Tests:**
+
 ```python
 def test_end_to_end_explanation():
     """Test full flow: API call → SHAP → plot → response."""
@@ -516,6 +548,7 @@ describe('RegimePanel with Explainability', () => {
 ```
 
 **Integration Tests:**
+
 ```typescript
 describe('Explainability Integration', () => {
   it('fetches explanation on button click')
@@ -528,6 +561,7 @@ describe('Explainability Integration', () => {
 ### Manual Testing Checklist
 
 **Phase 1:**
+
 - [ ] Click "Explain" button in RegimePanel
 - [ ] Verify modal opens with loading state
 - [ ] Verify waterfall plot displays (check image not broken)
@@ -539,6 +573,7 @@ describe('Explainability Integration', () => {
 - [ ] Close modal and reopen (cached response)
 
 **Phase 2:**
+
 - [ ] Navigate to /explainability page
 - [ ] Verify 6 event cards display
 - [ ] Click each event's "Explain" button
@@ -553,12 +588,14 @@ describe('Explainability Integration', () => {
 ### Railway Production Environment
 
 **Requirements:**
+
 - Memory: ~500MB for model + SHAP computation (current Railway plan: adequate)
 - Redis: Already configured via Railway plugin
 - PostgreSQL: Already configured with DATABASE_URL
 - Model file: `models/regime_classifier_rf.pkl` must be in deployment
 
 **Environment Variables:**
+
 ```bash
 # Already configured:
 REDIS_URL=redis://...
@@ -570,6 +607,7 @@ SHAP_CACHE_TTL=300          # Cache TTL in seconds (default: 300)
 ```
 
 **Deployment Steps:**
+
 1. Merge explainability code to main branch
 2. Verify model file in `models/` directory (check .gitignore)
 3. Run database migrations if cache schema added
@@ -578,12 +616,14 @@ SHAP_CACHE_TTL=300          # Cache TTL in seconds (default: 300)
 6. Monitor logs for any SHAP computation errors
 
 **Performance Monitoring:**
+
 - Track API response time for `/explainability/current`
 - Target: <50ms (cached), <500ms (cold)
 - Monitor cache hit rate via Redis INFO
 - Alert if >10% requests take >1 second
 
 **Rollback Plan:**
+
 ```python
 # In FastAPI app startup:
 if os.getenv('ENABLE_EXPLAINABILITY', 'true') == 'false':
@@ -598,12 +638,14 @@ if os.getenv('ENABLE_EXPLAINABILITY', 'true') == 'false':
 ### Phase 1: Current Prediction Explainability (4-5 hours)
 
 **Backend (30 minutes):**
+
 - [ ] Copy explainability module to main branch (5 min)
 - [ ] Verify imports and paths (5 min)
 - [ ] Test API endpoints locally (10 min)
 - [ ] Write/run unit tests (10 min)
 
 **Frontend (3-4 hours):**
+
 - [ ] Create TypeScript types (15 min)
 - [ ] Extend api.ts with explainabilityApi (15 min)
 - [ ] Build ExplainabilityModal component (2 hours)
@@ -618,11 +660,13 @@ if os.getenv('ENABLE_EXPLAINABILITY', 'true') == 'false':
 ### Phase 2: Historical Events Explorer (5-7 hours)
 
 **Backend (Already Complete):**
+
 - ✅ API endpoints exist
 - ✅ Event definitions exist
 - ✅ Mock feature generation exists
 
 **Frontend (5-7 hours):**
+
 - [ ] Create /explainability page route (30 min)
 - [ ] Build EventCard component (1 hour)
 - [ ] Build event gallery layout (1 hour)
@@ -640,12 +684,14 @@ if os.getenv('ENABLE_EXPLAINABILITY', 'true') == 'false':
 ### Technical Metrics
 
 **Performance:**
+
 - Cache hit rate >90% after 5 minutes of warm-up
 - Median response time <50ms (cached)
 - 95th percentile response time <500ms (cold)
 - Zero 500 errors from explainability endpoints
 
 **Reliability:**
+
 - Dashboard works even if explainability unavailable
 - Graceful degradation on API failures
 - Clear error messages (not technical stack traces)
@@ -653,11 +699,13 @@ if os.getenv('ENABLE_EXPLAINABILITY', 'true') == 'false':
 ### User Experience Metrics
 
 **Engagement:**
+
 - Track "Explain" button click rate (expect 20-40% of users)
 - Modal view duration (should be >10 seconds if engaged)
 - Historical events page views (Phase 2)
 
 **Qualitative:**
+
 - Committee feedback: "Model is clearly interpretable"
 - User feedback: "I understand why it predicted risk-off"
 - No confusion about feature contributions
@@ -665,11 +713,13 @@ if os.getenv('ENABLE_EXPLAINABILITY', 'true') == 'false':
 ### Academic Metrics
 
 **Paper Integration:**
+
 - Include modal screenshot in paper
 - Reference waterfall plots from Phase 2 events
 - Discuss feature importance findings from global analysis
 
 **Committee Demonstration:**
+
 - Live demo: Click "Explain" and walk through waterfall plot
 - Show historical event (e.g., COVID-19) with extreme features
 - Answer questions using live SHAP values
@@ -681,20 +731,24 @@ if os.getenv('ENABLE_EXPLAINABILITY', 'true') == 'false':
 ### Current Limitations
 
 **Model-Specific:**
+
 - Only works with tree-based models (Random Forest, XGBoost)
 - SHAP TreeExplainer used (optimized for trees)
 - If model changes to neural network, would need different explainer
 
 **Feature Names:**
+
 - Technical names like "ciss_lag1" need tooltips for clarity
 - Display names manually mapped (not auto-generated)
 
 **Visualization:**
+
 - Waterfall plot generated server-side (not interactive)
 - No drill-down into feature details from plot
 - Fixed layout (can't reorder features in UI)
 
 **Data:**
+
 - Mock features used in demo (not connected to real-time DB yet)
 - Historical events use representative feature values
 - Production needs actual feature pipeline integration
@@ -702,21 +756,25 @@ if os.getenv('ENABLE_EXPLAINABILITY', 'true') == 'false':
 ### Future Enhancements
 
 **Interactivity:**
+
 - Allow users to toggle features on/off to see impact
 - "What-if" analysis: Change feature values, see prediction change
 - Compare multiple time periods side-by-side
 
 **Additional Visualizations:**
+
 - SHAP summary plot (beeswarm) for global importance
 - Dependency plots showing feature relationships
 - Force plots (alternative to waterfall)
 
 **Real-Time Integration:**
+
 - Connect to actual feature database
 - Show explanation for any historical date (not just crisis events)
 - Time-series view of feature importance over time
 
 **Model Comparison:**
+
 - Compare Random Forest vs. XGBoost explanations
 - Highlight where models disagree
 - Show ensemble reasoning
@@ -728,6 +786,7 @@ if os.getenv('ENABLE_EXPLAINABILITY', 'true') == 'false':
 ### GET /api/v1/explainability/current
 
 **Response (200 OK):**
+
 ```json
 {
   "predicted_regime": "risk_off",
@@ -768,6 +827,7 @@ if os.getenv('ENABLE_EXPLAINABILITY', 'true') == 'false':
 ### GET /api/v1/explainability/events
 
 **Response (200 OK):**
+
 ```json
 {
   "events": [
@@ -794,6 +854,7 @@ if os.getenv('ENABLE_EXPLAINABILITY', 'true') == 'false':
 ### GET /api/v1/explainability/events/covid_crash_2020
 
 **Response (200 OK):**
+
 ```json
 {
   "event": {
@@ -850,6 +911,7 @@ This integration brings the completed SHAP explainability system to production u
 The design leverages existing infrastructure (caching, API architecture) and follows established patterns in the codebase. Total implementation time is 9-12 hours split across two phases.
 
 **Next Steps:**
+
 1. Review and approve this design
 2. Create implementation plan with detailed tasks
 3. Consider using git worktree for isolated development

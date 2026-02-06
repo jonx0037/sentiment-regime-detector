@@ -12,7 +12,9 @@
 This document outlines the design for a comprehensive model explainability system using SHAP (SHapley Additive exPlanations) and LIME (Local Interpretable Model-agnostic Explanations) to interpret the regime classifier's predictions. The system serves both academic reviewers (demonstrating theoretical validity) and practitioners (providing actionable insights).
 
 **Timeline:** 8-11 days
+
 **Deliverables:**
+
 1. Publication-quality figures for paper
 2. Interactive Jupyter notebook for exploration
 3. Live API integration for production dashboard
@@ -36,12 +38,14 @@ This document outlines the design for a comprehensive model explainability syste
 ### Scope of Analysis
 
 **Explainability Dimensions:**
+
 - Global feature importance (what matters most overall?)
 - Local instance explanations (why this specific prediction?)
 - Feature interactions (how do features work together?)
 - Temporal patterns (how does importance change over time?)
 
 **Events to Explain:**
+
 - 2008 Financial Crisis (Nov 20, 2008 - CISS peak)
 - COVID-19 Crash (March 16, 2020 - VIX 82.69)
 - GameStop Episode (Jan 27-28, 2021 - contrarian prediction)
@@ -50,6 +54,7 @@ This document outlines the design for a comprehensive model explainability syste
 - Out-of-sample validation (2024-2026 period)
 
 **Models to Explain:**
+
 - Current deployed models: DistilBERT sentiment → Random Forest/XGBoost regime classifiers
 - Note: Llama 3 integration exists in codebase but is NOT deployed (future work)
 
@@ -81,6 +86,7 @@ The explainability system consists of three interconnected layers sharing a comm
 **1. Analysis Core** (`src/sentiment_detector/explainability/`)
 
 **`explainer.py`** - Main explainability engine
+
 ```python
 class RegimeExplainer:
     """
@@ -98,12 +104,14 @@ class RegimeExplainer:
 ```
 
 **`feature_analyzer.py`** - Feature importance analysis
+
 - Global feature importance across all predictions (mean |SHAP|)
 - Feature interaction detection using SHAP interaction values
 - Temporal importance analysis (grouped by regime/period)
 - Comparison between XGBoost and Random Forest models
 
 **`event_explainer.py`** - Event-specific analysis
+
 - Loads historical backtest data for key dates
 - Generates waterfall plots showing feature contributions
 - Creates narrative explanations for paper
@@ -116,8 +124,10 @@ class RegimeExplainer:
 ## Performance Optimization: Caching Strategy
 
 **Cache Implementation:**
+
 - SQLite table: `explainability_cache`
 - Schema:
+
   ```sql
   CREATE TABLE explainability_cache (
     date TEXT PRIMARY KEY,
