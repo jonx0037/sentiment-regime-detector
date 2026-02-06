@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { X, Lightbulb, RefreshCw, Download } from 'lucide-react'
+import { X, Lightbulb, RefreshCw, Download, Info, ChevronDown, ChevronUp } from 'lucide-react'
 import { explainabilityApi } from '@/services/api'
 import type { ExplanationResponse } from '@/types/explainability'
 import ErrorMessage from './ErrorMessage'
@@ -45,6 +45,7 @@ export default function ExplainabilityModal({
   const [explanation, setExplanation] = useState<ExplanationResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showInfo, setShowInfo] = useState(false)
 
   const handleExport = () => {
     if (!explanation) return
@@ -228,6 +229,52 @@ export default function ExplainabilityModal({
                       <p className="text-xs text-gray-500">Confidence</p>
                     </div>
                   </div>
+                </div>
+
+                {/* What is SHAP? Info Banner */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setShowInfo(!showInfo)}
+                    className="w-full px-4 py-3 flex items-center justify-between hover:bg-blue-100 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Info className="w-5 h-5 text-blue-600" />
+                      <span className="font-medium text-blue-900 text-sm">
+                        What is SHAP? How to read this explanation
+                      </span>
+                    </div>
+                    {showInfo ? (
+                      <ChevronUp className="w-5 h-5 text-blue-600" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-blue-600" />
+                    )}
+                  </button>
+
+                  {showInfo && (
+                    <div className="px-4 pb-4 text-sm text-gray-700 space-y-3 border-t border-blue-200 pt-3">
+                      <p>
+                        <strong className="text-blue-900">SHAP</strong> (SHapley Additive exPlanations) values explain how much each feature contributed to this prediction.
+                      </p>
+                      <ul className="list-disc list-inside space-y-2 text-gray-600 ml-2">
+                        <li>
+                          <strong className="text-green-700">Positive SHAP values (green)</strong> push the prediction toward the displayed regime
+                        </li>
+                        <li>
+                          <strong className="text-red-700">Negative SHAP values (red)</strong> push the prediction away from the displayed regime
+                        </li>
+                        <li>
+                          <strong>Larger absolute values</strong> = stronger influence on the prediction
+                        </li>
+                        <li>
+                          The <strong>waterfall plot</strong> shows how the model starts from a base value and adds/subtracts each feature's contribution
+                        </li>
+                      </ul>
+                      <p className="text-xs text-gray-500 italic border-t border-blue-100 pt-2 mt-3">
+                        💡 Tip: Hover over feature names to see detailed descriptions of what each indicator measures.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Content Grid */}
