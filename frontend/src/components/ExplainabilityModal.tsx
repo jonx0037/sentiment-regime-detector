@@ -5,6 +5,7 @@ import { X, Lightbulb, RefreshCw } from 'lucide-react'
 import { explainabilityApi } from '@/services/api'
 import type { ExplanationResponse } from '@/types/explainability'
 import ErrorMessage from './ErrorMessage'
+import { getFeatureDisplayName, getFeatureDescription } from '@/utils/featureNames'
 
 interface ExplainabilityModalProps {
   isOpen: boolean
@@ -276,9 +277,14 @@ export default function ExplainabilityModal({
                                     <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium flex-shrink-0">
                                       {feature.rank}
                                     </span>
-                                    <p className="text-sm font-medium text-gray-900 truncate">
-                                      {feature.feature_name}
-                                    </p>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium text-gray-900 truncate">
+                                        {getFeatureDisplayName(feature.feature_name)}
+                                      </p>
+                                      <p className="text-xs text-gray-400 truncate">
+                                        {feature.feature_name}
+                                      </p>
+                                    </div>
                                   </div>
                                   <p className="text-xs text-gray-500 mt-1 ml-7">
                                     Value: {feature.value.toFixed(4)}
