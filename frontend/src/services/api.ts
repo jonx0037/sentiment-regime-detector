@@ -4,6 +4,11 @@ import type {
   RegimeResponse,
   AssetClass,
 } from '@/types/api'
+import type {
+  ExplanationResponse,
+  CrisisEvent,
+  EventDetailResponse,
+} from '@/types/explainability'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
@@ -113,5 +118,28 @@ export const healthApi = {
    */
   async checkHealth(): Promise<any> {
     return fetchApi('/health')
+  },
+}
+
+export const explainabilityApi = {
+  /**
+   * Get SHAP explanation for current regime prediction
+   */
+  async getCurrentExplanation(): Promise<ExplanationResponse> {
+    return fetchApi<ExplanationResponse>('/explainability/current')
+  },
+
+  /**
+   * Get list of historical crisis events
+   */
+  async getEventsList(): Promise<CrisisEvent[]> {
+    return fetchApi<CrisisEvent[]>('/explainability/events')
+  },
+
+  /**
+   * Get SHAP explanation for specific historical event
+   */
+  async getEventExplanation(eventId: string): Promise<EventDetailResponse> {
+    return fetchApi<EventDetailResponse>(`/explainability/events/${eventId}`)
   },
 }
