@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { X, Calendar, TrendingUp, Activity, ChevronRight, BookOpen } from 'lucide-react'
+import { X, Calendar, TrendingUp, Activity, ChevronRight, BookOpen, Download } from 'lucide-react'
 import { explainabilityApi } from '@/services/api'
 import type { CrisisEvent, EventDetailResponse } from '@/types/explainability'
 import ErrorMessage from './ErrorMessage'
@@ -78,6 +78,36 @@ export default function CrisisEventsBrowser({ isOpen, onClose }: CrisisEventsBro
 
   const handleBackToList = () => {
     setSelectedEvent(null)
+  }
+
+  const handleExportEvent = () => {
+    if (!selectedEvent) return
+
+    const exportData = {
+      event: selectedEvent.event,
+      explanation: {
+        timestamp: selectedEvent.explanation.timestamp,
+        predicted_regime: selectedEvent.explanation.predicted_regime,
+        confidence: selectedEvent.explanation.confidence,
+        model_version: selectedEvent.explanation.model_version,
+        base_value: selectedEvent.explanation.base_value,
+        prediction_value: selectedEvent.explanation.prediction_value,
+        top_features: selectedEvent.explanation.top_features,
+        all_features: selectedEvent.explanation.all_features,
+      },
+    }
+
+    const jsonString = JSON.stringify(exportData, null, 2)
+    const blob = new Blob([jsonString], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `crisis-${selectedEvent.event.event_id}-explanation.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
 
   if (!isOpen) return null
@@ -359,14 +389,33 @@ export default function CrisisEventsBrowser({ isOpen, onClose }: CrisisEventsBro
           </div>
 
           {/* Footer */}
-          <div className="border-t border-gray-200 px-4 sm:px-6 py-3 sm:py-4 bg-gray-50 flex justify-end">
-            <button
-              type="button"
-              onClick={selectedEvent ? handleBackToList : onClose}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-            >
-              {selectedEvent ? 'Back to Events' : 'Close'}
-            </button>
+          <div className="border-t border-gray-200 px-4 sm:px-6 py-3 sm:py-4 bg-gray-50 flex justify-between items-center">
+            <div className="text-xs sm:text-sm text-gray-500">
+              {selectedEvent && (
+                <span>
+                  {selectedEvent.event.name} • {new Date(selectedEvent.event.date).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              {selectedEvent && (
+                <button
+                  type="button"
+                  onClick={handleExportEvent}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium text-sm"
+                >
+                  <Download className="w-4 h-4" />
+                  Export
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={selectedEvent ? handleBackToList : onClose}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm"
+              >
+                {selectedEvent ? 'Back to Events' : 'Close'}
+              </button>
+            </div>
           </div>
         </div>
       </div>

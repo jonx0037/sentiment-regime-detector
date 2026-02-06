@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { X, Lightbulb, RefreshCw } from 'lucide-react'
+import { X, Lightbulb, RefreshCw, Download } from 'lucide-react'
 import { explainabilityApi } from '@/services/api'
 import type { ExplanationResponse } from '@/types/explainability'
 import ErrorMessage from './ErrorMessage'
@@ -45,6 +45,36 @@ export default function ExplainabilityModal({
   const [explanation, setExplanation] = useState<ExplanationResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const handleExport = () => {
+    if (!explanation) return
+
+    // Create exportable data (exclude base64 image to keep size reasonable)
+    const exportData = {
+      timestamp: explanation.timestamp,
+      predicted_regime: explanation.predicted_regime,
+      confidence: explanation.confidence,
+      model_version: explanation.model_version,
+      base_value: explanation.base_value,
+      prediction_value: explanation.prediction_value,
+      top_features: explanation.top_features,
+      all_features: explanation.all_features,
+    }
+
+    // Convert to JSON
+    const jsonString = JSON.stringify(exportData, null, 2)
+    const blob = new Blob([jsonString], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+
+    // Download
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `shap-explanation-${regime}-${new Date().toISOString().split('T')[0]}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
 
   useEffect(() => {
     if (!isOpen) return
@@ -367,13 +397,25 @@ export default function ExplainabilityModal({
                 </>
               )}
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-            >
-              Close
-            </button>
+            <div className="flex items-center gap-3">
+              {explanation && (
+                <button
+                  type="button"
+                  onClick={handleExport}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium text-sm"
+                >
+                  <Download className="w-4 h-4" />
+                  Export JSON
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       </div>
