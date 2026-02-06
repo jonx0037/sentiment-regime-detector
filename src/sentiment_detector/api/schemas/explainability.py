@@ -1,7 +1,7 @@
 """Explainability schemas for SHAP/LIME analysis."""
 
 from datetime import datetime
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -26,6 +26,10 @@ class ExplanationResponse(BaseModel):
     confidence: float = Field(..., ge=0, le=1, description="Prediction confidence")
     base_value: float = Field(..., description="Expected value (model average)")
     prediction_value: float = Field(..., description="Model output for predicted class")
+    waterfall_plot: Optional[str] = Field(
+        None,
+        description="Base64-encoded PNG waterfall plot (data URI format)"
+    )
     top_features: list[FeatureContribution] = Field(
         ...,
         description="Top contributing features (typically top 10)"

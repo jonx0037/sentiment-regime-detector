@@ -2,11 +2,14 @@
 
 from datetime import datetime, timezone
 from typing import Optional
+from io import BytesIO
+import base64
 
 from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 import numpy as np
+import matplotlib.pyplot as plt
 
 from sentiment_detector.api.schemas.explainability import (
     ExplanationResponse,
@@ -24,8 +27,26 @@ from sentiment_detector.explainability import (
     get_event,
     list_events,
 )
+from sentiment_detector.explainability.viz import plot_waterfall
 
 router = APIRouter()
+
+
+def figure_to_base64(fig: plt.Figure) -> str:
+    """Convert matplotlib figure to base64 PNG data URI.
+
+    Args:
+        fig: matplotlib Figure object
+
+    Returns:
+        Base64-encoded PNG data URI (data:image/png;base64,...)
+    """
+    buffer = BytesIO()
+    fig.savefig(buffer, format='png', dpi=100, bbox_inches='tight')
+    buffer.seek(0)
+    image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+    plt.close(fig)  # Clean up to prevent memory leaks
+    return f"data:image/png;base64,{image_base64}"
 
 
 async def build_feature_dict(
@@ -205,12 +226,55 @@ def explanation_result_to_response(result: ExplanationResult) -> ExplanationResp
         for rank, (name, value, shap_val, _) in enumerate(feature_shap_pairs)
     ]
 
+    # Generate waterfall plot
+    waterfall_plot_data_uri = None
+    try:
+        # Create waterfall plot (will be closed by plot_waterfall)
+        # We need to capture it before it's closed, so we use output_path
+        # to trigger saving, then read and encode
+        import tempfile
+        from pathlib import Path
+        import logging
+
+        logger = logging.getLogger(__name__)
+
+        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp_file:
+            tmp_path = Path(tmp_file.name)
+
+        logger.info(f"Creating waterfall plot at {tmp_path}")
+
+        try:
+            plot_waterfall(result, output_path=tmp_path, show=False, max_features=10)
+            logger.info(f"Plot saved, file exists: {tmp_path.exists()}")
+
+            if tmp_path.exists():
+                # Read the saved file and convert to base64
+                with open(tmp_path, 'rb') as f:
+                    image_data = f.read()
+                logger.info(f"Read {len(image_data)} bytes from plot file")
+
+                image_base64 = base64.b64encode(image_data).decode('utf-8')
+                waterfall_plot_data_uri = f"data:image/png;base64,{image_base64}"
+                logger.info(f"Successfully generated waterfall plot data URI ({len(waterfall_plot_data_uri)} chars)")
+            else:
+                logger.warning(f"Plot file not found after generation: {tmp_path}")
+        finally:
+            # Clean up temp file
+            if tmp_path.exists():
+                tmp_path.unlink()
+                logger.debug(f"Cleaned up temp file: {tmp_path}")
+    except Exception as e:
+        # Log error but don't fail the request if plot generation fails
+        import logging
+        logging.getLogger(__name__).error(f"Failed to generate waterfall plot: {e}", exc_info=True)
+
     return ExplanationResponse(
         timestamp=result.timestamp,
         predicted_regime=result.predicted_regime,
         confidence=result.confidence,
         base_value=result.base_value,
         prediction_value=result.prediction,
+        waterfall_plot=waterfall_plot_data_uri,
         top_features=all_features[:10],
         all_features=all_features,
         model_version=result.model_version,
