@@ -10,7 +10,12 @@ import type {
   EventDetailResponse,
 } from '@/types/explainability'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+// In production (no env var set), use relative URLs to leverage Vercel proxy
+// In development, use localhost or custom NEXT_PUBLIC_API_URL
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ||
+  (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+    ? '/api/v1'
+    : 'http://localhost:8000/api/v1')
 
 class ApiError extends Error {
   constructor(
