@@ -81,6 +81,9 @@ data/processed/*.json
 models/checkpoints/
 models/saved/
 
+# Exception: Include production regime classifier models
+!models/regime_classifier_*.pkl
+
 # Results & Outputs
 dev/results/figures/
 dev/results/plots/
