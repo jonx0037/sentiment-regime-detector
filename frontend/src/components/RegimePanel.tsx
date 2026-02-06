@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react'
 import { regimeApi } from '@/services/api'
 import type { RegimeResponse } from '@/types/api'
-import { Activity, TrendingUp, TrendingDown, AlertTriangle, Lightbulb } from 'lucide-react'
+import { Activity, TrendingUp, TrendingDown, AlertTriangle, Lightbulb, BookOpen } from 'lucide-react'
 import ErrorMessage from './ErrorMessage'
 import { RegimePanelSkeleton } from './LoadingSkeleton'
 import Tooltip from './Tooltip'
 import ExplainabilityModal from './ExplainabilityModal'
+import CrisisEventsBrowser from './CrisisEventsBrowser'
 
 interface RegimePanelProps {
   className?: string
@@ -84,6 +85,7 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isExplainModalOpen, setIsExplainModalOpen] = useState(false)
+  const [isCrisisEventsOpen, setIsCrisisEventsOpen] = useState(false)
 
   const fetchRegime = async () => {
     try {
@@ -189,16 +191,24 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
         </div>
       )}
 
-      {/* Explain Button */}
+      {/* Action Buttons */}
       {regime && (
-        <div className="mt-4">
+        <div className="mt-4 grid grid-cols-2 gap-3">
           <button
             type="button"
             onClick={() => setIsExplainModalOpen(true)}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm hover:shadow-md font-medium text-sm"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm hover:shadow-md font-medium text-sm"
           >
             <Lightbulb className="w-4 h-4" />
-            Explain This Prediction
+            Explain
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsCrisisEventsOpen(true)}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-sm hover:shadow-md font-medium text-sm"
+          >
+            <BookOpen className="w-4 h-4" />
+            History
           </button>
         </div>
       )}
@@ -210,12 +220,18 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
 
       {/* Explainability Modal */}
       {regime && (
-        <ExplainabilityModal
-          isOpen={isExplainModalOpen}
-          onClose={() => setIsExplainModalOpen(false)}
-          regime={currentRegime as 'risk_on' | 'risk_off' | 'transition'}
-          confidence={confidence}
-        />
+        <>
+          <ExplainabilityModal
+            isOpen={isExplainModalOpen}
+            onClose={() => setIsExplainModalOpen(false)}
+            regime={currentRegime as 'risk_on' | 'risk_off' | 'transition'}
+            confidence={confidence}
+          />
+          <CrisisEventsBrowser
+            isOpen={isCrisisEventsOpen}
+            onClose={() => setIsCrisisEventsOpen(false)}
+          />
+        </>
       )}
     </div>
   )
