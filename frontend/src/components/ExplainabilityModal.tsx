@@ -147,10 +147,43 @@ export default function ExplainabilityModal({
                       <h4 className="text-lg font-semibold text-gray-900 mb-4">
                         Feature Contribution Waterfall
                       </h4>
-                      {/* Placeholder for waterfall plot */}
-                      <div className="h-96 flex items-center justify-center bg-white rounded border border-gray-200">
-                        <p className="text-gray-400">Waterfall plot will be displayed here</p>
-                      </div>
+                      <p className="text-sm text-gray-600 mb-4">
+                        SHAP waterfall plot showing how each feature pushes the model prediction
+                        from the base value toward the final prediction.
+                      </p>
+
+                      {explanation.waterfall_plot ? (
+                        <div className="bg-white rounded border border-gray-200 p-4">
+                          <img
+                            src={explanation.waterfall_plot}
+                            alt="SHAP waterfall plot showing feature contributions to regime prediction"
+                            className="w-full h-auto"
+                          />
+                        </div>
+                      ) : (
+                        <div className="h-96 flex flex-col items-center justify-center bg-white rounded border border-gray-200 border-dashed p-8">
+                          <svg
+                            className="w-16 h-16 text-gray-300 mb-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                            />
+                          </svg>
+                          <p className="text-gray-500 font-medium mb-2">
+                            Waterfall plot not available
+                          </p>
+                          <p className="text-gray-400 text-sm text-center max-w-sm">
+                            The visualization is being generated. See the features table for
+                            detailed SHAP values.
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
 
