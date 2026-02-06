@@ -102,14 +102,73 @@ export default function ExplainabilityModal({
           {/* Content */}
           <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(95vh-200px)] sm:max-h-[calc(90vh-180px)]">
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-12">
-                <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mb-4" />
-                <p className="text-gray-600 text-lg font-medium">
-                  Computing SHAP explanations...
-                </p>
-                <p className="text-gray-400 text-sm mt-2">
-                  Analyzing feature contributions
-                </p>
+              <div className="space-y-6 animate-pulse">
+                {/* Regime Summary Skeleton */}
+                <div className="p-4 bg-gray-100 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="h-6 bg-gray-200 rounded w-32 mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-48"></div>
+                    </div>
+                    <div className="text-right">
+                      <div className="h-10 bg-gray-200 rounded w-20 mb-1"></div>
+                      <div className="h-3 bg-gray-200 rounded w-16 ml-auto"></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content Grid Skeleton */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Waterfall Plot Skeleton - 2/3 width */}
+                  <div className="lg:col-span-2">
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                      <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
+                      <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
+                      <div className="h-96 bg-gradient-to-b from-gray-100 to-gray-50 rounded flex items-end justify-around px-4 pb-4">
+                        {[...Array(10)].map((_, i) => (
+                          <div
+                            key={i}
+                            className="bg-gray-200 rounded-t"
+                            style={{
+                              width: '6%',
+                              height: `${40 + Math.random() * 50}%`,
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Features Table Skeleton - 1/3 width */}
+                  <div className="lg:col-span-1">
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                      <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
+                      <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
+                      <div className="space-y-3">
+                        {[...Array(10)].map((_, i) => (
+                          <div key={i} className="bg-white rounded-lg p-3 border border-gray-200">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="w-5 h-5 bg-gray-200 rounded-full"></div>
+                              <div className="h-4 bg-gray-200 rounded flex-1"></div>
+                            </div>
+                            <div className="ml-7">
+                              <div className="h-3 bg-gray-200 rounded w-20 mb-2"></div>
+                              <div className="h-2 bg-gray-100 rounded-full"></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Loading Indicator */}
+                <div className="flex items-center justify-center gap-3 py-4">
+                  <RefreshCw className="w-5 h-5 text-blue-600 animate-spin" />
+                  <p className="text-gray-600 text-sm font-medium">
+                    Computing SHAP explanations...
+                  </p>
+                </div>
               </div>
             ) : error ? (
               <ErrorMessage
