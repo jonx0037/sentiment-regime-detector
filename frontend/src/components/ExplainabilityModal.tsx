@@ -193,10 +193,74 @@ export default function ExplainabilityModal({
                       <h4 className="text-lg font-semibold text-gray-900 mb-4">
                         Top Features
                       </h4>
-                      {/* Placeholder for features table */}
-                      <div className="space-y-2">
-                        <p className="text-gray-400 text-sm">Features table will be displayed here</p>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Features ranked by impact on the model's prediction
+                      </p>
+
+                      <div className="space-y-3">
+                        {explanation.top_features.map((feature) => {
+                          const isPositive = feature.shap_value >= 0
+                          const maxAbsShap = Math.max(
+                            ...explanation.top_features.map((f) => Math.abs(f.shap_value))
+                          )
+                          const barWidth = (Math.abs(feature.shap_value) / maxAbsShap) * 100
+
+                          return (
+                            <div
+                              key={feature.feature_name}
+                              className="bg-white rounded-lg p-3 border border-gray-200"
+                            >
+                              {/* Feature Header */}
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium flex-shrink-0">
+                                      {feature.rank}
+                                    </span>
+                                    <p className="text-sm font-medium text-gray-900 truncate">
+                                      {feature.feature_name}
+                                    </p>
+                                  </div>
+                                  <p className="text-xs text-gray-500 mt-1 ml-7">
+                                    Value: {feature.value.toFixed(4)}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* SHAP Value Bar */}
+                              <div className="ml-7">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span
+                                    className={`text-xs font-semibold ${
+                                      isPositive ? 'text-green-700' : 'text-red-700'
+                                    }`}
+                                  >
+                                    {isPositive ? '+' : ''}
+                                    {feature.shap_value.toFixed(4)}
+                                  </span>
+                                </div>
+                                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full ${
+                                      isPositive ? 'bg-green-500' : 'bg-red-500'
+                                    }`}
+                                    style={{ width: `${barWidth}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
                       </div>
+
+                      {explanation.all_features.length > explanation.top_features.length && (
+                        <div className="mt-4 text-center">
+                          <p className="text-xs text-gray-500">
+                            Showing top {explanation.top_features.length} of{' '}
+                            {explanation.all_features.length} features
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
