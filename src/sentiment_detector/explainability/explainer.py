@@ -65,7 +65,17 @@ class RegimeExplainer:
         self._model = checkpoint['model']
         self._scaler = checkpoint['scaler']
         self._feature_names = checkpoint['feature_names']
-        self.model_version = checkpoint.get('model_version', 'unknown')
+
+        # Generate model version from checkpoint metadata
+        if 'model_version' in checkpoint:
+            self.model_version = checkpoint['model_version']
+        elif 'train_end_date' in checkpoint:
+            # Use train date to create version (e.g., "RF_v2024.01")
+            train_date = checkpoint['train_end_date']
+            self.model_version = f"RF_v{train_date[:4]}.{train_date[5:7]}"
+        else:
+            # Fallback: use model filename
+            self.model_version = self.model_path.stem
 
         # Initialize SHAP
         self._explainer = shap.TreeExplainer(self._model)

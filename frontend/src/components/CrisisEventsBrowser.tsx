@@ -174,28 +174,35 @@ export default function CrisisEventsBrowser({ isOpen, onClose }: CrisisEventsBro
                   </div>
 
                   {/* Crisis Metrics */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white rounded-lg p-4 border border-gray-200">
-                      <div className="flex items-center gap-2 mb-2">
-                        <TrendingUp className="w-5 h-5 text-red-600" />
-                        <span className="text-sm font-medium text-gray-700">CISS Peak</span>
-                        <Tooltip content="Composite Indicator of Systemic Stress at peak of crisis" />
-                      </div>
-                      <p className="text-2xl font-bold text-red-700">
-                        {selectedEvent.event.ciss_peak.toFixed(3)}
-                      </p>
+                  {(selectedEvent.event.ciss_peak !== null ||
+                    selectedEvent.event.vix_peak !== null) && (
+                    <div className="grid grid-cols-2 gap-4">
+                      {selectedEvent.event.ciss_peak !== null && (
+                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <div className="flex items-center gap-2 mb-2">
+                            <TrendingUp className="w-5 h-5 text-red-600" />
+                            <span className="text-sm font-medium text-gray-700">CISS Peak</span>
+                            <Tooltip content="Composite Indicator of Systemic Stress at peak of crisis" />
+                          </div>
+                          <p className="text-2xl font-bold text-red-700">
+                            {selectedEvent.event.ciss_peak.toFixed(3)}
+                          </p>
+                        </div>
+                      )}
+                      {selectedEvent.event.vix_peak !== null && (
+                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Activity className="w-5 h-5 text-amber-600" />
+                            <span className="text-sm font-medium text-gray-700">VIX Peak</span>
+                            <Tooltip content="CBOE Volatility Index (fear gauge) at peak of crisis" />
+                          </div>
+                          <p className="text-2xl font-bold text-amber-700">
+                            {selectedEvent.event.vix_peak.toFixed(2)}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                    <div className="bg-white rounded-lg p-4 border border-gray-200">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Activity className="w-5 h-5 text-amber-600" />
-                        <span className="text-sm font-medium text-gray-700">VIX Peak</span>
-                        <Tooltip content="CBOE Volatility Index (fear gauge) at peak of crisis" />
-                      </div>
-                      <p className="text-2xl font-bold text-amber-700">
-                        {selectedEvent.event.vix_peak.toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* SHAP Explanation */}
@@ -316,18 +323,27 @@ export default function CrisisEventsBrowser({ isOpen, onClose }: CrisisEventsBro
                       </div>
 
                       <div className="flex items-center gap-4 text-sm">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-gray-500">CISS:</span>
-                          <span className="font-semibold text-red-700">
-                            {event.ciss_peak.toFixed(3)}
+                        {event.ciss_peak !== null && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-500">CISS:</span>
+                            <span className="font-semibold text-red-700">
+                              {event.ciss_peak.toFixed(3)}
+                            </span>
+                          </div>
+                        )}
+                        {event.vix_peak !== null && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-500">VIX:</span>
+                            <span className="font-semibold text-amber-700">
+                              {event.vix_peak.toFixed(2)}
+                            </span>
+                          </div>
+                        )}
+                        {event.ciss_peak === null && event.vix_peak === null && (
+                          <span className="text-gray-500 italic text-xs">
+                            Out-of-sample validation period
                           </span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-gray-500">VIX:</span>
-                          <span className="font-semibold text-amber-700">
-                            {event.vix_peak.toFixed(2)}
-                          </span>
-                        </div>
+                        )}
                       </div>
 
                       {loadingEventId === event.event_id && (
