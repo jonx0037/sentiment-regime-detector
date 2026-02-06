@@ -6,6 +6,7 @@ import { explainabilityApi } from '@/services/api'
 import type { ExplanationResponse } from '@/types/explainability'
 import ErrorMessage from './ErrorMessage'
 import { getFeatureDisplayName, getFeatureDescription } from '@/utils/featureNames'
+import Tooltip from './Tooltip'
 
 interface ExplainabilityModalProps {
   isOpen: boolean
@@ -204,12 +205,17 @@ export default function ExplainabilityModal({
                   {/* Waterfall Plot - 2/3 width on large screens */}
                   <div className="lg:col-span-2">
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                        Feature Contribution Waterfall
-                      </h4>
+                      <div className="flex items-center gap-2 mb-4">
+                        <h4 className="text-lg font-semibold text-gray-900">
+                          Feature Contribution Waterfall
+                        </h4>
+                        <Tooltip
+                          content="SHAP waterfall plot showing how each feature pushes the model prediction from the base value toward the final prediction. Positive contributions (green) increase the prediction, negative contributions (red) decrease it."
+                          side="right"
+                        />
+                      </div>
                       <p className="text-sm text-gray-600 mb-4">
-                        SHAP waterfall plot showing how each feature pushes the model prediction
-                        from the base value toward the final prediction.
+                        Shows how each feature pushes the model prediction from the base value toward the final prediction.
                       </p>
 
                       {explanation.waterfall_plot ? (
@@ -250,9 +256,15 @@ export default function ExplainabilityModal({
                   {/* Top Features Table - 1/3 width on large screens */}
                   <div className="lg:col-span-1">
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                        Top Features
-                      </h4>
+                      <div className="flex items-center gap-2 mb-4">
+                        <h4 className="text-lg font-semibold text-gray-900">
+                          Top Features
+                        </h4>
+                        <Tooltip
+                          content="Features ranked by absolute SHAP value impact. Green bars indicate features pushing toward the predicted regime, red bars indicate features pushing away from it."
+                          side="right"
+                        />
+                      </div>
                       <p className="text-sm text-gray-600 mb-4">
                         Features ranked by impact on the model's prediction
                       </p>
@@ -278,9 +290,15 @@ export default function ExplainabilityModal({
                                       {feature.rank}
                                     </span>
                                     <div className="flex-1 min-w-0">
-                                      <p className="text-sm font-medium text-gray-900 truncate">
-                                        {getFeatureDisplayName(feature.feature_name)}
-                                      </p>
+                                      <div className="flex items-center gap-1.5">
+                                        <p className="text-sm font-medium text-gray-900 truncate">
+                                          {getFeatureDisplayName(feature.feature_name)}
+                                        </p>
+                                        <Tooltip
+                                          content={getFeatureDescription(feature.feature_name)}
+                                          side="right"
+                                        />
+                                      </div>
                                       <p className="text-xs text-gray-400 truncate">
                                         {feature.feature_name}
                                       </p>
@@ -303,6 +321,11 @@ export default function ExplainabilityModal({
                                     {isPositive ? '+' : ''}
                                     {feature.shap_value.toFixed(4)}
                                   </span>
+                                  <span className="text-xs text-gray-400">SHAP</span>
+                                  <Tooltip
+                                    content={`SHAP value represents how much this feature contributes to the prediction. ${isPositive ? 'Positive values push toward the predicted regime.' : 'Negative values push away from the predicted regime.'}`}
+                                    side="right"
+                                  />
                                 </div>
                                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                                   <div
