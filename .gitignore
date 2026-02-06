@@ -152,3 +152,6 @@ data/reference-repos/
 # Database Backup & Restore
 railway-restore/
 sentiment_db_backup.dump
+
+# Git Worktrees
+.worktrees/
