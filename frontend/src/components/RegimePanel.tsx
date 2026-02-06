@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react'
 import { regimeApi } from '@/services/api'
 import type { RegimeResponse } from '@/types/api'
-import { Activity, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react'
+import { Activity, TrendingUp, TrendingDown, AlertTriangle, Lightbulb } from 'lucide-react'
 import ErrorMessage from './ErrorMessage'
 import { RegimePanelSkeleton } from './LoadingSkeleton'
 import Tooltip from './Tooltip'
+import ExplainabilityModal from './ExplainabilityModal'
 
 interface RegimePanelProps {
   className?: string
@@ -82,6 +83,7 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
   const [regime, setRegime] = useState<RegimeResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isExplainModalOpen, setIsExplainModalOpen] = useState(false)
 
   const fetchRegime = async () => {
     try {
@@ -187,10 +189,34 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
         </div>
       )}
 
+      {/* Explain Button */}
+      {regime && (
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => setIsExplainModalOpen(true)}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm hover:shadow-md font-medium text-sm"
+          >
+            <Lightbulb className="w-4 h-4" />
+            Explain This Prediction
+          </button>
+        </div>
+      )}
+
       {/* Timestamp */}
       <div className="mt-4 text-xs text-gray-500 text-center">
         Last updated: {new Date().toLocaleTimeString()}
       </div>
+
+      {/* Explainability Modal */}
+      {regime && (
+        <ExplainabilityModal
+          isOpen={isExplainModalOpen}
+          onClose={() => setIsExplainModalOpen(false)}
+          regime={currentRegime as 'risk_on' | 'risk_off' | 'transition'}
+          confidence={confidence}
+        />
+      )}
     </div>
   )
 }
