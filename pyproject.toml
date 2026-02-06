@@ -69,6 +69,10 @@ dependencies = [
     "numpy>=1.26.0",
     "statsmodels>=0.14.0",  # Time series analysis
 
+    # Explainability
+    "shap>=0.44.0",
+    "matplotlib>=3.8.0",
+
     # Utilities
     "python-dotenv>=1.0.0",
     "structlog>=24.1.0",
