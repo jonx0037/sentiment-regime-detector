@@ -1,8 +1,8 @@
 # Cross-Asset Sentiment Regime Detector
 
-**SMU MSDS Capstone Project | Spring 2026**  
-**Author:** Jonathan Rocha (<jrocha@smu.edu>)  
-**Advisor:** [To be determined]  
+**SMU MSDS Capstone Project | Spring 2026**
+**Author:** Jonathan Rocha (<jrocha@smu.edu>)
+**Advisor:** David (King Ip) Lin, Ph.D. (<kdlin@smu.edu>)
 **Due Date:** March 20, 2026
 
 ---
@@ -153,7 +153,7 @@ DS_6210_Capstone/
 - **Renault (2017):** Reddit sentiment correlates with volatility
 - **Nystrup et al. (2018):** Regime-switching models for market state detection
 
-*[Literature review to be expanded with 5-8 additional papers this week]*
+**Current Literature Base:** 53 academic papers analyzed (see `course_files/research/summaries/`)
 
 ---
 
@@ -308,5 +308,5 @@ GitHub: [your-github-username]
 
 - **SMU Lyle School of Engineering** - MSDS program support
 - **MANEFRAME HPC Team** - GPU compute resources
-- **Dr. [Advisor Name]** - Research guidance
+- **Dr. David (King Ip) Lin** - Research guidance and academic oversight
 - **Hugging Face** - Pre-trained transformer models
