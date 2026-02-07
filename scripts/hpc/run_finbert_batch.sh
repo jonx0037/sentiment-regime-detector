@@ -2,7 +2,7 @@
 #SBATCH --job-name=finbert_batch
 #SBATCH --output=/lustre/scratch/client/users/jarocha/sentiment-detector/logs/finbert_batch_%j.out
 #SBATCH --error=/lustre/scratch/client/users/jarocha/sentiment-detector/logs/finbert_batch_%j.err
-#SBATCH --partition=gpgpu-1
+#SBATCH --partition=gpu-dev
 #SBATCH --gres=gpu:1
 #SBATCH --time=02:00:00
 #SBATCH --mem=32G

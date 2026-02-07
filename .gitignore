@@ -147,6 +147,9 @@ data/kaggle/reddit-finance/
 data/kaggle/
 data/hpc_batches/
 
+# HPC FinBERT raw results (1GB+ JSON files - keep processed CSV only)
+data/finbert_results/
+
 # Reference repositories (contain nested .git)
 course_files/research/reference-repos/
 data/reference-repos/

@@ -2,25 +2,16 @@
 Tests for Sentiment Ensemble module.
 """
 
-import sys
-from pathlib import Path
-import importlib.util
-
-# Load the module directly to avoid __init__.py import issues
-module_path = Path(__file__).parent.parent / "sentiment_ensemble.py"
-spec = importlib.util.spec_from_file_location("sentiment_ensemble", module_path)
-sentiment_ensemble = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(sentiment_ensemble)
-
 import numpy as np
 import pytest
 
-# Import from the directly loaded module
-SentimentLabel = sentiment_ensemble.SentimentLabel
-ModelPrediction = sentiment_ensemble.ModelPrediction
-EnsemblePrediction = sentiment_ensemble.EnsemblePrediction
-SentimentEnsemble = sentiment_ensemble.SentimentEnsemble
-create_ensemble = sentiment_ensemble.create_ensemble
+from sentiment_detector.models.sentiment_ensemble import (
+    SentimentLabel,
+    ModelPrediction,
+    EnsemblePrediction,
+    SentimentEnsemble,
+    create_ensemble,
+)
 
 
 # ============================================================================
