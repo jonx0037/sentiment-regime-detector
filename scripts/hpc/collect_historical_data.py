@@ -57,7 +57,7 @@ class HistoricalDataCollector:
             keywords: Financial keywords to filter
 
         Returns:
-            DataFrame with collected news articles
+            DataFrame with collected news articles (English only)
         """
         print(f"\n📰 Collecting GDELT news: {start_date.date()} to {end_date.date()}")
 
@@ -66,14 +66,17 @@ class HistoricalDataCollector:
 
         articles = []
         current_date = start_date
+        english_count = 0
+        total_fetched = 0
 
         # Collect day by day
         pbar = tqdm(total=(end_date - start_date).days, desc="GDELT collection")
 
         while current_date <= end_date:
             try:
-                # Build query for financial news
-                query = " OR ".join(keywords)
+                # Build query for financial news (English only)
+                # Add sourcelang:english to filter for English articles
+                query = f"sourcelang:english ({' OR '.join(keywords)})"
                 date_str = current_date.strftime("%Y%m%d")
 
                 params = {
@@ -91,22 +94,35 @@ class HistoricalDataCollector:
                             data = await resp.json()
 
                             if "articles" in data:
+                                total_fetched += len(data["articles"])
                                 for article in data["articles"]:
-                                    articles.append({
-                                        "date": current_date,
-                                        "source": "gdelt",
-                                        "title": article.get("title", ""),
-                                        "text": article.get("title", ""),  # Use title as text
-                                        "url": article.get("url", ""),
-                                        "domain": article.get("domain", ""),
-                                        "language": article.get("language", "")
-                                    })
+                                    # Double-check language is English
+                                    lang = article.get("language", "").lower()
+                                    if lang in ["english", "en"]:
+                                        articles.append({
+                                            "date": current_date,
+                                            "source": "gdelt",
+                                            "title": article.get("title", ""),
+                                            "text": article.get("title", ""),  # Use title as text
+                                            "url": article.get("url", ""),
+                                            "domain": article.get("domain", ""),
+                                            "language": lang
+                                        })
+                                        english_count += 1
+                        else:
+                            # Log non-200 responses
+                            error_text = await resp.text()
+                            print(f"  ⚠️ HTTP {resp.status} on {current_date.date()}: {error_text[:100]}")
 
                 # Rate limiting
                 await asyncio.sleep(1)
 
+            except asyncio.TimeoutError:
+                print(f"  ⏱️  Timeout on {current_date.date()} - API not responding")
+            except aiohttp.ClientError as e:
+                print(f"  🔌 Network error on {current_date.date()}: {e}")
             except Exception as e:
-                print(f"  Error on {current_date.date()}: {e}")
+                print(f"  ❌ Error on {current_date.date()}: {type(e).__name__}: {e}")
 
             current_date += timedelta(days=1)
             pbar.update(1)
@@ -114,7 +130,7 @@ class HistoricalDataCollector:
         pbar.close()
 
         df = pd.DataFrame(articles)
-        print(f"  ✓ Collected {len(df):,} GDELT articles")
+        print(f"  ✓ Collected {len(df):,} English GDELT articles (filtered from {total_fetched:,} total)")
 
         return df
 
@@ -122,14 +138,16 @@ class HistoricalDataCollector:
         self,
         start_date: datetime,
         end_date: datetime,
-        subreddits: list[str]
+        subreddits: list[str],
+        max_posts_per_sub: int = 5000  # Target posts per subreddit
     ) -> pd.DataFrame:
-        """Collect Reddit posts via Pushshift archives.
+        """Collect Reddit posts via Pushshift archives with pagination.
 
         Args:
             start_date: Start date for collection
             end_date: End date for collection
             subreddits: List of subreddits to collect from
+            max_posts_per_sub: Maximum posts to collect per subreddit
 
         Returns:
             DataFrame with collected Reddit posts
@@ -143,50 +161,95 @@ class HistoricalDataCollector:
 
         for subreddit in subreddits:
             print(f"  Collecting r/{subreddit}...")
+            sub_posts = 0
+            max_attempts = 10  # Limit pagination attempts
 
             after = int(start_date.timestamp())
             before = int(end_date.timestamp())
 
-            try:
-                params = {
-                    "subreddit": subreddit,
-                    "after": after,
-                    "before": before,
-                    "size": 1000,  # Max per request
-                    "sort": "desc",
-                    "sort_type": "created_utc"
-                }
+            # Paginate through results
+            for attempt in range(max_attempts):
+                try:
+                    params = {
+                        "subreddit": subreddit,
+                        "after": after,
+                        "before": before,
+                        "size": 1000,  # Max per request
+                        "sort": "desc",
+                        "sort_type": "created_utc"
+                    }
 
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(base_url, params=params, timeout=60) as resp:
-                        if resp.status == 200:
-                            data = await resp.json()
+                    async with aiohttp.ClientSession() as session:
+                        async with session.get(base_url, params=params, timeout=60) as resp:
+                            if resp.status == 200:
+                                data = await resp.json()
 
-                            if "data" in data:
-                                for post in data["data"]:
-                                    # Combine title + selftext
-                                    text = f"{post.get('title', '')} {post.get('selftext', '')}"
+                                if "data" in data and len(data["data"]) > 0:
+                                    batch_count = 0
+                                    for post in data["data"]:
+                                        # Combine title + selftext
+                                        text = f"{post.get('title', '')} {post.get('selftext', '')}"
 
-                                    posts.append({
-                                        "date": datetime.fromtimestamp(post.get("created_utc", 0)),
-                                        "source": "reddit",
-                                        "subreddit": subreddit,
-                                        "title": post.get("title", ""),
-                                        "text": text.strip(),
-                                        "score": post.get("score", 0),
-                                        "num_comments": post.get("num_comments", 0),
-                                        "author": post.get("author", ""),
-                                        "url": f"https://reddit.com{post.get('permalink', '')}"
-                                    })
+                                        posts.append({
+                                            "date": datetime.fromtimestamp(post.get("created_utc", 0)),
+                                            "source": "reddit",
+                                            "subreddit": subreddit,
+                                            "title": post.get("title", ""),
+                                            "text": text.strip(),
+                                            "score": post.get("score", 0),
+                                            "num_comments": post.get("num_comments", 0),
+                                            "author": post.get("author", ""),
+                                            "url": f"https://reddit.com{post.get('permalink', '')}"
+                                        })
+                                        batch_count += 1
 
-                # Rate limiting
-                await asyncio.sleep(2)
+                                    sub_posts += batch_count
 
-            except Exception as e:
-                print(f"  Error collecting r/{subreddit}: {e}")
+                                    # Update 'before' for pagination (get older posts)
+                                    if len(data["data"]) > 0:
+                                        # Use the oldest post's timestamp for next request
+                                        before = data["data"][-1].get("created_utc", before) - 1
+
+                                    # Check if we've hit our target
+                                    if sub_posts >= max_posts_per_sub:
+                                        print(f"    Reached target of {max_posts_per_sub} posts")
+                                        break
+
+                                    # If we got fewer than requested, we've reached the end
+                                    if len(data["data"]) < 1000:
+                                        print(f"    No more posts available ({sub_posts} total)")
+                                        break
+                                else:
+                                    # No more data available
+                                    print(f"    No more posts available ({sub_posts} total)")
+                                    break
+                            elif resp.status == 429:
+                                # Rate limited
+                                print(f"    ⏱️  Rate limited, waiting 60s...")
+                                await asyncio.sleep(60)
+                                continue
+                            else:
+                                error_text = await resp.text()
+                                print(f"    ⚠️ HTTP {resp.status}: {error_text[:100]}")
+                                break
+
+                    # Rate limiting between requests
+                    await asyncio.sleep(2)
+
+                except asyncio.TimeoutError:
+                    print(f"    ⏱️  Timeout on attempt {attempt + 1}")
+                    await asyncio.sleep(5)
+                except aiohttp.ClientError as e:
+                    print(f"    🔌 Network error: {e}")
+                    break
+                except Exception as e:
+                    print(f"    ❌ Error: {type(e).__name__}: {e}")
+                    break
+
+            print(f"    Collected {sub_posts} posts from r/{subreddit}")
 
         df = pd.DataFrame(posts)
-        print(f"  ✓ Collected {len(df):,} Reddit posts")
+        print(f"  ✓ Collected {len(df):,} Reddit posts total")
 
         return df
 
@@ -247,12 +310,19 @@ class HistoricalDataCollector:
                                         "author": article.get("author", ""),
                                         "published_at": article.get("publishedAt", "")
                                     })
+                        else:
+                            error_text = await resp.text()
+                            print(f"  ⚠️ HTTP {resp.status} on {current_date.date()}: {error_text[:100]}")
 
                 # Rate limiting (NewsAPI has strict limits)
                 await asyncio.sleep(1)
 
+            except asyncio.TimeoutError:
+                print(f"  ⏱️  Timeout on {current_date.date()}")
+            except aiohttp.ClientError as e:
+                print(f"  🔌 Network error on {current_date.date()}: {e}")
             except Exception as e:
-                print(f"  Error on {current_date.date()}: {e}")
+                print(f"  ❌ Error on {current_date.date()}: {type(e).__name__}: {e}")
 
             current_date += timedelta(days=1)
 
