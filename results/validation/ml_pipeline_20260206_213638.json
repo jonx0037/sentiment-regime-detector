@@ -1,0 +1,53 @@
+{
+  "timestamp": "2026-02-06T21:36:28.896052",
+  "overall_passed": false,
+  "sentiment_ensemble": {
+    "models": {
+      "standard_ensemble": {
+        "passed": false,
+        "error": "create_ensemble() got an unexpected keyword argument 'use_finbert'"
+      },
+      "distilbert": {
+        "available": false
+      },
+      "llama3": {
+        "available": true,
+        "integrated": false,
+        "mock_backend_works": true
+      }
+    },
+    "passed": false,
+    "issues": [
+      "Standard ensemble failed: create_ensemble() got an unexpected keyword argument 'use_finbert'",
+      "DistilBERT not implemented"
+    ]
+  },
+  "garch_midas": {
+    "passed": false,
+    "issues": [
+      "Parameters differ from expected: \u03b1=0.8623, \u03b2=0.1377",
+      "GARCH-MIDAS fitting failed: GARCHMIDASModel.forecast() got an unexpected keyword argument 'horizon'"
+    ],
+    "parameters": {
+      "alpha": 0.8622902249198307,
+      "beta": 0.13770977508016938,
+      "alpha_plus_beta": 1.0
+    }
+  },
+  "regime_classifier": {
+    "passed": true,
+    "issues": [
+      "Prediction failed: Model must be fitted before prediction"
+    ],
+    "instantiation": "success",
+    "model_path": "models/regime_classifier_rf.pkl"
+  },
+  "explainability": {
+    "passed": true,
+    "issues": [
+      "No SHAP artifacts found"
+    ],
+    "shap_installed": true,
+    "explainability_module": "found"
+  }
+}
