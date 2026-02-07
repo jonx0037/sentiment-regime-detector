@@ -209,7 +209,7 @@
 - [course_files/paper-drafts/draft-1.md](../../course_files/paper-drafts/draft-1.md) - Current paper
 - [course_files/paper-drafts/draft-1.1-changelog.md](../../course_files/paper-drafts/draft-1.1-changelog.md) - Implementation
 - [MORNING_SESSION_FEB3.md](MORNING_SESSION_FEB3.md) - Morning achievements
-- [TESTING.md](../../TESTING.md) - Test coverage
+- [TESTING.md](../../docs/TESTING.md) - Test coverage
 - [frontend/src/app/page.tsx](../../frontend/src/app/page.tsx) - Dashboard status
 
 ---

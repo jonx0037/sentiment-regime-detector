@@ -39,7 +39,7 @@ Welcome to the comprehensive documentation for the Sentiment Regime Detector pro
 
 **Common Tasks:**
 - Setting up local environment → [DEVELOPMENT.md#quick-start](DEVELOPMENT.md#quick-start)
-- Running tests → [TESTING.md](../TESTING.md)
+- Running tests → [TESTING.md](TESTING.md)
 - Making database changes → [DEVELOPMENT.md#database-management](DEVELOPMENT.md#database-management)
 
 ---
@@ -98,7 +98,7 @@ Welcome to the comprehensive documentation for the Sentiment Regime Detector pro
 ### Development
 
 - **Setup Guide:** [DEVELOPMENT.md#quick-start](DEVELOPMENT.md#quick-start)
-- **Testing:** [../TESTING.md](../TESTING.md)
+- **Testing:** [../TESTING.md](TESTING.md)
 - **Code Style:** [DEVELOPMENT.md#code-style](DEVELOPMENT.md#code-style)
 - **Debugging:** [DEVELOPMENT.md#debugging](DEVELOPMENT.md#debugging)
 
@@ -139,7 +139,7 @@ Welcome to the comprehensive documentation for the Sentiment Regime Detector pro
 | Deploy to production | [DEPLOYMENT.md](DEPLOYMENT.md) | Docker Production |
 | Process data on HPC | [DEPLOYMENT.md](DEPLOYMENT.md) | HPC Deployment |
 | Debug an issue | [DEVELOPMENT.md](DEVELOPMENT.md) | Debugging |
-| Run tests | [../TESTING.md](../TESTING.md) | Running Tests |
+| Run tests | [../TESTING.md](TESTING.md) | Running Tests |
 | Add a dependency | [DEVELOPMENT.md](DEVELOPMENT.md) | Dependency Management |
 
 ### By Component
@@ -162,7 +162,7 @@ Welcome to the comprehensive documentation for the Sentiment Regime Detector pro
 ### In This Repository
 
 - **Project README:** [../README.md](../README.md) - Project overview and results
-- **Testing Guide:** [../TESTING.md](../TESTING.md) - Comprehensive testing documentation
+- **Testing Guide:** [../TESTING.md](TESTING.md) - Comprehensive testing documentation
 - **Scripts Reference:** [../scripts/README.md](../scripts/README.md) - Detailed script catalog
 - **Data Directory:** [../data/README.md](../data/README.md) - Data organization
 - **Kaggle Datasets:** [../data/kaggle/README.md](../data/kaggle/README.md) - Dataset details
@@ -266,7 +266,7 @@ docs/
 | **Data Pipeline** | ✅ Complete | [DATA_PIPELINE.md](DATA_PIPELINE.md) |
 | **Development** | ✅ Complete | [DEVELOPMENT.md](DEVELOPMENT.md) |
 | **Deployment** | ✅ Complete | [DEPLOYMENT.md](DEPLOYMENT.md) |
-| **Testing** | ✅ Complete | [../TESTING.md](../TESTING.md) |
+| **Testing** | ✅ Complete | [../TESTING.md](TESTING.md) |
 | **Datasets** | ✅ Complete | [DATASETS.md](DATASETS.md) |
 | **Scripts** | ✅ Complete | [SCRIPTS.md](SCRIPTS.md) |
 | **CI/CD** | ⏳ Coming Soon | TBD |

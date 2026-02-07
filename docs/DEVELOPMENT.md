@@ -158,7 +158,7 @@ open htmlcov/index.html
 
 ### Writing Tests
 
-See [TESTING.md](../TESTING.md) for comprehensive testing guide.
+See [TESTING.md](TESTING.md) for comprehensive testing guide.
 
 **Quick example:**
 
@@ -527,7 +527,7 @@ docker-compose logs redis
 - **API Documentation:** [API.md](API.md)
 - **Data Pipeline:** [DATA_PIPELINE.md](DATA_PIPELINE.md)
 - **Deployment:** [DEPLOYMENT.md](DEPLOYMENT.md)
-- **Testing:** [../TESTING.md](../TESTING.md)
+- **Testing:** [../TESTING.md](TESTING.md)
 - **Scripts:** [../scripts/README.md](../scripts/README.md)
 
 ---

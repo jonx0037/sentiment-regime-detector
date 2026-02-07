@@ -1,19 +1,22 @@
 #!/bin/bash
 #SBATCH --job-name=collect_historical
-#SBATCH --partition=standard-mem-s
+#SBATCH --account=jcheun_ds6210_1262_401_0001
+#SBATCH --partition=standard-s
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=8
 #SBATCH --mem=16G
 #SBATCH --time=24:00:00
-#SBATCH --array=0-71  # 72 quarters from 2008-2026 (18 years * 4)
+#SBATCH --array=0-71%36  # 72 quarters, max 36 concurrent (avoid API rate limits)
 #SBATCH --output=logs/collect_%A_%a.out
 #SBATCH --error=logs/collect_%A_%a.err
 
 # Historical data collection array job
-# Each array task collects data for one 3-month period
+# Each array task collects data for one 3-month period (quarter)
+# 72 quarters total: 2008-Q1 through 2026-Q4
 
-module load python/3.11
+# Load Python with data science packages (includes numpy, pandas, scipy)
+module load python/3.11.11/data_science/2025.08.21
 
 # Activate virtual environment
 source venv/bin/activate
@@ -48,11 +51,11 @@ echo "Historical Data Collection - Array Task $SLURM_ARRAY_TASK_ID"
 echo "Period: $START_DATE to $END_DATE"
 echo "=================================================="
 
-# Create output directory
-OUTPUT_DIR="/work/$USER/historical_data"
+# Create output directory (using /scratch, not /work which is being deprecated)
+OUTPUT_DIR="/scratch/users/$USER/sentiment_regime_data/raw_data"
 mkdir -p $OUTPUT_DIR
 
-# Run collection
+# Run collection (checkpoint support not yet implemented in Python script)
 python scripts/hpc/collect_historical_data.py \
     --start-date $START_DATE \
     --end-date $END_DATE \

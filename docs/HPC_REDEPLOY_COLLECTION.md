@@ -8,12 +8,14 @@
 ## 🔍 What Was Fixed
 
 **Error #9 & #10 Resolution:**
+
 - ✅ Removed unsupported `--checkpoint` parameter
 - ✅ Added English language filtering to GDELT
 - ✅ Implemented Reddit pagination for more posts
 - ✅ Enhanced error logging for debugging
 
 **Expected Results:**
+
 - GDELT: 50-250 English articles/day (was: 0)
 - Reddit: 5,000-25,000 posts/quarter (was: ~100)
 - File sizes: 5-20 MB per quarter (was: 15-98 KB)
@@ -27,6 +29,7 @@
 You have two options:
 
 **Option A: Push from local (recommended if you have working git)**
+
 ```bash
 # On your local machine in project directory
 cd ~/Documents/SMU/DS_6210_Capstone
@@ -52,6 +55,7 @@ git pull origin main
 ```
 
 **Option B: Direct edit on cluster (if git push doesn't work)**
+
 ```bash
 # SSH to cluster
 ssh jarocha@m3.smu.edu
@@ -142,30 +146,35 @@ watch -n 60 'ls /scratch/users/jarocha/sentiment_regime_data/raw_data/*.parquet 
 **After Collection Completes (2-3 days):**
 
 1. **File Count:**
+
    ```bash
    ls /scratch/users/jarocha/sentiment_regime_data/raw_data/*.parquet | wc -l
    # Should show: 144 files (72 reddit + 72 combined)
    ```
 
 2. **File Sizes:**
+
    ```bash
    ls -lh /scratch/users/jarocha/sentiment_regime_data/raw_data/*.parquet | head -10
    # Should show: Files ranging from 5-20 MB (not 15-98 KB)
    ```
 
 3. **Sample Data Inspection:**
+
    ```bash
    python3 -c "import pandas as pd; df = pd.read_parquet('/scratch/users/jarocha/sentiment_regime_data/raw_data/combined_batch_0000.parquet'); print(f'Rows: {len(df):,}'); print(f'Columns: {df.columns.tolist()}'); print(df.head())"
    # Should show: 10,000+ rows for a 3-month batch
    ```
 
 4. **No Critical Errors:**
+
    ```bash
    grep -i "error.*critical\|failed.*collect" logs/collect_*.err | wc -l
    # Should show: 0 or very few
    ```
 
 5. **Validation:**
+
    ```bash
    python scripts/hpc/validate_pipeline_phase.py \
      --phase collection \
@@ -180,12 +189,14 @@ watch -n 60 'ls /scratch/users/jarocha/sentiment_regime_data/raw_data/*.parquet 
 ### If Jobs Fail Again
 
 **1. Check error logs for patterns:**
+
 ```bash
 # Find common errors across all batches
 grep -h "Error\|Failed\|Exception" logs/collect_*.err | sort | uniq -c | sort -rn | head -10
 ```
 
 **2. Test single batch manually:**
+
 ```bash
 # Interactive test of batch 0 (2008-Q1)
 srun --partition=standard-s --cpus-per-task=8 --mem=16G --time=1:00:00 --pty bash
@@ -208,6 +219,7 @@ ls -lh /scratch/users/jarocha/sentiment_regime_data/test_run/
 ```
 
 **3. If GDELT still returns 0:**
+
 ```bash
 # Test GDELT API directly
 curl -s "https://api.gdeltproject.org/api/v2/doc/doc?query=sourcelang:english%20(stock%20market)&mode=artlist&maxrecords=10&format=json&startdatetime=20190701000000&enddatetime=20190701235959" | python3 -m json.tool | head -50
@@ -215,6 +227,7 @@ curl -s "https://api.gdeltproject.org/api/v2/doc/doc?query=sourcelang:english%20
 ```
 
 **4. If Reddit pagination fails:**
+
 ```bash
 # Check Pushshift API status
 curl -s "https://api.pullpush.io/reddit/search/submission?subreddit=wallstreetbets&after=1546300800&before=1554076799&size=100" | python3 -m json.tool | head -20
@@ -224,6 +237,7 @@ curl -s "https://api.pullpush.io/reddit/search/submission?subreddit=wallstreetbe
 ### Common Issues
 
 **API Rate Limiting:**
+
 ```bash
 # If seeing many 429 errors, reduce parallelism
 # Edit collect_historical_array.sh line 10:
@@ -231,6 +245,7 @@ curl -s "https://api.pullpush.io/reddit/search/submission?subreddit=wallstreetbe
 ```
 
 **Timeout Errors:**
+
 ```bash
 # If seeing many timeouts, increase timeout in Python script
 # Edit collect_historical_data.py:
@@ -238,6 +253,7 @@ async with session.get(base_url, params=params, timeout=90)  # Was 30 or 60
 ```
 
 **Disk Space:**
+
 ```bash
 # If running out of space
 df -h /scratch/users/jarocha
@@ -262,6 +278,7 @@ rm -rf /scratch/users/jarocha/sentiment_regime_data/old_data_broken/
 | Completion | - | All 144 files present with good data |
 
 **Realistic expectations:**
+
 - Some jobs may timeout (24h limit) - that's OK, checkpoint-free restarts work
 - API rate limits may slow things down - throttling helps
 - Some quarters (early 2008, recent 2025-2026) may have less data
@@ -273,11 +290,13 @@ rm -rf /scratch/users/jarocha/sentiment_regime_data/old_data_broken/
 Once all 72 batches complete successfully:
 
 1. **Validate data quality:**
+
    ```bash
    python scripts/hpc/validate_pipeline_phase.py --phase collection --path /scratch/users/jarocha/sentiment_regime_data/raw_data
    ```
 
 2. **Proceed to Phase 2: Sentiment Processing**
+
    ```bash
    sbatch scripts/hpc/run_sentiment_processing.sh
    ```
