@@ -104,6 +104,7 @@ graph LR
 ```
 
 **Components:**
+
 - **Collectors:** Reddit API, Twitter API, RSS parsers
 - **Storage:** JSON files in `data/raw/`
 - **Import:** Bulk PostgreSQL insertion with validation
@@ -119,6 +120,7 @@ graph LR
 ```
 
 **Components:**
+
 - **HPC:** SMU ManeFrame III (NVIDIA A100 GPUs)
 - **Model:** FinBERT ensemble (ProsusAI/finbert)
 - **Batch Size:** ~13-19 MB per batch, 30 batches total
@@ -135,6 +137,7 @@ graph LR
 ```
 
 **Components:**
+
 - **Feature Engineering:** Time alignment, MIDAS components
 - **GARCH(1,1):** Volatility modeling (α=0.155, β=0.800)
 - **Aligned Data:** Daily/weekly CSV outputs
@@ -151,6 +154,7 @@ graph LR
 ```
 
 **Models:**
+
 - **Primary:** XGBoost conditional routing classifier (25% performance improvement)
 - **Fallback:** GARCH-MIDAS + Jump Model
 - **Validation:** Walk-forward backtesting
@@ -167,6 +171,7 @@ graph LR
 ```
 
 **Optimization:**
+
 - **Cache:** Redis (60s TTL for hot data)
 - **Connection Pool:** AsyncPG (10-20 connections)
 - **Response Time:** <50ms (p95)
@@ -246,6 +251,7 @@ Input Text
 ```
 
 **Performance:**
+
 - **Processing Speed:** 1,000 texts/sec (GPU), 50 texts/sec (CPU)
 - **Accuracy:** 87% on FinancialPhraseBank test set
 - **Batch Size:** 32 (optimal for A100 GPU)
@@ -265,6 +271,7 @@ else:
 ```
 
 **Features:**
+
 - Sentiment score (cross-asset aggregate)
 - VIX level and 30-day change
 - CISS level and trend
@@ -272,6 +279,7 @@ else:
 - Day of week, month indicators
 
 **Performance:**
+
 - **Accuracy:** 82% on held-out test set (2020-2024)
 - **Sharpe Ratio:** 1.45 (trading strategy)
 - **Latency:** <10ms (90th percentile)
@@ -283,6 +291,7 @@ else:
 ### Core Tables
 
 #### `texts`
+
 ```sql
 CREATE TABLE texts (
     id BIGSERIAL PRIMARY KEY,
@@ -298,6 +307,7 @@ CREATE INDEX idx_texts_source ON texts(source);
 ```
 
 #### `sentiment_scores`
+
 ```sql
 CREATE TABLE sentiment_scores (
     id BIGSERIAL PRIMARY KEY,
@@ -312,6 +322,7 @@ CREATE INDEX idx_sentiment_text ON sentiment_scores(text_id);
 ```
 
 #### `market_data`
+
 ```sql
 CREATE TABLE market_data (
     id BIGSERIAL PRIMARY KEY,
@@ -328,6 +339,7 @@ CREATE INDEX idx_market_date ON market_data(date);
 ```
 
 #### `regimes`
+
 ```sql
 CREATE TABLE regimes (
     id BIGSERIAL PRIMARY KEY,
@@ -362,6 +374,7 @@ CREATE TABLE regimes (
 ```
 
 **Commands:**
+
 ```bash
 docker-compose --profile dev up
 # OR
@@ -414,6 +427,7 @@ docker-compose --profile prod up -d
 ```
 
 **Resource Allocation:**
+
 - **CPUs:** 4 cores per job (120 total)
 - **GPUs:** 1 A100 per job (30 total)
 - **Memory:** 32GB per job (960GB total)
@@ -426,16 +440,19 @@ docker-compose --profile prod up -d
 ### Horizontal Scaling
 
 **API Layer:**
+
 - Add FastAPI instances behind load balancer
 - Stateless design enables easy scaling
 - Target: 10,000 requests/minute
 
 **Database Layer:**
+
 - PostgreSQL read replicas for query distribution
 - Connection pooling (pgBouncer)
 - Partitioning: texts table by month
 
 **Processing Layer:**
+
 - PySpark cluster for distributed processing
 - Kafka for streaming data ingestion (future)
 - Kubernetes for container orchestration (future)
@@ -443,11 +460,13 @@ docker-compose --profile prod up -d
 ### Vertical Scaling
 
 **Current Limits:**
+
 - PostgreSQL: 2.66M rows (manageable)
 - Redis: 4GB cache (plenty of headroom)
 - API: Single instance handles 1,000 req/min
 
 **Next Bottlenecks:**
+
 - Database writes (solved with batching)
 - Model inference (solved with GPU acceleration)
 - Redis memory (solved with LRU eviction)

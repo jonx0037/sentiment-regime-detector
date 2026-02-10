@@ -17,9 +17,22 @@ An automated system for detecting market regime transitions (Risk-On/Risk-Off/Tr
 
 ## 📊 Project Status
 
-**Current Phase:** Week 4 - GARCH-MIDAS & Backtesting Complete
-**Deployment:** Production deployment active on Railway (backend) + Vercel (frontend)  
-**Last Updated:** February 2, 2026
+**Current Phase:** Week 5 - Data Collection Complete ✅
+**Next Phase:** Sentiment Analysis & Regime Classification
+**Deployment:** Production deployment active on Railway (backend) + Vercel (frontend)
+**Last Updated:** February 7, 2026
+
+### Data Collection Complete (Feb 7, 2026) ✅
+
+- ✅ **Total Records**: 27.1 million (7.2 GB)
+- ✅ **Date Coverage**: 2008-2025 with key event coverage
+- ✅ **2023-2024 Gap**: FILLED (+605K records)
+- ✅ **Cross-Asset News**: +10,800% improvement (3K → 328K)
+- ✅ **Major Events Covered**: 2008 Crisis, COVID Crash, GameStop Era, Crypto Winter
+- ✅ **Asset Classes**: Equities (61%), Crypto (36%), News (1.2%)
+- ⚠️ **Known Gaps**: Forex (0.01%), Commodities (0.04%) - acceptable for initial analysis
+
+**Ready for**: PySpark sentiment analysis and regime classification
 
 ### Key Results
 
@@ -300,7 +313,7 @@ This project is for academic purposes as part of the SMU MSDS program. Code will
 Master of Science in Data Science  
 Southern Methodist University  
 Email: <jrocha@smu.edu>  
-GitHub: [your-github-username]
+GitHub: github.com/jonx0037
 
 ---
 
