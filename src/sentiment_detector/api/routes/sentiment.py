@@ -29,13 +29,13 @@ async def get_current_sentiment(
 ) -> SentimentResponse:
     """
     Get current sentiment scores for all asset classes.
-    
+
     Returns the latest aggregated sentiment indices across
     equities, crypto, forex, and commodities.
     """
     service = SentimentService()
     sentiment_data = await service.get_current_sentiment(session)
-    
+
     # Convert to response model
     asset_classes = [
         AssetClassSentiment(
@@ -49,7 +49,7 @@ async def get_current_sentiment(
         )
         for data in sentiment_data
     ]
-    
+
     # Calculate cross-asset statistics
     if asset_classes:
         compound_scores = [ac.compound_score for ac in asset_classes]
@@ -58,7 +58,7 @@ async def get_current_sentiment(
     else:
         cross_asset_mean = 0.0
         cross_asset_std = 0.0
-    
+
     return SentimentResponse(
         timestamp=datetime.now(timezone.utc),
         asset_classes=asset_classes,
@@ -77,7 +77,7 @@ async def get_sentiment_history(
 ) -> SentimentHistoryResponse:
     """
     Get historical sentiment data for a specific asset class.
-    
+
     Returns time-series sentiment data with configurable granularity.
     """
     service = SentimentService()
@@ -87,7 +87,7 @@ async def get_sentiment_history(
         start_date=start_date,
         end_date=end_date,
     )
-    
+
     # Convert to response model
     data_points = [
         SentimentDataPoint(
@@ -98,7 +98,7 @@ async def get_sentiment_history(
         )
         for data in history_data
     ]
-    
+
     return SentimentHistoryResponse(
         asset_class=asset_class,
         start_date=start_date,
@@ -119,7 +119,8 @@ async def get_cross_asset_sentiment_history(
 
     Returns time-series sentiment data for equity, crypto, forex, and commodity.
     """
-    result = await session.execute(text("""
+    result = await session.execute(
+        text("""
         SELECT
             DATE(period_start) as date,
             asset_class,
@@ -130,7 +131,9 @@ async def get_cross_asset_sentiment_history(
           AND period_start >= CURRENT_DATE - :days * INTERVAL '1 day'
         GROUP BY DATE(period_start), asset_class
         ORDER BY date, asset_class
-    """), {"days": days})
+    """),
+        {"days": days},
+    )
     rows = result.fetchall()
 
     # Organize data by date
@@ -152,31 +155,50 @@ async def get_cross_asset_sentiment_history(
 @router.get("/by-source")
 async def get_sentiment_by_source(
     asset_class: AssetClass = Query(..., description="Asset class to filter"),
+    session: AsyncSession = Depends(get_session),
 ) -> dict:
     """
     Get sentiment breakdown by data source (Reddit, Twitter, News).
 
     Useful for identifying divergence between retail and news sentiment.
     """
-    # TODO: Implement source-level breakdown
+    # Query actual source-level breakdown from the database
+    result = await session.execute(
+        text("""
+        SELECT
+            source,
+            AVG(compound_score) as avg_score,
+            COUNT(*) as sample_count
+        FROM raw_texts
+        WHERE asset_class = :asset_class
+          AND compound_score IS NOT NULL
+        GROUP BY source
+        ORDER BY sample_count DESC
+    """),
+        {"asset_class": asset_class},
+    )
+    rows = result.fetchall()
+
+    sources = {}
+    scores = []
+    for row in rows:
+        source_name = row[0] or "unknown"
+        avg_score = float(row[1]) if row[1] else 0.0
+        count = int(row[2])
+        sources[source_name] = {
+            "compound_score": round(avg_score, 4),
+            "sample_count": count,
+        }
+        scores.append(avg_score)
+
+    # Compute divergence: how much sources disagree (std of scores)
+    divergence = 0.0
+    if len(scores) > 1:
+        mean_score = sum(scores) / len(scores)
+        divergence = round((sum((s - mean_score) ** 2 for s in scores) / len(scores)) ** 0.5, 4)
 
     return {
         "asset_class": asset_class,
-        "sources": {
-            "reddit": {
-                "compound_score": 0.18,
-                "sample_count": 2500,
-                "subreddits": ["wallstreetbets", "investing", "stocks"],
-            },
-            "news": {
-                "compound_score": 0.05,
-                "sample_count": 150,
-                "sources": ["reuters", "bloomberg"],
-            },
-            "twitter": {
-                "compound_score": 0.12,
-                "sample_count": 800,
-            },
-        },
-        "divergence_score": 0.13,  # How much sources disagree
+        "sources": sources,
+        "divergence_score": divergence,
     }

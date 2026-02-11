@@ -46,6 +46,11 @@ class Settings(BaseSettings):
 
     twitter_bearer_token: str = Field(default="", description="Twitter API bearer token")
     news_api_key: str = Field(default="", description="NewsAPI key")
+    finhub_api_key: str = Field(default="", description="Finnhub API key")
+    tiingo_api_key: str = Field(default="", description="Tiingo API key")
+    coinapi_key_1: str = Field(default="", description="CoinAPI key 1")
+    coinapi_key_2: str = Field(default="", description="CoinAPI key 2")
+    coinapi_key_3: str = Field(default="", description="CoinAPI key 3")
     alpha_vantage_api_key: str = Field(default="", description="Alpha Vantage API key")
 
     # -------------------------------------------------------------------------
@@ -110,6 +115,7 @@ class Settings(BaseSettings):
     def news_sources_list(self) -> list[str]:
         """Parse news sources from comma-separated string."""
         return [s.strip() for s in self.news_sources.split(",") if s.strip()]
+
     collection_interval_minutes: int = Field(
         default=60,
         description="Interval between data collection runs",
