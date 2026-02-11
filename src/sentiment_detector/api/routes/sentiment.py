@@ -162,18 +162,18 @@ async def get_sentiment_by_source(
 
     Useful for identifying divergence between retail and news sentiment.
     """
-    # Query actual source-level breakdown from the database
+    # Query actual source-level breakdown from sentiment_indices
     result = await session.execute(
         text("""
         SELECT
             source,
-            AVG(compound_score) as avg_score,
-            COUNT(*) as sample_count
-        FROM raw_texts
+            AVG(mean_compound) as avg_score,
+            SUM(sample_count) as total_count
+        FROM sentiment_indices
         WHERE asset_class = :asset_class
-          AND compound_score IS NOT NULL
+          AND source IS NOT NULL
         GROUP BY source
-        ORDER BY sample_count DESC
+        ORDER BY total_count DESC
     """),
         {"asset_class": asset_class},
     )
