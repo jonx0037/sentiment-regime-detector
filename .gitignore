@@ -161,3 +161,5 @@ sentiment_db_backup.dump
 
 # Git Worktrees
 .worktrees/
+results/
+data/SPY_full.csv

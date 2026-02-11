@@ -134,6 +134,8 @@ async def get_garch_parameters() -> dict:
         "aic": baseline.get("aic"),
         "bic": baseline.get("bic"),
         "loglikelihood": baseline.get("loglikelihood"),
+        "run_timestamp": results.get("run_timestamp"),
+        "data_range": results.get("data_range"),
         "interpretation": {
             "persistence": "high"
             if persistence > 0.9

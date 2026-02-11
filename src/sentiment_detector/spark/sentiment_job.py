@@ -797,10 +797,17 @@ def main():
         for subdir in subdirs:
             subdir_path = _os.path.join(input_path_str, subdir)
 
-            # ── Find CSV files recursively ────────────────────────────
-            csv_files = _glob.glob(_os.path.join(subdir_path, "**", "*.csv"), recursive=True)
+            # ── Find CSV files ─────────────────────────────────────
+            # Try top-level first (fast), then recursive only if needed.
+            # Recursive glob on Lustre with 300K+ nested files hangs.
+            csv_files = _glob.glob(_os.path.join(subdir_path, "*.csv"))
             if not csv_files:
-                # ── JSON fallback: look for JSON files ────────────────
+                csv_files = _glob.glob(_os.path.join(subdir_path, "**", "*.csv"), recursive=True)
+            if not csv_files:
+                # ── JSON fallback: skip — pre-aggregated CSVs handle this
+                skipped_datasets.append((subdir, "no CSV files"))
+                continue
+            if False:  # disabled JSON fallback — replaced by pre-aggregated CSVs
                 json_files = _glob.glob(_os.path.join(subdir_path, "**", "*.json"), recursive=True)
                 if not json_files:
                     skipped_datasets.append((subdir, "no CSV or JSON files"))

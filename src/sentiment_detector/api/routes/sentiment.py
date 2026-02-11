@@ -19,8 +19,10 @@ from sentiment_detector.services.sentiment_service import SentimentService
 
 router = APIRouter()
 
-# Asset classes we track
-AssetClass = Literal["equity", "crypto", "forex", "commodity"]
+# Asset classes we track (dynamically from DB, but typed for API docs)
+AssetClass = Literal[
+    "equity", "equities", "crypto", "forex", "commodity", "cross-asset", "news", "social"
+]
 
 
 @router.get("/current", response_model=SentimentResponse)

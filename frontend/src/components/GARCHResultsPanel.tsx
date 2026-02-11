@@ -24,6 +24,8 @@ interface GARCHResponse {
   bic: number
   loglikelihood: number
   interpretation: GARCHInterpretation
+  run_timestamp?: string
+  data_range?: { start: string; end: string; num_observations: number }
 }
 
 interface VolatilityForecast {
@@ -115,11 +117,21 @@ export default function GARCHResultsPanel() {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-1">
         <Activity className="w-5 h-5 text-purple-600" />
         <h2 className="text-lg font-semibold text-gray-900">GARCH(1,1) Volatility Model</h2>
         <Tooltip content="Generalized Autoregressive Conditional Heteroskedasticity - a time series model that predicts volatility based on past shocks (ARCH effects) and historical volatility. The (1,1) means 1 lag for both terms." />
       </div>
+      {params.run_timestamp && (
+        <p className="text-xs text-gray-400 mb-3 ml-7">
+          Model fitted: {new Date(params.run_timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          {params.data_range && (
+            <> · Data: {params.data_range.start} to {params.data_range.end}
+              {params.data_range.num_observations && ` (${params.data_range.num_observations.toLocaleString()} obs)`}
+            </>
+          )}
+        </p>
+      )}
 
       {/* Model Parameters */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">

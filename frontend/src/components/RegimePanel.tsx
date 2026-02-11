@@ -138,8 +138,8 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
           <Tooltip content="Market regime classification based on sentiment, CISS, and VIX. Identifies Risk-On (bullish), Risk-Off (bearish), or Transition states." />
         </h2>
         <div className="flex items-center gap-2">
-          <span className="inline-flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-          <span className="text-xs text-gray-500">Live</span>
+          <span className="inline-flex h-2 w-2 rounded-full bg-blue-500"></span>
+          <span className="text-xs text-gray-500">Model-based</span>
         </div>
       </div>
 
@@ -214,8 +214,9 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
       )}
 
       {/* Timestamp */}
-      <div className="mt-4 text-xs text-gray-500 text-center">
-        Last updated: {new Date().toLocaleTimeString()}
+      <div className="mt-4 text-xs text-gray-400 text-center space-y-1">
+        <div>Classification from CISS, VIX &amp; sentiment features</div>
+        <div>Page loaded: {new Date().toLocaleTimeString()}</div>
       </div>
 
       {/* Explainability Modal */}

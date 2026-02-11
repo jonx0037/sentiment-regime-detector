@@ -30,7 +30,7 @@ export default function SentimentComparisonChart({ data }: SentimentComparisonCh
           onExportSVG={() => exportChartAsSVG('sentiment-comparison-chart', 'sentiment-comparison')}
         />
       </div>
-      
+
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -42,7 +42,7 @@ export default function SentimentComparisonChart({ data }: SentimentComparisonCh
           <YAxis
             tick={{ fill: '#6b7280', fontSize: 12 }}
             stroke="#9ca3af"
-            label={{ value: 'Sentiment Score (%)', angle: -90, position: 'insideLeft', fill: '#6b7280' }}
+            label={{ value: 'Sentiment Score', angle: -90, position: 'insideLeft', fill: '#6b7280', fontSize: 12 }}
           />
           <Tooltip
             contentStyle={{

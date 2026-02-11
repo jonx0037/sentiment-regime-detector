@@ -19,9 +19,12 @@ export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
 
   return (
     <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">
-        Cross-Asset Summary
-      </h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold text-gray-900">
+          Cross-Asset Summary
+        </h2>
+        <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded">Last 7 days</span>
+      </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {/* Mean Sentiment */}
@@ -88,17 +91,17 @@ function getMarketCondition(mean: number, std: number, spread: number): string {
   if (std > 0.2 || spread > 0.4) {
     return 'Divergent - Asset-Specific Moves'
   }
-  
+
   // Strong directional
   if (Math.abs(mean) > 0.2) {
     return mean > 0 ? 'Risk-On - Broad Bullish' : 'Risk-Off - Broad Bearish'
   }
-  
+
   // Moderate directional
   if (Math.abs(mean) > 0.1) {
     return mean > 0 ? 'Cautiously Bullish' : 'Cautiously Bearish'
   }
-  
+
   // Low conviction
   return 'Mixed - Low Conviction'
 }
