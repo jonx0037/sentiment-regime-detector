@@ -11,9 +11,24 @@ router = APIRouter()
 
 def load_latest_garch_results() -> Optional[dict]:
     """Load the most recent GARCH results file."""
-    results_dir = Path("results")
-    if not results_dir.exists():
-        return None
+    # Resolve project root: try multiple strategies to find results dir
+    # Strategy 1: Walk up from this source file
+    source_dir = Path(__file__).resolve().parent
+    for _ in range(6):
+        source_dir = source_dir.parent
+        candidate = source_dir / "results"
+        if candidate.exists() and list(candidate.glob("garch_midas_results_*.json")):
+            results_dir = candidate
+            break
+    else:
+        # Strategy 2: Check common working directories
+        for base in [Path.cwd(), Path("/app"), Path.home()]:
+            candidate = base / "results"
+            if candidate.exists():
+                results_dir = candidate
+                break
+        else:
+            return None
 
     # Find all GARCH results files
     garch_files = sorted(results_dir.glob("garch_midas_results_*.json"), reverse=True)
@@ -120,7 +135,11 @@ async def get_garch_parameters() -> dict:
         "bic": baseline.get("bic"),
         "loglikelihood": baseline.get("loglikelihood"),
         "interpretation": {
-            "persistence": "high" if persistence > 0.9 else "moderate" if persistence > 0.7 else "low",
+            "persistence": "high"
+            if persistence > 0.9
+            else "moderate"
+            if persistence > 0.7
+            else "low",
             "shock_impact": "high" if alpha > 0.2 else "moderate" if alpha > 0.1 else "low",
             "memory": "high" if beta > 0.85 else "moderate" if beta > 0.7 else "low",
         },
