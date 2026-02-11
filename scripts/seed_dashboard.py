@@ -28,6 +28,10 @@ def get_connection(database_url):
     """Get psycopg2 connection from URL."""
     # Convert asyncpg URL to psycopg2 if needed
     url = database_url.replace("postgresql+asyncpg://", "postgresql://")
+    # Add sslmode for Railway public proxy
+    if "railway" in url and "sslmode" not in url:
+        sep = "&" if "?" in url else "?"
+        url += f"{sep}sslmode=require"
     return psycopg2.connect(url)
 
 
@@ -41,9 +45,8 @@ def seed_sentiment_indices(conn, sentiment_path, feature_matrix_path):
     # If we have the feature matrix, use its precomputed momentum
     features = None
     if os.path.exists(feature_matrix_path):
-        features = pd.read_csv(
-            feature_matrix_path, parse_dates=["date"], index_col="date"
-        )
+        features = pd.read_csv(feature_matrix_path, index_col=0)
+        features.index = pd.to_datetime(features.index)
 
     # Asset class mapping from daily_sentiment.csv columns
     asset_classes = {
@@ -83,6 +86,7 @@ def seed_sentiment_indices(conn, sentiment_path, feature_matrix_path):
                     if pd.isna(momentum):
                         momentum = None
 
+            now = datetime.now(timezone.utc)
             rows.append(
                 (
                     str(uuid4()),
@@ -102,6 +106,8 @@ def seed_sentiment_indices(conn, sentiment_path, feature_matrix_path):
                     neg_ratio,
                     float(momentum) if momentum is not None else None,
                     None,  # sentiment_acceleration
+                    now,  # created_at
+                    now,  # updated_at
                 )
             )
 
@@ -118,7 +124,8 @@ def seed_sentiment_indices(conn, sentiment_path, feature_matrix_path):
                (id, asset_class, source, period_start, period_end, granularity,
                 mean_compound, std_compound, sample_count,
                 positive_ratio, negative_ratio,
-                sentiment_momentum, sentiment_acceleration)
+                sentiment_momentum, sentiment_acceleration,
+                created_at, updated_at)
                VALUES %s
                ON CONFLICT DO NOTHING""",
             rows,
@@ -140,6 +147,7 @@ def seed_stress_indices(conn, ciss_path):
     df["ciss"] = pd.to_numeric(df[val_col], errors="coerce")
     df = df.dropna(subset=["date", "ciss"])
 
+    now = datetime.now(timezone.utc)
     rows = []
     for _, row_data in df.iterrows():
         rows.append(
@@ -150,6 +158,8 @@ def seed_stress_indices(conn, ciss_path):
                 "ea",
                 float(row_data["ciss"]),
                 "daily",
+                now,
+                now,
             )
         )
 
@@ -162,7 +172,8 @@ def seed_stress_indices(conn, ciss_path):
         execute_values(
             cur,
             """INSERT INTO stress_indices
-               (id, source, date, region, value, frequency)
+               (id, source, date, region, value, frequency,
+                created_at, updated_at)
                VALUES %s
                ON CONFLICT DO NOTHING""",
             rows,
@@ -183,6 +194,7 @@ def seed_market_data(conn, vix_path):
     # Compute daily returns
     df["daily_return"] = df["close"].pct_change()
 
+    now = datetime.now(timezone.utc)
     rows = []
     for date, row_data in df.iterrows():
         rows.append(
@@ -210,6 +222,8 @@ def seed_market_data(conn, vix_path):
                 else None,
                 None,  # volatility
                 "vix_kaggle",
+                now,
+                now,
             )
         )
 
@@ -224,7 +238,8 @@ def seed_market_data(conn, vix_path):
             """INSERT INTO market_data
                (id, symbol, asset_type, exchange, region, date,
                 open, high, low, close, adj_close, volume,
-                daily_return, volatility, source)
+                daily_return, volatility, source,
+                created_at, updated_at)
                VALUES %s
                ON CONFLICT DO NOTHING""",
             rows,
