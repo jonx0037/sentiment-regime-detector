@@ -1,0 +1,46 @@
+{
+  "pipeline_version": "2.0",
+  "run_timestamp": "2026-02-11T10:22:41.221721",
+  "processing_time_seconds": 2.07,
+  "data": {
+    "sentiment_days": 6278,
+    "feature_matrix_days": 4490,
+    "date_range": [
+      "2005-01-19",
+      "2025-08-14"
+    ],
+    "n_features": 22
+  },
+  "garch": {
+    "omega": 0.01964905872063571,
+    "alpha": 0.1571333930547569,
+    "beta": 0.8417652559023509,
+    "nu": 5.552685788750066,
+    "log_likelihood": -6039.211953825942,
+    "aic": 12088.423907651884,
+    "bic": 12120.471947555567
+  },
+  "jump_model": {
+    "n_regimes": 4,
+    "jump_penalty": 5.0,
+    "n_transitions": 513,
+    "avg_regime_duration": 8.735408560311283,
+    "regime_distribution": {
+      "normal": 0.6841870824053452,
+      "low_volatility": 0.13763919821826281,
+      "elevated": 0.12360801781737193,
+      "high_volatility": 0.05456570155902005
+    },
+    "regime_vix_means": {
+      "elevated": 20.49189188330023,
+      "low_volatility": 14.753834921951047,
+      "high_volatility": 45.75893879326022,
+      "normal": 18.509654947246116
+    }
+  },
+  "output_files": {
+    "regime_labels": "results/pipeline_output/regime_labels.csv",
+    "feature_matrix": "results/pipeline_output/feature_matrix.csv",
+    "transitions": "results/pipeline_output/regime_transitions.csv"
+  }
+}
