@@ -195,7 +195,9 @@ class SentimentService:
             ac_result = await session.execute(
                 sql_text(
                     "SELECT DISTINCT asset_class FROM sentiment_indices "
-                    "WHERE source IS NULL ORDER BY asset_class"
+                    "WHERE source IS NULL "
+                    "AND asset_class IN ('equity', 'crypto', 'forex', 'commodity') "
+                    "ORDER BY asset_class"
                 )
             )
             asset_classes = [row[0] for row in ac_result.fetchall()]

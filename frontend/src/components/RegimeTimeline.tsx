@@ -102,7 +102,7 @@ export default function RegimeTimeline() {
   return (
     <div id="regime-timeline-chart" className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-2">
         <Clock className="w-5 h-5 text-blue-600" />
         <h2 className="text-lg font-semibold text-gray-900">Regime Transition History</h2>
         <span className="ml-auto text-sm text-gray-500">{transitions.length} recent changes</span>
@@ -111,6 +111,9 @@ export default function RegimeTimeline() {
           onExportSVG={() => exportChartAsSVG('regime-timeline-chart', 'regime-timeline')}
         />
       </div>
+      <p className="text-xs text-gray-500 mb-4">
+        Detected shifts between Risk-On, Risk-Off, and Transition states, driven by VIX thresholds, ECB CISS systemic stress, and cross-asset sentiment divergence. Jump penalties reduce false signals.
+      </p>
 
       {/* Timeline */}
       <div className="space-y-3 max-h-96 overflow-y-auto">

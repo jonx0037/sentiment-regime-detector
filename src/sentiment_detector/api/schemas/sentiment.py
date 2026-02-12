@@ -7,8 +7,13 @@ from pydantic import BaseModel, Field
 
 
 AssetClass = Literal[
-    "equity", "equities", "crypto", "forex", "commodity",
-    "cross-asset", "cross_asset", "news", "social",
+    "equity",
+    "equities",
+    "crypto",
+    "forex",
+    "commodity",
+    "cross-asset",
+    "cross_asset",
 ]
 
 
@@ -19,19 +24,11 @@ class AssetClassSentiment(BaseModel):
     compound_score: float = Field(
         ..., ge=-1, le=1, description="Aggregated sentiment score (-1 to 1)"
     )
-    positive_ratio: float = Field(
-        ..., ge=0, le=1, description="Ratio of positive sentiment texts"
-    )
-    negative_ratio: float = Field(
-        ..., ge=0, le=1, description="Ratio of negative sentiment texts"
-    )
-    neutral_ratio: float = Field(
-        ..., ge=0, le=1, description="Ratio of neutral sentiment texts"
-    )
+    positive_ratio: float = Field(..., ge=0, le=1, description="Ratio of positive sentiment texts")
+    negative_ratio: float = Field(..., ge=0, le=1, description="Ratio of negative sentiment texts")
+    neutral_ratio: float = Field(..., ge=0, le=1, description="Ratio of neutral sentiment texts")
     sample_count: int = Field(..., ge=0, description="Number of texts analyzed")
-    momentum: float = Field(
-        ..., description="Rate of change in sentiment (positive = improving)"
-    )
+    momentum: float = Field(..., description="Rate of change in sentiment (positive = improving)")
 
 
 class SentimentResponse(BaseModel):
@@ -41,9 +38,7 @@ class SentimentResponse(BaseModel):
     asset_classes: list[AssetClassSentiment] = Field(
         ..., description="Sentiment data per asset class"
     )
-    cross_asset_mean: float = Field(
-        ..., description="Mean sentiment across all asset classes"
-    )
+    cross_asset_mean: float = Field(..., description="Mean sentiment across all asset classes")
     cross_asset_std: float = Field(
         ..., description="Standard deviation of sentiment across asset classes"
     )
@@ -67,7 +62,5 @@ class SentimentHistoryResponse(BaseModel):
     granularity: Literal["hourly", "daily"] = Field(
         ..., description="Time granularity of data points"
     )
-    data_points: list[SentimentDataPoint] = Field(
-        ..., description="Time series data points"
-    )
+    data_points: list[SentimentDataPoint] = Field(..., description="Time series data points")
     total_count: int = Field(..., description="Total number of data points")

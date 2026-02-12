@@ -216,22 +216,33 @@ export default function Dashboard() {
                         <p className="text-xs">
                           <InlineTooltip
                             term="FinBERT + RoBERTa"
-                            definition="An ensemble of two transformer models: FinBERT (specialized for financial text) and RoBERTa (a robustly optimized BERT variant). The ensemble combines both models' predictions for more reliable sentiment classification."
-                          /> ensemble models analyze sentiment across equity, crypto, forex, and commodity markets.
-                          Scores range from -1 (bearish) to +1 (bullish). Data from Reddit, news, and social media.
+                            definition="An ensemble of two transformer models: FinBERT (finance-specific BERT) and RoBERTa (robustly optimized BERT). Predictions are averaged for more reliable sentiment classification across source types."
+                          />
+                          {' '}ensemble models scored ~8.5M texts from Reddit, Twitter, and financial news across four
+                          asset classes: Equities, Crypto, Forex, and Commodities.
+                          Compound scores range from -1 (most bearish) to +1 (most bullish).
                         </p>
                       </div>
                       <div>
                         <p className="font-medium mb-1">Regime Detection</p>
                         <p className="text-xs">
-                          ML-based classifier (99.45% accuracy) uses <InlineTooltip
+                          Two-Layer model: <InlineTooltip
+                            term="GARCH-MIDAS"
+                            definition="Generalized Autoregressive Conditional Heteroskedasticity — Mixed Data Sampling. Isolates long-term volatility driven by sentiment from short-term noise."
+                          />
+                          {' '}isolates sentiment-driven volatility; a{' '}
+                          <InlineTooltip
+                            term="Statistical Jump Model"
+                            definition="Classifies discrete regime states while penalizing frequent switching, producing more stable and persistent regime identifications than Hidden Markov Models (Shu et al., 2024)."
+                          />
+                          {' '}classifies Risk-On / Risk-Off / Transition states using{' '}
+                          <InlineTooltip
                             term="CISS"
                             definition="Composite Indicator of Systemic Stress from the European Central Bank"
                           />, <InlineTooltip
                             term="VIX"
-                            definition="CBOE Volatility Index - the market's expectation of 30-day volatility"
-                          />, and sentiment features to identify
-                          risk-on, risk-off, and transition regimes in real-time.
+                            definition="CBOE Volatility Index — the market's expectation of 30-day forward volatility"
+                          />, and cross-asset sentiment features.
                         </p>
                       </div>
                       <div>
@@ -239,22 +250,20 @@ export default function Dashboard() {
                         <p className="text-xs">
                           <InlineTooltip
                             term="GARCH(1,1)"
-                            definition="Generalized Autoregressive Conditional Heteroskedasticity - models time-varying volatility by combining recent shocks (ARCH) with historical volatility patterns"
-                          /> models forecast market volatility with high <InlineTooltip
+                            definition="Generalized Autoregressive Conditional Heteroskedasticity — decomposes volatility into short-term shocks (α / ARCH) and long-term memory (β / GARCH)"
+                          />
+                          {' '}decomposes volatility into short-term shocks (α) and long-term memory (β). High <InlineTooltip
                             term="persistence"
-                            definition="α+β near 1.0 means volatility shocks decay very slowly - current volatility strongly predicts future volatility"
-                          /> (α+β=1.000),
-                          combining <InlineTooltip
-                            term="ARCH effects"
-                            definition="Autoregressive Conditional Heteroskedasticity - how recent market shocks impact current volatility levels"
-                          /> and historical volatility memory.
+                            definition="α+β near 1.0 means volatility shocks decay very slowly — current volatility strongly predicts future volatility"
+                          /> (α+β ≈ 1.0) means
+                          current volatility strongly predicts future volatility.
                         </p>
                       </div>
                       <div>
                         <p className="font-medium mb-1">Data Sources</p>
                         <p className="text-xs">
-                          ECB CISS (systemic stress), CBOE VIX (implied volatility), and 2.66M+ sentiment texts
-                          processed on HPC via ensemble FinBERT/RoBERTa. Live feeds from NewsAPI, Finnhub, Tiingo, and Reddit.
+                          ~8.5M texts processed on SMU MANEFRAME HPC via ensemble FinBERT/RoBERTa.
+                          Systemic stress from ECB (CISS) and CBOE (VIX). Data spans 2005–present.
                         </p>
                       </div>
                     </div>
