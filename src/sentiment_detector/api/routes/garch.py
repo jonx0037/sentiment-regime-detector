@@ -284,7 +284,7 @@ async def get_garch_parameters(
 
     alpha = params.get("alpha[1]", 0)
     beta = params.get("beta[1]", 0)
-    persistence = alpha + beta
+    persistence = baseline.get("persistence", alpha + beta)
 
     return {
         "parameters": params,
