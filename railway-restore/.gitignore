@@ -1,6 +1,0 @@
-# Ignore large database dump files
-*.dump
-*.sql
-
-# Ignore backup files
-*.backup
