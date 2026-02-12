@@ -122,23 +122,29 @@ export default function GARCHResultsPanel() {
         <h2 className="text-lg font-semibold text-gray-900">GARCH(1,1) Volatility Model</h2>
         <Tooltip content="Layer 1 of the Two-Layer Regime Detector. GARCH-MIDAS isolates the long-term volatility component driven by sentiment. The (1,1) means 1 lag for both ARCH and GARCH terms." />
       </div>
-      {params.run_timestamp && (() => {
-        const fittedDate = new Date(params.run_timestamp)
-        const daysSinceFit = Math.floor((Date.now() - fittedDate.getTime()) / (1000 * 60 * 60 * 24))
-        const isStale = daysSinceFit > 30
+      {(() => {
+        const dataEnd = params.data_range?.end ? new Date(params.data_range.end) : null
+        const dataStart = params.data_range?.start ? new Date(params.data_range.start) : null
+        // Guard against epoch dates (1969/1970)
+        const validStart = dataStart && dataStart.getFullYear() > 2000 ? dataStart : null
+        const daysSinceData = dataEnd ? Math.floor((Date.now() - dataEnd.getTime()) / (1000 * 60 * 60 * 24)) : null
+        const isStale = daysSinceData !== null && daysSinceData > 30
+
         return (
           <>
             <p className="text-xs text-gray-400 mb-2 ml-7">
-              Model fitted: {fittedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              {params.run_timestamp && (
+                <>Model fitted: {new Date(params.run_timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</>
+              )}
               {params.data_range && (
-                <> · Data: {params.data_range.start} to {params.data_range.end}
+                <> · Data: {validStart ? validStart.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'} to {dataEnd ? dataEnd.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'}
                   {params.data_range.num_observations && ` (${params.data_range.num_observations.toLocaleString()} obs)`}
                 </>
               )}
             </p>
             {isStale && (
               <div className="mb-3 ml-7 p-2 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
-                ⚠️ Model fitted {daysSinceFit} days ago — results may not reflect current market conditions.
+                ⚠️ Data ends {dataEnd!.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ({daysSinceData} days ago) — model may not reflect current market conditions.
               </div>
             )}
           </>

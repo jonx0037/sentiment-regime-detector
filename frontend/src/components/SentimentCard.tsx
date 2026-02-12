@@ -106,7 +106,7 @@ export default function SentimentCard({ sentiment }: SentimentCardProps) {
       {/* Sample Count */}
       <div className="pt-4 border-t border-gray-200">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">Sample Size</span>
+          <span className="text-xs text-gray-500">7-Day Volume</span>
           <span className="text-sm font-medium text-gray-700">
             {formatNumber(sample_count)} texts
           </span>

@@ -59,14 +59,14 @@ export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
           </div>
         </div>
 
-        {/* Total Samples */}
+        {/* Total Corpus */}
         <div>
-          <div className="text-sm text-gray-600 mb-1">Total Samples</div>
+          <div className="text-sm text-gray-600 mb-1">Total Corpus</div>
           <div className="text-2xl font-bold text-gray-900">
-            {asset_classes.reduce((sum, ac) => sum + ac.sample_count, 0)}
+            ~8.5M
           </div>
           <div className="text-xs text-gray-500">
-            Texts Analyzed
+            Texts Scored (HPC)
           </div>
         </div>
       </div>
