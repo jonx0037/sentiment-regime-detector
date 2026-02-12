@@ -201,8 +201,17 @@ class SentimentService:
         if asset_class:
             asset_classes = [asset_class]
         else:
-            # Asset classes matching actual data in Railway DB
-            asset_classes = ["cross-asset", "crypto", "equities", "forex", "news", "social"]
+            # Dynamically discover asset classes from the database
+            ac_result = await session.execute(
+                sql_text(
+                    "SELECT DISTINCT asset_class FROM sentiment_indices "
+                    "WHERE source IS NULL ORDER BY asset_class"
+                )
+            )
+            asset_classes = [row[0] for row in ac_result.fetchall()]
+            if not asset_classes:
+                # Fallback if table is empty
+                asset_classes = ["commodity", "crypto", "equity", "forex"]
         results = []
 
         for ac in asset_classes:
