@@ -3,7 +3,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, PostgresDsn, RedisDsn
+from pydantic import Field, PostgresDsn, RedisDsn, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -29,10 +29,18 @@ class Settings(BaseSettings):
     # -------------------------------------------------------------------------
     # Redis
     # -------------------------------------------------------------------------
-    redis_url: RedisDsn = Field(
-        default="redis://localhost:6379/0",
-        description="Redis connection URL",
+    redis_url: RedisDsn | None = Field(
+        default=None,
+        description="Redis connection URL (optional, app uses in-memory cache)",
     )
+
+    @field_validator("redis_url", mode="before")
+    @classmethod
+    def empty_redis_url_to_none(cls, v):
+        """Convert empty REDIS_URL to None so Pydantic doesn't try to parse it."""
+        if v is None or v == "":
+            return None
+        return v
 
     # -------------------------------------------------------------------------
     # API Keys
