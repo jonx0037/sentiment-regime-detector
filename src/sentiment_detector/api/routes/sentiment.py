@@ -21,7 +21,15 @@ router = APIRouter()
 
 # Asset classes we track (dynamically from DB, but typed for API docs)
 AssetClass = Literal[
-    "equity", "equities", "crypto", "forex", "commodity", "cross-asset", "news", "social"
+    "equity",
+    "equities",
+    "crypto",
+    "forex",
+    "commodity",
+    "cross-asset",
+    "cross_asset",
+    "news",
+    "social",
 ]
 
 

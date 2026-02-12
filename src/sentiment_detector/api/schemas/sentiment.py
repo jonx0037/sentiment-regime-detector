@@ -6,7 +6,10 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 
-AssetClass = Literal["equity", "crypto", "forex", "commodity"]
+AssetClass = Literal[
+    "equity", "equities", "crypto", "forex", "commodity",
+    "cross-asset", "cross_asset", "news", "social",
+]
 
 
 class AssetClassSentiment(BaseModel):
