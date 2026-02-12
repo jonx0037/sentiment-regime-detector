@@ -94,7 +94,11 @@ async def compute_garch_from_db(session: AsyncSession) -> Optional[dict]:
 
         mu = float(np.mean(returns))
         persistence = alpha + beta
-        uncond_var = omega / (1 - persistence) if persistence < 1 else omega / 0.01
+
+        # Clamp persistence below 1.0 for unconditional variance calculation
+        if persistence >= 1.0:
+            persistence = 0.9999
+        uncond_var = omega / (1 - persistence)
 
         # Compute conditional volatility
         cond_vol = np.zeros(n)
@@ -102,6 +106,17 @@ async def compute_garch_from_db(session: AsyncSession) -> Optional[dict]:
         for t in range(1, n):
             var_t = omega + alpha * returns[t - 1] ** 2 + beta * cond_vol[t - 1] ** 2
             cond_vol[t] = np.sqrt(max(var_t, 1e-10))
+
+        # Compute log-likelihood, AIC, BIC if not loaded from pipeline
+        if loglik == 0.0:
+            cond_var = cond_vol**2
+            cond_var = np.maximum(cond_var, 1e-10)
+            loglik = float(
+                -0.5 * np.sum(np.log(2 * np.pi) + np.log(cond_var) + (returns**2) / cond_var)
+            )
+            k = 4  # number of parameters: mu, omega, alpha, beta
+            aic = float(-2 * loglik + 2 * k)
+            bic = float(-2 * loglik + k * np.log(n))
 
         start_date = str(dates[0])
         end_date = str(dates[-1])

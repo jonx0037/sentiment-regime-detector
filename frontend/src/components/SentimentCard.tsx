@@ -81,7 +81,7 @@ export default function SentimentCard({ sentiment }: SentimentCardProps) {
             {compound_score >= 0 ? '+' : ''}
             {(compound_score * 100).toFixed(1)}
           </span>
-          <Tooltip content={`Compound sentiment score (×100) from FinBERT + RoBERTa ensemble. Raw score: ${compound_score.toFixed(4)}. Scale: -100 (most bearish) to +100 (most bullish). Averaged over the last 7 days of scored texts for ${formatAssetClass(asset_class)}.`} />
+          <Tooltip content={`Compound sentiment score (×100). Raw score: ${compound_score.toFixed(4)}. Scale: -100 (most bearish) to +100 (most bullish). Averaged over the last 7 days of daily sentiment indices for ${formatAssetClass(asset_class)}.`} />
         </div>
         <div className={`text-sm font-medium ${colorClass}`}>{label}</div>
       </div>
@@ -139,7 +139,7 @@ export default function SentimentCard({ sentiment }: SentimentCardProps) {
         <div className="flex items-center justify-between">
           <span className="text-xs text-gray-500 flex items-center gap-1">
             7-Day Volume
-            <Tooltip content={`Number of texts scored in the last 7 days for ${formatAssetClass(asset_class)}. Sources: Reddit, Twitter/X, and financial news. Part of the ~8.5M total corpus processed on SMU MANEFRAME HPC.`} />
+            <Tooltip content={`Total texts scored in the last 7 daily aggregation periods for ${formatAssetClass(asset_class)}. Sources include financial news (Finnhub, NewsAPI) and social data (Reddit).`} />
           </span>
           <span className="text-sm font-medium text-gray-700">
             {formatNumber(sample_count)} texts

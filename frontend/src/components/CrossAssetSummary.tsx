@@ -35,7 +35,7 @@ export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
         <div>
           <div className="text-sm text-gray-600 mb-1 flex items-center gap-1">
             Mean Sentiment
-            <Tooltip content="Average compound sentiment across all 4 asset classes over the last 7 days. Scale: -100 (most bearish) to +100 (most bullish). Derived from FinBERT + RoBERTa ensemble scores." />
+            <Tooltip content="Average compound sentiment across all 4 asset classes over the last 7 daily indices. Scale: -100 (most bearish) to +100 (most bullish). Derived from VADER + TextBlob ensemble scores on recent financial texts." />
           </div>
           <div className={`text-2xl font-bold ${colorClass}`}>
             {cross_asset_mean >= 0 ? '+' : ''}
@@ -76,7 +76,7 @@ export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
         <div>
           <div className="text-sm text-gray-600 mb-1 flex items-center gap-1">
             7-Day Volume
-            <Tooltip content="Total scored texts in the last 7 days across all 4 asset classes. These are aggregated daily counts from the sentiment indices pipeline." />
+            <Tooltip content="Total scored texts in the last 7 daily aggregation periods across all 4 asset classes. Sources: Finnhub, NewsAPI, Reddit, and HPC-processed financial texts." />
           </div>
           <div className="text-2xl font-bold text-gray-900">
             {recentVolume.toLocaleString()}
