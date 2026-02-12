@@ -28,12 +28,18 @@ CSV_PATH = os.path.join(
 
 # Map CSV column prefixes to sentiment_indices asset_class values
 # Frontend expects: equity, crypto, forex, commodity
-# HPC dataset has: equities, crypto, forex, cross_asset (+ news, social which are DATA SOURCES, not asset classes)
+# HPC dataset has: equities, crypto, forex, cross_asset, news, social
+# - equities/crypto/forex are asset-class-specific scored texts
+# - cross_asset maps to commodity for frontend
+# - news and social are cross-asset sentiment from current market texts
+#   (financial news APIs + social media) — essential for 2024-2025 coverage
 ASSET_MAP = {
     "equities": "equity",
     "crypto": "crypto",
     "forex": "forex",
-    "cross_asset": "commodity",  # Map cross_asset → commodity for frontend compatibility
+    "cross_asset": "commodity",
+    "news": "equity",  # Financial news is primarily equity-focused
+    "social": "commodity",  # Social media → commodity for broader market pulse
 }
 
 
