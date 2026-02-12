@@ -35,8 +35,18 @@ async def get_current_sentiment(
     Returns the latest aggregated sentiment indices across
     equities, crypto, forex, and commodities.
     """
-    service = SentimentService()
-    sentiment_data = await service.get_current_sentiment(session)
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    try:
+        service = SentimentService()
+        sentiment_data = await service.get_current_sentiment(session)
+    except Exception as e:
+        logger.error(f"Error fetching sentiment data: {e}", exc_info=True)
+        from fastapi import HTTPException
+
+        raise HTTPException(status_code=500, detail=f"Database query failed: {str(e)}")
 
     # Convert to response model
     asset_classes = [

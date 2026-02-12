@@ -217,19 +217,26 @@ class SentimentService:
                         sample_count,
                         period_start,
                         1.0 - COALESCE(positive_ratio, 0) - COALESCE(negative_ratio, 0) AS neutral_ratio
-                    FROM sentiment_indices
-                    WHERE asset_class = :ac
-                      AND source IS NULL
-                    ORDER BY period_start DESC
-                    LIMIT 7
+                    FROM (
+                        SELECT mean_compound, positive_ratio, negative_ratio,
+                               sample_count, period_start
+                        FROM sentiment_indices
+                        WHERE asset_class = :ac
+                          AND source IS NULL
+                        ORDER BY period_start DESC
+                        LIMIT 7
+                    ) sub_recent
                 ),
                 prior AS (
                     SELECT AVG(mean_compound) as prior_avg
-                    FROM sentiment_indices
-                    WHERE asset_class = :ac
-                      AND source IS NULL
-                    ORDER BY period_start DESC
-                    LIMIT 7 OFFSET 7
+                    FROM (
+                        SELECT mean_compound
+                        FROM sentiment_indices
+                        WHERE asset_class = :ac
+                          AND source IS NULL
+                        ORDER BY period_start DESC
+                        LIMIT 7 OFFSET 7
+                    ) sub_prior
                 )
                 SELECT
                     AVG(r.mean_compound) as avg_compound,
