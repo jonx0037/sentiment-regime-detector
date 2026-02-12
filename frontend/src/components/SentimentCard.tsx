@@ -1,3 +1,5 @@
+'use client'
+
 import type { AssetClassSentiment } from '@/types/api'
 import {
   formatAssetClass,
@@ -7,11 +9,36 @@ import {
   getSentimentBgColor,
   getSentimentEmoji,
   formatNumber,
-  getMomentumIndicator,
 } from '@/lib/utils'
+import Tooltip from './Tooltip'
 
 interface SentimentCardProps {
   sentiment: AssetClassSentiment
+}
+
+/**
+ * Momentum label based on 7-day change in compound score.
+ * "Trending Up/Down" is clearer than "Strong Up/Down" which
+ * sounds like it describes the level, not the direction of change.
+ */
+function getMomentumInfo(momentum: number): {
+  symbol: string
+  color: string
+  label: string
+} {
+  if (momentum > 0.05) {
+    return { symbol: '⬆️', color: 'text-bullish', label: 'Trending Up' }
+  }
+  if (momentum > 0.01) {
+    return { symbol: '↗️', color: 'text-bullish-light', label: 'Drifting Up' }
+  }
+  if (momentum < -0.05) {
+    return { symbol: '⬇️', color: 'text-bearish', label: 'Trending Down' }
+  }
+  if (momentum < -0.01) {
+    return { symbol: '↘️', color: 'text-bearish-light', label: 'Drifting Down' }
+  }
+  return { symbol: '→', color: 'text-neutral', label: 'Stable' }
 }
 
 export default function SentimentCard({ sentiment }: SentimentCardProps) {
@@ -29,7 +56,7 @@ export default function SentimentCard({ sentiment }: SentimentCardProps) {
   const colorClass = getSentimentColor(compound_score)
   const bgClass = getSentimentBgColor(compound_score)
   const emoji = getSentimentEmoji(compound_score)
-  const momentumInfo = getMomentumIndicator(momentum)
+  const momentumInfo = getMomentumInfo(momentum)
 
   return (
     <div className={`rounded-lg border-2 p-6 transition-all hover:shadow-lg ${bgClass}`}>
@@ -41,16 +68,20 @@ export default function SentimentCard({ sentiment }: SentimentCardProps) {
             {formatAssetClass(asset_class)}
           </h3>
         </div>
-        <span className={`text-sm font-medium ${momentumInfo.color}`}>
+        <span className={`text-sm font-medium flex items-center gap-1 ${momentumInfo.color}`}>
           {momentumInfo.symbol} {momentumInfo.label}
+          <Tooltip content={`7-day momentum: sentiment is ${momentum >= 0 ? 'rising' : 'falling'} compared to the prior 7-day period (Δ = ${momentum >= 0 ? '+' : ''}${(momentum * 100).toFixed(1)}). This measures the DIRECTION of change, not the current level.`} />
         </span>
       </div>
 
       {/* Main Score */}
       <div className="mb-4">
-        <div className={`text-3xl font-bold ${colorClass}`}>
-          {compound_score >= 0 ? '+' : ''}
-          {(compound_score * 100).toFixed(1)}
+        <div className="flex items-baseline gap-1">
+          <span className={`text-3xl font-bold ${colorClass}`}>
+            {compound_score >= 0 ? '+' : ''}
+            {(compound_score * 100).toFixed(1)}
+          </span>
+          <Tooltip content={`Compound sentiment score (×100) from FinBERT + RoBERTa ensemble. Raw score: ${compound_score.toFixed(4)}. Scale: -100 (most bearish) to +100 (most bullish). Averaged over the last 7 days of scored texts for ${formatAssetClass(asset_class)}.`} />
         </div>
         <div className={`text-sm font-medium ${colorClass}`}>{label}</div>
       </div>
@@ -103,10 +134,13 @@ export default function SentimentCard({ sentiment }: SentimentCardProps) {
         </div>
       </div>
 
-      {/* Sample Count */}
+      {/* Volume */}
       <div className="pt-4 border-t border-gray-200">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">7-Day Volume</span>
+          <span className="text-xs text-gray-500 flex items-center gap-1">
+            7-Day Volume
+            <Tooltip content={`Number of texts scored in the last 7 days for ${formatAssetClass(asset_class)}. Sources: Reddit, Twitter/X, and financial news. Part of the ~8.5M total corpus processed on SMU MANEFRAME HPC.`} />
+          </span>
           <span className="text-sm font-medium text-gray-700">
             {formatNumber(sample_count)} texts
           </span>

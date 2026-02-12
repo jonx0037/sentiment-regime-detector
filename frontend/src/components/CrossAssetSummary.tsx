@@ -1,5 +1,8 @@
+'use client'
+
 import type { SentimentResponse } from '@/types/api'
 import { formatPercent, getSentimentLabel, getSentimentColor } from '@/lib/utils'
+import Tooltip from './Tooltip'
 
 interface CrossAssetSummaryProps {
   data: SentimentResponse
@@ -16,6 +19,7 @@ export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
   const maxScore = Math.max(...scores)
   const minScore = Math.min(...scores)
   const spread = maxScore - minScore
+  const recentVolume = asset_classes.reduce((sum, ac) => sum + ac.sample_count, 0)
 
   return (
     <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
@@ -26,10 +30,13 @@ export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
         <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded">Last 7 days</span>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
         {/* Mean Sentiment */}
         <div>
-          <div className="text-sm text-gray-600 mb-1">Mean Sentiment</div>
+          <div className="text-sm text-gray-600 mb-1 flex items-center gap-1">
+            Mean Sentiment
+            <Tooltip content="Average compound sentiment across all 4 asset classes over the last 7 days. Scale: -100 (most bearish) to +100 (most bullish). Derived from FinBERT + RoBERTa ensemble scores." />
+          </div>
           <div className={`text-2xl font-bold ${colorClass}`}>
             {cross_asset_mean >= 0 ? '+' : ''}
             {(cross_asset_mean * 100).toFixed(1)}
@@ -39,7 +46,10 @@ export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
 
         {/* Standard Deviation */}
         <div>
-          <div className="text-sm text-gray-600 mb-1">Dispersion</div>
+          <div className="text-sm text-gray-600 mb-1 flex items-center gap-1">
+            Dispersion
+            <Tooltip content="Standard deviation of sentiment scores across the 4 asset classes. High dispersion (>20%) means asset classes are moving in different directions — a potential divergence signal." />
+          </div>
           <div className="text-2xl font-bold text-gray-900">
             {formatPercent(cross_asset_std)}
           </div>
@@ -50,18 +60,38 @@ export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
 
         {/* Spread */}
         <div>
-          <div className="text-sm text-gray-600 mb-1">Score Spread</div>
+          <div className="text-sm text-gray-600 mb-1 flex items-center gap-1">
+            Score Spread
+            <Tooltip content="Difference between the most bullish and most bearish asset class. A wide spread (>40%) often precedes regime transitions as sentiment fractures across markets." />
+          </div>
           <div className="text-2xl font-bold text-gray-900">
             {formatPercent(spread)}
           </div>
           <div className="text-xs text-gray-500">
-            Max - Min
+            Max − Min
+          </div>
+        </div>
+
+        {/* 7-Day Volume */}
+        <div>
+          <div className="text-sm text-gray-600 mb-1 flex items-center gap-1">
+            7-Day Volume
+            <Tooltip content="Total scored texts in the last 7 days across all 4 asset classes. These are aggregated daily counts from the sentiment indices pipeline." />
+          </div>
+          <div className="text-2xl font-bold text-gray-900">
+            {recentVolume.toLocaleString()}
+          </div>
+          <div className="text-xs text-gray-500">
+            Recent Texts
           </div>
         </div>
 
         {/* Total Corpus */}
         <div>
-          <div className="text-sm text-gray-600 mb-1">Total Corpus</div>
+          <div className="text-sm text-gray-600 mb-1 flex items-center gap-1">
+            Total Corpus
+            <Tooltip content="Total texts scored by FinBERT + RoBERTa ensemble models on SMU MANEFRAME HPC. Sources include Reddit, Twitter/X, and financial news spanning 2005–present." />
+          </div>
           <div className="text-2xl font-bold text-gray-900">
             ~8.5M
           </div>
@@ -74,8 +104,9 @@ export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
       {/* Market Condition Indicator */}
       <div className="mt-6 pt-6 border-t border-gray-200">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-gray-700 flex items-center gap-1">
             Market Condition
+            <Tooltip content="A heuristic classification based on the mean sentiment, dispersion, and spread. Not a trading signal — it summarizes the current cross-asset mood." />
           </span>
           <span className={`text-sm font-bold ${colorClass}`}>
             {getMarketCondition(cross_asset_mean, cross_asset_std, spread)}

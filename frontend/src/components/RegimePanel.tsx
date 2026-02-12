@@ -135,11 +135,11 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wider flex items-center gap-1">
           Current Regime
-          <Tooltip content="Market regime classification based on sentiment, CISS, and VIX. Identifies Risk-On (bullish), Risk-Off (bearish), or Transition states." />
+          <Tooltip content="Layer 2 of the Two-Layer Regime Detector. A Statistical Jump Model classifies Risk-On / Risk-Off / Transition states from CISS, VIX, and cross-asset sentiment features. Regime data covers 2005–present (HPC-processed)." />
         </h2>
         <div className="flex items-center gap-2">
           <span className="inline-flex h-2 w-2 rounded-full bg-blue-500"></span>
-          <span className="text-xs text-gray-500">Model-based</span>
+          <span className="text-xs text-gray-500">Jump Model</span>
         </div>
       </div>
 
@@ -167,7 +167,7 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
             </p>
             <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
               Confidence
-              <Tooltip content="ML model confidence in the predicted regime (99.45% accuracy on test data)" />
+              <Tooltip content="Model confidence in the predicted regime. Based on sentiment dispersion, CISS/VIX alignment, and feature consistency. Not a probability of being correct." />
             </p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
@@ -213,9 +213,10 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
         </div>
       )}
 
-      {/* Timestamp */}
+      {/* Data Provenance */}
       <div className="mt-4 text-xs text-gray-400 text-center space-y-1">
-        <div>Classification from CISS, VIX &amp; sentiment features</div>
+        <div>Classification from ECB CISS, CBOE VIX &amp; cross-asset sentiment</div>
+        <div>Sentiment: ~8.5M texts (Reddit, Twitter, news) · 2005–present</div>
         <div>Page loaded: {new Date().toLocaleTimeString()}</div>
       </div>
 
