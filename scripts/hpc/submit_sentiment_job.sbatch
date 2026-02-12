@@ -26,28 +26,16 @@ echo "=== Node: $(hostname) ==="
 echo "=== GPUs available ==="
 nvidia-smi -L 2>/dev/null || echo "No GPU detected"
 
-# Environment setup
-module load python/3.11.7-qxgm323
-module load cuda/11.8.0-vnha6cm
+# Use existing PyTorch venv (same as working llama3 job)
+source ~/.venv/auto_python_3.11.11_pytorch_2025.08.21/bin/activate
 
 cd /lustre/scratch/client/users/jarocha/sentiment-detector
 
-# Create venv if needed
-if [ ! -d ".venv" ]; then
-  python3 -m venv .venv
-fi
-source .venv/bin/activate
+# Ensure extra deps are present
+pip install --quiet vaderSentiment textblob 2>/dev/null
 
-# Install dependencies
-pip install --quiet --upgrade pip
-pip install --quiet torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-pip install --quiet transformers accelerate bitsandbytes
-pip install --quiet vaderSentiment textblob pandas pyarrow tqdm
-
-# Model cache
-export TRANSFORMERS_CACHE=/lustre/scratch/client/users/jarocha/.cache/huggingface
-export HF_HOME=$TRANSFORMERS_CACHE
-mkdir -p $TRANSFORMERS_CACHE
+# GPU memory management
+export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
 
 # Paths
 INPUT_PATH="/lustre/scratch/client/users/jarocha/sentiment-detector/data/kaggle"
@@ -68,11 +56,8 @@ echo "Found $CSV_COUNT CSV, $JSON_COUNT JSON, $PARQUET_COUNT Parquet files"
 # Run pure Python sentiment scoring (no Spark)
 echo "=== Starting sentiment processing ==="
 python3 scripts/hpc/score_sentiment.py \
-  --input_path $INPUT_PATH \
-  --output_path $OUTPUT_PATH \
-  --checkpoint_dir $CHECKPOINT_DIR \
-  --batch_size 64 \
-  --device cuda \
+  --input-path $INPUT_PATH \
+  --output-path $OUTPUT_PATH \
   2>&1
 
 EXIT_CODE=$?
