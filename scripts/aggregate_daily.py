@@ -148,8 +148,14 @@ def aggregate_daily(df: pd.DataFrame) -> pd.DataFrame:
     for ddf in daily_dfs[1:]:
         result = result.join(ddf, how="outer")
 
-    # Cross-asset summary columns
-    ensemble_cols = [c for c in result.columns if c.endswith("_ensemble_mean")]
+    # Cross-asset summary columns — only the 4 REAL asset classes
+    # "news" and "social" are data sources, NOT asset classes (per Section 3.2)
+    REAL_ASSET_CLASSES = ["equities", "crypto", "forex", "cross_asset"]
+    ensemble_cols = [
+        f"{ac}_ensemble_mean"
+        for ac in REAL_ASSET_CLASSES
+        if f"{ac}_ensemble_mean" in result.columns
+    ]
     result["cross_asset_mean"] = result[ensemble_cols].mean(axis=1)
     result["cross_asset_std"] = result[ensemble_cols].std(axis=1)
 

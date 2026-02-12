@@ -1,41 +1,35 @@
 {
   "pipeline_version": "2.0",
-  "run_timestamp": "2026-02-11T10:17:38.917110",
-  "processing_time_seconds": 3.43,
+  "run_timestamp": "2026-02-12T09:59:58.192060",
+  "processing_time_seconds": 2.69,
   "data": {
     "sentiment_days": 6278,
-    "feature_matrix_days": 3165,
+    "feature_matrix_days": 4490,
     "date_range": [
       "2005-01-19",
-      "2020-04-01"
+      "2025-08-14"
     ],
     "n_features": 22
   },
   "garch": {
-    "omega": 0.018509868991239447,
-    "alpha": 0.16258205099852482,
-    "beta": 0.8374179490016305,
-    "nu": 5.297783076745122,
-    "log_likelihood": -4166.473021785738,
-    "aic": 8342.946043571475,
-    "bic": 8373.245585244367
+    "note": "arch not available, used realized vol proxy"
   },
   "jump_model": {
     "n_regimes": 4,
-    "jump_penalty": 0.5,
-    "n_transitions": 1530,
-    "avg_regime_duration": 2.067276290006532,
+    "jump_penalty": 5.0,
+    "n_transitions": 516,
+    "avg_regime_duration": 8.684719535783366,
     "regime_distribution": {
-      "normal": 0.539652448657188,
-      "elevated": 0.2037914691943128,
-      "low_volatility": 0.17946287519747237,
-      "high_volatility": 0.07709320695102685
+      "normal": 0.6808463251670379,
+      "low_volatility": 0.1378619153674833,
+      "elevated": 0.11781737193763919,
+      "high_volatility": 0.06347438752783964
     },
     "regime_vix_means": {
-      "normal": 17.385878214512275,
-      "high_volatility": 44.808852492785846,
-      "low_volatility": 16.99936619275053,
-      "elevated": 18.77065114161765
+      "low_volatility": 14.754345688950842,
+      "high_volatility": 43.516105277078196,
+      "normal": 18.485361466736897,
+      "elevated": 19.88410206057399
     }
   },
   "output_files": {

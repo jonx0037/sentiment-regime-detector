@@ -55,7 +55,7 @@ def score_llama3(texts, batch_size=4, device="cuda"):
         model_name,
         quantization_config=quantization_config,
         device_map="auto",
-        torch_dtype=torch.float16,
+        dtype=torch.float16,
     )
     model.eval()
     print(f"  Model loaded. GPU Memory: {torch.cuda.memory_allocated() / 1e9:.1f} GB")

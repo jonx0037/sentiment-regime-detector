@@ -20,6 +20,10 @@ echo "Running on nodes: $SLURM_NODELIST"
 # Activate PyTorch virtual environment
 source ~/.venv/auto_python_3.11.11_pytorch_2025.08.21/bin/activate
 
+# Hugging Face auth (set HF_TOKEN in your environment before submitting)
+# e.g.: export HF_TOKEN=hf_xxx && sbatch submit_llama3.sbatch
+# export HF_TOKEN=  # set before running
+
 # GPU memory management
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
 
