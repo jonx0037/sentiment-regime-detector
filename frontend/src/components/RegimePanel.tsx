@@ -216,7 +216,7 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
       {/* Data Provenance */}
       <div className="mt-4 text-xs text-gray-400 text-center space-y-1">
         <div>Classification from ECB CISS, CBOE VIX &amp; cross-asset sentiment</div>
-        <div>Total historical corpus: ~8.5M texts (Reddit, Twitter, news · 2005–present)</div>
+        <div>Total corpus: ~33M texts (21 Kaggle datasets + live APIs · 2005–present)</div>
         <div>Page loaded: {new Date().toLocaleTimeString()}</div>
       </div>
 

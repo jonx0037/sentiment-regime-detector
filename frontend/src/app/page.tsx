@@ -214,11 +214,12 @@ export default function Dashboard() {
                       <div>
                         <p className="font-medium mb-1">Sentiment Analysis</p>
                         <p className="text-xs">
+                          A{' '}
                           <InlineTooltip
-                            term="FinBERT + RoBERTa"
-                            definition="An ensemble of two transformer models: FinBERT (finance-specific BERT) and RoBERTa (robustly optimized BERT). Predictions are averaged for more reliable sentiment classification across source types."
+                            term="6-model ensemble"
+                            definition="FinBERT, RoBERTa, VADER, TextBlob, DistilBERT, and Llama 3 (8B). Weighted predictions are combined for robust, multi-perspective sentiment classification across source types."
                           />
-                          {' '}ensemble models scored ~8.5M texts from Reddit, Twitter, and financial news across four
+                          {' '}scored ~33M texts from Reddit, Twitter, and financial news across four
                           asset classes: Equities, Crypto, Forex, and Commodities.
                           Compound scores range from -1 (most bearish) to +1 (most bullish).
                         </p>
@@ -262,7 +263,7 @@ export default function Dashboard() {
                       <div>
                         <p className="font-medium mb-1">Data Sources</p>
                         <p className="text-xs">
-                          ~8.5M texts processed on SMU MANEFRAME HPC via ensemble FinBERT/RoBERTa.
+                          ~33M texts from 21 Kaggle datasets + live APIs (Finnhub, NewsAPI, Reddit), processed on SMU MANEFRAME HPC.
                           Systemic stress from ECB (CISS) and CBOE (VIX). Data spans 2005–present.
                         </p>
                       </div>

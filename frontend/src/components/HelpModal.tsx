@@ -45,11 +45,10 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
               <button
                 type="button"
                 onClick={() => setActiveTab('overview')}
-                className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === 'overview'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
+                className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${activeTab === 'overview'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
               >
                 <BookOpen className="w-4 h-4 inline mr-2" />
                 Overview
@@ -57,11 +56,10 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
               <button
                 type="button"
                 onClick={() => setActiveTab('terms')}
-                className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === 'terms'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
+                className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${activeTab === 'terms'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
               >
                 <Activity className="w-4 h-4 inline mr-2" />
                 Key Terms
@@ -69,11 +67,10 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
               <button
                 type="button"
                 onClick={() => setActiveTab('interpret')}
-                className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === 'interpret'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
+                className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${activeTab === 'interpret'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
               >
                 <BarChart3 className="w-4 h-4 inline mr-2" />
                 How to Read
@@ -81,11 +78,10 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
               <button
                 type="button"
                 onClick={() => setActiveTab('faq')}
-                className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === 'faq'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
+                className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${activeTab === 'faq'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
               >
                 <TrendingUp className="w-4 h-4 inline mr-2" />
                 FAQ
@@ -101,7 +97,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">What This Dashboard Does</h3>
                   <p className="text-gray-700 leading-relaxed">
                     The Sentiment Regime Detector analyzes cross-asset market sentiment in real-time to identify
-                    market regimes (Risk-On, Risk-Off, or Transition). It combines sentiment analysis from 2.66M+ texts,
+                    market regimes (Risk-On, Risk-Off, or Transition). It combines sentiment analysis from ~33M texts,
                     systemic stress indicators, and volatility modeling to provide comprehensive market insights.
                   </p>
                 </div>
@@ -110,15 +106,15 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                   <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <h4 className="font-semibold text-blue-900 mb-2">🎯 Sentiment Analysis</h4>
                     <p className="text-sm text-blue-800">
-                      Uses DistilBERT NLP models to analyze sentiment across equity, crypto, forex, and commodity markets.
+                      Uses a 6-model ensemble (FinBERT, RoBERTa, VADER, TextBlob, DistilBERT, Llama 3) to analyze sentiment across equity, crypto, forex, and commodity markets.
                       Scores from -1 (bearish) to +1 (bullish).
                     </p>
                   </div>
                   <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
                     <h4 className="font-semibold text-purple-900 mb-2">🔮 Regime Detection</h4>
                     <p className="text-sm text-purple-800">
-                      ML classifier (99.45% accuracy) identifies Risk-On, Risk-Off, and Transition regimes using
-                      sentiment, CISS, and VIX features.
+                      Statistical Jump Model classifies Risk-On, Risk-Off, and Transition regimes using
+                      sentiment, CISS, and VIX features with jump-penalty regularization.
                     </p>
                   </div>
                   <div className="p-4 bg-green-50 rounded-lg border border-green-200">
@@ -177,8 +173,8 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                     definition="Sum of α and β. Values near 1.0 mean volatility shocks decay very slowly. Values >0.95 suggest nearly permanent impact."
                   />
                   <TermDefinition
-                    term="DistilBERT"
-                    definition="A distilled transformer model for NLP. 40% smaller and 60% faster than BERT while retaining 97% of language understanding capability."
+                    term="6-Model Ensemble"
+                    definition="FinBERT (financial domain), RoBERTa (social media), VADER (lexicon-based), TextBlob (pattern-based), DistilBERT (efficient transformer), and Llama 3 8B (large language model). Weighted scores are combined for robust multi-perspective sentiment analysis."
                   />
                   <TermDefinition
                     term="Risk-On Regime"
@@ -267,11 +263,11 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 />
                 <FAQItem
                   question="What data sources are used?"
-                  answer="The system analyzes 2.66M+ texts from 21 Kaggle datasets, including Reddit posts, financial news, social media, and market commentary across multiple asset classes."
+                  answer="The system analyzes ~33M texts from 21 Kaggle datasets, including Reddit posts (WSB, r/cryptocurrency), financial news, Twitter/X, and market commentary. Live data is collected via Finnhub, NewsAPI, and Reddit APIs across four asset classes."
                 />
                 <FAQItem
                   question="How accurate is the regime classifier?"
-                  answer="The ML classifier achieved 99.45% accuracy on test data, validated across multiple market crises including the 2008 Financial Crisis, COVID-19 crash, and recent market events."
+                  answer="The Statistical Jump Model achieved 85% average accuracy in backtests across the 2008 Financial Crisis, COVID-19 crash, GameStop mania, and 2022 crypto winter. Jump-penalty regularization reduces false regime switches."
                 />
                 <FAQItem
                   question="Can I use this for trading decisions?"
@@ -300,7 +296,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
           {/* Footer */}
           <div className="border-t border-gray-200 px-4 sm:px-6 py-3 sm:py-4 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-3">
             <p className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
-              SMU DS-6210 Capstone Project • Built with Next.js, FastAPI, and DistilBERT
+              SMU DS-6210 Capstone Project • Built with Next.js, FastAPI, and 6-Model Ensemble
             </p>
             <button
               type="button"

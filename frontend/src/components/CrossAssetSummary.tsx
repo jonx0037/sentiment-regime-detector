@@ -90,10 +90,10 @@ export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
         <div>
           <div className="text-sm text-gray-600 mb-1 flex items-center gap-1">
             Total Corpus
-            <Tooltip content="Total texts scored by FinBERT + RoBERTa ensemble models on SMU MANEFRAME HPC. Sources include Reddit, Twitter/X, and financial news spanning 2005–present." />
+            <Tooltip content="~33M texts scored by a 6-model ensemble (FinBERT, RoBERTa, VADER, TextBlob, DistilBERT, Llama 3) on SMU MANEFRAME HPC. Sources include 21 Kaggle datasets + live APIs (Finnhub, NewsAPI, Reddit) spanning 2005–present." />
           </div>
           <div className="text-2xl font-bold text-gray-900">
-            ~8.5M
+            ~33M
           </div>
           <div className="text-xs text-gray-500">
             Texts Scored (HPC)
