@@ -1,7 +1,7 @@
 # Data Pipeline Documentation
 
 **Project:** Cross-Asset Sentiment Regime Detector
-**Last Updated:** February 3, 2026
+**Last Updated:** February 12, 2026
 **Pipeline Version:** 2.0
 
 ---
@@ -23,15 +23,15 @@
 
 ## 🎯 Overview
 
-The data pipeline processes **2.66 million texts** spanning **24 years (2002-2026)** across multiple asset classes to produce real-time market regime classifications.
+The data pipeline processes **~33 million text records** (61.8M total rows, ~28.7M OHLCV excluded) spanning **24 years (2002-2026)** across 40+ datasets and live API collections to produce real-time market regime classifications.
 
 ### Pipeline Characteristics
 
 - **Throughput:** 1,000 texts/second (GPU), 50 texts/second (CPU)
 - **Latency:** <100ms for real-time sentiment analysis
-- **Data Volume:** ~4.5 GB total (2.8 GB raw, 1.7 GB processed)
-- **Processing Time:** 4 hours for 30-batch HPC run
-- **Accuracy:** 87% sentiment classification, 82% regime detection
+- **Data Volume:** ~14 GB raw Kaggle data + live API collections
+- **Processing Time:** ~18-24 hours on 20× A100 GPUs (full corpus)
+- **Accuracy:** 85% backtest average, 82% regime detection
 
 ---
 
@@ -46,6 +46,7 @@ The data pipeline processes **2.66 million texts** spanning **24 years (2002-202
 ```
 
 **Timeline:**
+
 - **Collection:** Continuous (cron: hourly)
 - **Import:** Daily batch (midnight)
 - **HPC Processing:** Weekly (Sundays)
@@ -105,7 +106,7 @@ graph TB
 | **Reddit** | Social Media | Hourly | ~5,000 posts | Equities, Crypto |
 | **Twitter/X** | Social Media | Hourly | ~10,000 tweets | All |
 | **RSS Feeds** | News | Every 15 min | ~500 articles | Equities, Forex |
-| **Kaggle** | Historical | One-time | 2.66M texts | All |
+| **Kaggle** | Historical | One-time | ~33M texts (40+ datasets) | All |
 
 ### Collection Scripts
 
@@ -122,6 +123,7 @@ python scripts/data_collection/collect_reddit_data.py \
 ```
 
 **Configuration:**
+
 - API: PRAW (Python Reddit API Wrapper)
 - Rate Limit: 60 requests/minute
 - Authentication: OAuth2 (client_id, client_secret)
@@ -203,6 +205,7 @@ python scripts/data_import/import_collected_data.py \
 - No duplicate text+source combinations
 
 **Performance:**
+
 - **Throughput:** 10,000 records/second
 - **Batch Size:** 1,000 rows per transaction
 - **Deduplication:** Hash-based (MD5)
@@ -308,15 +311,19 @@ python process_batch.py --batch-id $SLURM_ARRAY_TASK_ID
 
 **Processing Script:** [scripts/processing/process_batch.py](../scripts/processing/process_batch.py)
 
-### FinBERT Inference
+### 6-Model Ensemble Inference
 
 **Model Configuration:**
 
 ```python
-# Load FinBERT ensemble
+# 6-model sentiment ensemble
 models = [
-    "ProsusAI/finbert",           # Base FinBERT
-    "yiyanghkust/finbert-tone",   # Domain-specific
+    "ProsusAI/finbert",                                        # FinBERT (GPU)
+    "cardiffnlp/twitter-roberta-base-sentiment-latest",        # RoBERTa (GPU)
+    "distilbert-base-uncased-finetuned-sst-2-english",         # DistilBERT (GPU)
+    "meta-llama/Meta-Llama-3-8B",                              # Llama 3 (GPU, 4-bit quantized)
+    "VADER",                                                    # CPU-fast
+    "TextBlob",                                                 # CPU-fast
 ]
 
 # Inference settings
@@ -328,30 +335,35 @@ device = "cuda"       # GPU acceleration
 **Processing Flow:**
 
 1. Load batch JSON
-2. Tokenize texts (Hugging Face tokenizer)
-3. Run inference on GPU
-4. Aggregate ensemble predictions
-5. Add VADER baseline
-6. Save results to JSON
+2. Apply VADER + TextBlob (CPU-fast)
+3. Tokenize texts (Hugging Face tokenizer)
+4. Run FinBERT, RoBERTa, DistilBERT inference on GPU
+5. Run Llama 3 inference (4-bit quantized) on GPU
+6. Compute weighted ensemble score
+7. Save results to Parquet
 
 **Output Format:**
 
-```json
-{
-  "results": [
-    {
-      "id": 123456,
-      "sentiment": 0.45,
-      "confidence": 0.87,
-      "model_scores": {
-        "finbert": 0.43,
-        "finbert_tone": 0.47,
-        "vader": 0.42
-      },
-      "processed_at": "2026-02-03T14:30:00Z"
-    }
-  ]
-}
+```python
+# Output schema (Parquet)
+Columns:
+├── post_id: string
+├── source: string
+├── asset_class: string
+├── timestamp: timestamp
+├── text: string
+├── vader_score: float
+├── textblob_score: float
+├── finbert_score: float
+├── roberta_score: float
+├── distilbert_score: float
+├── llama3_score: float
+├── llama3_confidence: float
+├── ensemble_score: float
+├── sentiment_label: string
+└── confidence: float
+```
+
 ```
 
 **Performance Metrics:**
@@ -454,6 +466,7 @@ Where:
 **MIDAS Component:**
 
 Uses weekly realized volatility with Beta-weighted lags:
+
 - 12-week lookback window
 - Beta weights emphasize recent weeks
 - Rolling estimation for walk-forward validation
@@ -535,6 +548,7 @@ graph LR
 ### Cache Strategy
 
 **Redis TTL:**
+
 - Current sentiment: 60 seconds
 - Regime classification: 60 seconds
 - Historical data: 5 minutes

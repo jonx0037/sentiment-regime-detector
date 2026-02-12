@@ -1,7 +1,7 @@
 # System Architecture
 
 **Project:** Cross-Asset Sentiment Regime Detector
-**Last Updated:** February 3, 2026
+**Last Updated:** February 12, 2026
 **Architecture Type:** Microservices with Async Processing
 
 ---
@@ -31,7 +31,7 @@ The Sentiment Regime Detector is a **real-time market psychology analysis system
 
 1. **Multi-Source Data Collection** - Reddit, Twitter, RSS feeds, financial news
 2. **Cross-Asset Analysis** - Equities, crypto, forex, commodities
-3. **Ensemble Sentiment Analysis** - FinBERT transformers with VADER baseline
+3. **Ensemble Sentiment Analysis** - 6-model ensemble (FinBERT, RoBERTa, VADER, TextBlob, DistilBERT, Llama 3)
 4. **Regime Classification** - ML-based regime detection with GARCH-MIDAS volatility forecasting
 5. **Real-Time API** - FastAPI with WebSocket support for live updates
 6. **Alert System** - Configurable regime transition notifications
@@ -122,8 +122,8 @@ graph LR
 **Components:**
 
 - **HPC:** SMU ManeFrame III (NVIDIA A100 GPUs)
-- **Model:** FinBERT ensemble (ProsusAI/finbert)
-- **Batch Size:** ~13-19 MB per batch, 30 batches total
+- **Model:** 6-model ensemble (FinBERT, RoBERTa, VADER, TextBlob, DistilBERT, Llama 3)
+- **Corpus:** ~33M text records (61.8M total rows, ~28.7M OHLCV excluded)
 
 ### 3. Feature Engineering Phase
 
@@ -185,7 +185,7 @@ graph LR
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
 | **API Framework** | FastAPI 0.109+ | High-performance async REST API |
-| **Database** | PostgreSQL 15 | Primary data store (2.66M texts) |
+| **Database** | PostgreSQL 15 | Primary data store (~33M texts) |
 | **Cache** | Redis 7 | Session cache, real-time data |
 | **ORM** | SQLAlchemy 2.0 | Async database operations |
 | **Migration** | Alembic 1.13 | Database schema versioning |
@@ -195,9 +195,9 @@ graph LR
 
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
-| **Transformers** | Hugging Face Transformers 4.37+ | FinBERT model loading |
-| **Sentiment Model** | ProsusAI/finbert | Financial domain pre-training |
-| **Baseline** | VADER (NLTK) | Rule-based sentiment baseline |
+| **Transformers** | Hugging Face Transformers 4.37+ | FinBERT, RoBERTa, DistilBERT model loading |
+| **Sentiment Models** | 6-model ensemble | FinBERT, RoBERTa, DistilBERT, Llama 3, VADER, TextBlob |
+| **LLM** | Meta Llama 3 8B (4-bit quantized) | Deep contextual sentiment classification |
 | **Volatility** | ARCH 7.2 | GARCH(1,1) volatility modeling |
 | **Classification** | XGBoost, RandomForest | Regime classification |
 | **Distributed Processing** | PySpark 3.5 | Large-scale batch processing |
@@ -232,18 +232,18 @@ graph LR
 ```
 Input Text
     │
-    ├─────────────────────┬─────────────────────┐
-    │                     │                     │
-┌───▼─────┐      ┌───────▼──────┐     ┌───────▼──────┐
-│ FinBERT │      │ FinBERT-Tone │     │    VADER     │
-│ (Base)  │      │   (Domain)   │     │  (Baseline)  │
-└───┬─────┘      └───────┬──────┘     └───────┬──────┘
-    │                    │                     │
-    └─────────────────────┴─────────────────────┘
+    ├──────────┬──────────┬──────────┬──────────┬──────────┐
+    │          │          │          │          │          │
+┌───▼───┐ ┌───▼───┐ ┌───▼───┐ ┌───▼───┐ ┌───▼───┐ ┌───▼───┐
+│FinBERT│ │RoBERTa│ │DistilB│ │Llama 3│ │ VADER │ │TextBl │
+│ (GPU) │ │ (GPU) │ │ (GPU) │ │ (GPU) │ │ (CPU) │ │ (CPU) │
+└───┬───┘ └───┬───┘ └───┬───┘ └───┬───┘ └───┬───┘ └───┬───┘
+    │         │         │         │         │         │
+    └─────────┴─────────┴─────────┴─────────┴─────────┘
                          │
                     ┌────▼────┐
-                    │ Ensemble│
-                    │ Average │
+                    │Weighted │
+                    │Ensemble │
                     └────┬────┘
                          │
                    Sentiment Score
@@ -253,8 +253,9 @@ Input Text
 **Performance:**
 
 - **Processing Speed:** 1,000 texts/sec (GPU), 50 texts/sec (CPU)
-- **Accuracy:** 87% on FinancialPhraseBank test set
+- **Accuracy:** 85% backtest average on held-out data
 - **Batch Size:** 32 (optimal for A100 GPU)
+- **Models:** 6 (4 GPU, 2 CPU)
 
 ### Regime Classification
 
@@ -413,24 +414,24 @@ docker-compose --profile prod up -d
 ┌─────────────────────────────────────┐
 │       SMU ManeFrame III HPC         │
 │  ┌──────────────────────────────┐   │
-│  │   SLURM Job Array (30 jobs)  │   │
-│  │   GPU: NVIDIA A100 (1 per)   │   │
-│  │   Memory: 32GB per job       │   │
-│  │   Time: 4 hours per batch    │   │
+│  │   SLURM Job (5 nodes × 4 GPUs) │   │
+│  │   GPU: NVIDIA A100 (20 total)   │   │
+│  │   Memory: 128GB per node        │   │
+│  │   Time: 18-24 hours full corpus │   │
 │  └──────────────────────────────┘   │
 │         │                            │
 │  ┌──────▼──────────────────────┐    │
-│  │  Sentiment Processing       │    │
-│  │  (FinBERT Inference)        │    │
+│  │  6-Model Ensemble Pipeline  │    │
+│  │  (PySpark distributed)      │    │
 │  └─────────────────────────────┘    │
 └─────────────────────────────────────┘
 ```
 
 **Resource Allocation:**
 
-- **CPUs:** 4 cores per job (120 total)
-- **GPUs:** 1 A100 per job (30 total)
-- **Memory:** 32GB per job (960GB total)
+- **CPUs:** 8 cores per task, 5 nodes (160 total)
+- **GPUs:** 4 A100 per node (20 total)
+- **Memory:** 128GB per node (640GB total)
 - **Storage:** /lustre/scratch (high-performance)
 
 ---
@@ -461,7 +462,7 @@ docker-compose --profile prod up -d
 
 **Current Limits:**
 
-- PostgreSQL: 2.66M rows (manageable)
+- PostgreSQL: ~33M rows (partitioned by month)
 - Redis: 4GB cache (plenty of headroom)
 - API: Single instance handles 1,000 req/min
 

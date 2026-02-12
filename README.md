@@ -38,7 +38,7 @@ An automated system for detecting market regime transitions (Risk-On/Risk-Off/Tr
 
 | Metric | Value |
 |--------|-------|
-| **Texts Processed** | 2.66 million |
+| **Texts Processed** | ~33 million |
 | **Date Coverage** | 2002-2026 |
 | **CISS Records** | 12,029 |
 | **Market Data** | 135,000+ |
@@ -147,7 +147,7 @@ DS_6210_Capstone/
 | Component        | Technology                                        |
 | ---------------- | ------------------------------------------------- |
 | **Backend**      | Python 3.11+, FastAPI, async SQLAlchemy           |
-| **Models**       | FinBERT, VADER, GARCH-MIDAS (arch library)        |
+| **Models**       | 6-model ensemble: FinBERT, RoBERTa, DistilBERT, Llama 3, VADER, TextBlob + GARCH-MIDAS (arch library) |
 | **Data Sources** | Reddit, Twitter/X, ECB CISS, Yahoo Finance        |
 | **Database**     | PostgreSQL (asyncpg driver)                       |
 | **Frontend**     | Next.js, Tailwind CSS                             |
@@ -271,7 +271,7 @@ sbatch scripts/hpc/run_kaggle_sentiment.sh
 
 **Completed:**
 
-- ✅ 2.66M texts processed with VADER on HPC
+- ✅ ~33M texts across 40+ datasets ready for 6-model ensemble processing on HPC
 - ✅ Phased batch processing (Phase 1: 850K, Phase 2: 1.8M)
 - ✅ Sentiment import to PostgreSQL
 - ✅ WSB 2022 data integration

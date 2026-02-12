@@ -1,13 +1,13 @@
 # Datasets Reference
 
 **Project:** Cross-Asset Sentiment Regime Detector
-**Last Updated:** February 3, 2026
+**Last Updated:** February 12, 2026
 
 ---
 
 ## 📊 Overview
 
-This project processes **2.66 million texts** spanning **24 years (2002-2026)** across 21 Kaggle datasets and live API collections.
+This project processes **~33 million text records** (61.8M total rows, ~28.7M OHLCV excluded) spanning **24 years (2002-2026)** across 40+ Kaggle datasets and live API collections.
 
 ---
 
@@ -18,6 +18,7 @@ This project processes **2.66 million texts** spanning **24 years (2002-2026)** 
 **For complete dataset catalog, see:**
 
 📄 **[/data/kaggle/README.md](../data/kaggle/README.md)**
+
 - Comprehensive catalog of all 21 Kaggle datasets
 - Redundancy analysis and recommendations
 - Temporal coverage and overlap details
@@ -25,6 +26,7 @@ This project processes **2.66 million texts** spanning **24 years (2002-2026)** 
 - Use case recommendations
 
 📄 **[/data/README.md](../data/README.md)**
+
 - Data directory structure
 - Data pipeline flow diagram
 - Data retention policies
@@ -34,32 +36,64 @@ This project processes **2.66 million texts** spanning **24 years (2002-2026)** 
 
 ## 🗂️ Dataset Categories
 
-### Social Media & Forums (1.8 GB)
+### Social Media & Forums
 
+- **stock_market_comprehensive/** - 28.2M rows (equities social + market data)
+- **twitter_stocks_2015_2020/** - 8.1M rows (stock tweets)
+- **reddit-finance/** (1.2 GB) - 4.5M rows, multi-subreddit (2010-2024)
 - **wsb-echo-chamber/** (1.5 GB) - Stock-specific meme analysis
-- **reddit-finance/** (1.2 GB) - Multi-subreddit coverage (2010-2024)
 - **wsb-2022/** (211 MB) - 2.1M rows from 2022
-- **wsb/** (42 MB) - GameStop era (2020-2021)
-- **reddit-sentiment-2025/** (11 MB) - Recent preprocessed data
+- **wsb/** (42 MB) - 400K rows, GameStop era (2020-2021)
+- **reddit-sentiment-2025/** - 105K rows, recent preprocessed data
+- **elon_tweets_2010_2025/** - 106K rows
+- **stock_tweets/** / **stock_tweets_sentiment/** - 306K rows each
 
-### Cryptocurrency (475 MB)
+### Cryptocurrency
 
-- **crypto-reddit/** (445 MB) - r/cryptocurrency, r/bitcoin, r/ethereum
-- **crypto/** (425 MB) - Market data by coin
-- **crypto-tweets/** (3.1 MB) - 10k tweets from crypto winter
+- **crypto-reddit/** (445 MB) - 4.9M rows, r/cryptocurrency, r/bitcoin, r/ethereum
+- **crypto/** (425 MB) - 4.7M rows, market data by coin
+- **crypto_top200_daily_2025/** - 349K rows
+- **crypto-tweets/** (3.1 MB) - 37K tweets from crypto winter
+- **crypto_top500_2024_2025/** - 40K rows
+- **crypto_top100_2025/** - 33K rows
+- **crypto_telegram/** - 15K rows
+- **bitcoin_sentiment_2021_2024/** - 11K rows
+- **crypto_sentiment_2025/** - 2K rows
+- **crypto_1000_realtime_2025/** - 1.1K rows
 
-### Financial News (17 MB)
+### Financial News
 
-- **financial-news/** (2.6 MB) - FinancialPhraseBank labeled sentences
-- **stocknews/** (14 MB) - DJIA news correlation (2008-2016)
-- **financial-news-nlp-2025/** (2.0 MB) - Recent event-based news
+- **massive_stock_news_db/** - 4.65M rows (largest news dataset)
+- **apple_news_historical/** - 915K rows
+- **us_financial_news_comprehensive/** - 612K rows
+- **news_sentiment_comprehensive/** - 431K rows
+- **russian_financial_news/** - 274K rows
+- **stocknews/** / **stocknews_2008_crisis/** - 83K rows each
+- **finsen_sentiment/** - 51K rows
+- **financial-news/** (2.6 MB) - 4.8K FinancialPhraseBank labeled sentences
+- **financial-news-nlp-2025/** / **financial_news_2025_extended/** - 3K rows each
+- **high_quality_financial_news/** - 24K rows
+- **sp500_news_2008_2024/** - 19K rows
+- **ticker_sentiment_news/** - 11K rows
+- **cnn_indonesia_economy_news/** - 36K rows
+- **news_cnbc_indonesia_2024_2025/** - 10K rows
 
-### Market Data (12 MB)
+### Market Data & Indices (OHLCV — excluded from text corpus)
 
-- **covid-world-indices/** (5.8 MB) - 46 global indices during COVID
-- **forex/** (4.1 MB) - Currency sentiment
-- **commodity-gold/** (1.9 MB) - Gold prices (2000-2024)
-- **ecb-ciss/** (424 KB) ⭐ - ECB systemic stress indicator
+- **covid-world-indices/** - 108K rows, 46 global indices during COVID
+- **forex_turkey_central_bank/** - 144K rows
+- **forex_9currencies_2014_2024/** - 36K rows
+- **forex/** - 3K rows, currency sentiment
+- **forex_euro_1999_2025/** - 6.8K rows
+- **forex_usd_major_currencies/** - 6.7K rows
+- **commodity-gold/** - 10.5K rows (2000-2024)
+- **commodities_natural_resources/** - 14K rows
+- **commodities_major_1997_2025/** - 7.1K rows
+- **ecb-ciss/** - 12K rows ⭐ ECB systemic stress indicator
+- **vix_index/** / **vix_daily_updated/** - 9K rows each
+- **indices_financial_giants/** - 5.1K rows
+- **indices_stock_portfolio/** - 39K rows
+- **market_trends_external/** - 30K rows
 
 ### Pre-Labeled (2.0 GB)
 
@@ -106,6 +140,7 @@ This project processes **2.66 million texts** spanning **24 years (2002-2026)** 
 ### Temporal Overlaps (Keep All)
 
 Multiple datasets cover similar periods but from **different sources** - all provide value:
+
 - WallStreetBets: 3 datasets with different granularity
 - Reddit finance: 2 datasets with different communities
 - Crypto: 3 sources (tweets, reddit, market data)
@@ -142,23 +177,25 @@ python scripts/data_import/import_prelabeled_sentiment.py
 
 ## 📈 Dataset Statistics
 
-### Coverage
+### Coverage (Verified Feb 12, 2026)
 
-- **Total Texts:** 2.66 million
+- **Total Rows on Disk:** 61,845,921
+- **OHLCV/Price Data (excluded):** ~28.7M rows
+- **Text Records (for sentiment):** ~33M
 - **Date Range:** 2002-2026 (24 years)
 - **CISS Records:** 12,029 (daily from 2000)
-- **Market Data:** 135,000+ records
+- **Market Data:** 400K+ records
 
 ### Asset Class Distribution
 
-| Asset Class | Datasets | Est. Texts |
-|-------------|----------|------------|
-| Equities | 8 | ~1.2M |
-| Crypto | 4 | ~900K |
-| Reddit (Mixed) | 5 | ~1.8M |
-| Forex | 1 | ~50K |
-| Commodities | 1 | ~30K |
-| News | 4 | ~200K |
+| Asset Class | Datasets | Verified Rows |
+|-------------|----------|---------------|
+| Equities (social) | 10+ | ~36.5M |
+| Crypto | 10 | ~10.1M |
+| News | 15+ | ~7.1M |
+| Forex | 5 | ~197K |
+| Commodities | 3 | ~31K |
+| Market Data (OHLCV) | 8+ | ~28.7M |
 
 ---
 
