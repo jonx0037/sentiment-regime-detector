@@ -19,17 +19,12 @@ from sentiment_detector.services.sentiment_service import SentimentService
 
 router = APIRouter()
 
-# Asset classes we track (dynamically from DB, but typed for API docs)
+# The 4 real asset classes per the paper (Section 3.2)
 AssetClass = Literal[
     "equity",
-    "equities",
     "crypto",
     "forex",
     "commodity",
-    "cross-asset",
-    "cross_asset",
-    "news",
-    "social",
 ]
 
 
@@ -139,16 +134,25 @@ async def get_cross_asset_sentiment_history(
 
     Returns time-series sentiment data for equity, crypto, forex, and commodity.
     """
+    # Query the last N days of AVAILABLE data (not relative to CURRENT_DATE,
+    # since HPC data may end months/years before today)
     result = await session.execute(
         text("""
+        WITH max_date AS (
+            SELECT MAX(DATE(period_start)) as latest
+            FROM sentiment_indices
+            WHERE source IS NULL
+              AND asset_class IN ('equity', 'crypto', 'forex', 'commodity')
+        )
         SELECT
             DATE(period_start) as date,
             asset_class,
             AVG(mean_compound) as avg_sentiment,
             COUNT(*) as count
-        FROM sentiment_indices
+        FROM sentiment_indices, max_date
         WHERE source IS NULL
-          AND period_start >= CURRENT_DATE - :days * INTERVAL '1 day'
+          AND asset_class IN ('equity', 'crypto', 'forex', 'commodity')
+          AND DATE(period_start) >= max_date.latest - :days * INTERVAL '1 day'
         GROUP BY DATE(period_start), asset_class
         ORDER BY date, asset_class
     """),

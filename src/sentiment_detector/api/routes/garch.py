@@ -44,7 +44,7 @@ async def compute_garch_from_db(session: AsyncSession) -> Optional[dict]:
                   AND asset_class IN ('equity', 'crypto', 'forex', 'commodity')
                   AND granularity = 'daily'
                 GROUP BY DATE(period_start)
-                HAVING COUNT(DISTINCT asset_class) >= 2
+                HAVING COUNT(DISTINCT asset_class) >= 1
                 ORDER BY date
             """)
         )
