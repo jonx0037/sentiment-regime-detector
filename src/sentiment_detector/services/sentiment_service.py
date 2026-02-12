@@ -185,23 +185,13 @@ class SentimentService:
         """
         Get current aggregated sentiment for asset class(es).
 
-        Uses the most recent 7 days of pre-computed sentiment indices
-        for responsive, meaningful current-state reporting. Falls back
-        to raw scores if indices are unavailable.
-
-        Args:
-            session: Database session
-            asset_class: Specific asset class or None for all
-
-        Returns:
-            List of sentiment aggregates with statistics
+        Uses pre-computed sentiment_indices for fast lookups.
         """
         from sqlalchemy import text as sql_text
 
         if asset_class:
             asset_classes = [asset_class]
         else:
-            # Dynamically discover asset classes from the database
             ac_result = await session.execute(
                 sql_text(
                     "SELECT DISTINCT asset_class FROM sentiment_indices "
@@ -210,104 +200,66 @@ class SentimentService:
             )
             asset_classes = [row[0] for row in ac_result.fetchall()]
             if not asset_classes:
-                # Fallback if table is empty
                 asset_classes = ["commodity", "crypto", "equity", "forex"]
-        results = []
 
+        results = []
         for ac in asset_classes:
-            # Try sentiment_indices first (pre-computed daily aggregates)
-            idx_result = await session.execute(
+            # Simple query: avg of last 7 daily indices
+            row = await session.execute(
                 sql_text("""
-                WITH recent AS (
-                    SELECT
-                        mean_compound,
-                        positive_ratio,
-                        negative_ratio,
-                        sample_count,
-                        period_start,
-                        1.0 - COALESCE(positive_ratio, 0) - COALESCE(negative_ratio, 0) AS neutral_ratio
+                    SELECT AVG(mean_compound) as avg_compound,
+                           AVG(positive_ratio) as avg_positive,
+                           AVG(negative_ratio) as avg_negative,
+                           AVG(1.0 - COALESCE(positive_ratio,0) - COALESCE(negative_ratio,0)) as avg_neutral,
+                           COALESCE(SUM(sample_count), 0) as total_count
                     FROM (
-                        SELECT mean_compound, positive_ratio, negative_ratio,
-                               sample_count, period_start
+                        SELECT mean_compound, positive_ratio, negative_ratio, sample_count
                         FROM sentiment_indices
-                        WHERE asset_class = :ac
-                          AND source IS NULL
+                        WHERE asset_class = :ac AND source IS NULL
                         ORDER BY period_start DESC
                         LIMIT 7
-                    ) sub_recent
-                ),
-                prior AS (
-                    SELECT AVG(mean_compound) as prior_avg
-                    FROM (
-                        SELECT mean_compound
-                        FROM sentiment_indices
-                        WHERE asset_class = :ac
-                          AND source IS NULL
-                        ORDER BY period_start DESC
-                        LIMIT 7 OFFSET 7
-                    ) sub_prior
-                )
-                SELECT
-                    AVG(r.mean_compound) as avg_compound,
-                    AVG(r.positive_ratio) as avg_positive,
-                    AVG(r.negative_ratio) as avg_negative,
-                    AVG(r.neutral_ratio) as avg_neutral,
-                    SUM(r.sample_count) as total_count,
-                    (SELECT prior_avg FROM prior) as prior_avg
-                FROM recent r
-            """),
+                    ) t
+                """),
                 {"ac": ac},
             )
+            stats = row.one()
 
-            stats = idx_result.one()
-
-            if stats.total_count and stats.total_count > 0:
-                avg_compound = float(stats.avg_compound or 0.0)
-                prior_avg = float(stats.prior_avg) if stats.prior_avg else avg_compound
-                momentum = round(avg_compound - prior_avg, 4) if prior_avg else 0.0
-
-                results.append(
-                    {
-                        "asset_class": ac,
-                        "compound_score": float(stats.avg_compound or 0.0),
-                        "positive_ratio": float(stats.avg_positive or 0.0),
-                        "negative_ratio": float(stats.avg_negative or 0.0),
-                        "neutral_ratio": float(stats.avg_neutral or 0.0),
-                        "sample_count": int(stats.total_count),
-                        "momentum": momentum,
-                        "timestamp": datetime.now(timezone.utc),
-                    }
-                )
+            if not stats.total_count or stats.total_count == 0:
                 continue
 
-            # Fallback: aggregate from raw sentiment_scores (last 7 days only)
-            query = (
-                select(
-                    func.avg(SentimentScore.compound).label("avg_compound"),
-                    func.avg(SentimentScore.positive).label("avg_positive"),
-                    func.avg(SentimentScore.negative).label("avg_negative"),
-                    func.avg(SentimentScore.neutral).label("avg_neutral"),
-                    func.count(SentimentScore.id).label("count"),
-                )
-                .join(RawText, SentimentScore.text_id == RawText.id)
-                .where(RawText.asset_class == ac)
-                .where(SentimentScore.processed_at >= func.now() - sql_text("INTERVAL '7 days'"))
+            # Prior period for momentum
+            prior_row = await session.execute(
+                sql_text("""
+                    SELECT AVG(mean_compound) as prior_avg
+                    FROM (
+                        SELECT mean_compound FROM sentiment_indices
+                        WHERE asset_class = :ac AND source IS NULL
+                        ORDER BY period_start DESC
+                        LIMIT 7 OFFSET 7
+                    ) t
+                """),
+                {"ac": ac},
             )
-            result = await session.execute(query)
-            raw_stats = result.one()
+            prior = prior_row.one()
+            avg_compound = float(stats.avg_compound or 0.0)
+            prior_avg = float(prior.prior_avg) if prior.prior_avg else avg_compound
+            momentum = round(avg_compound - prior_avg, 4)
 
-            if raw_stats.count == 0:
-                continue
+            # Clamp values to valid Pydantic ranges (HPC data can exceed bounds)
+            pos_ratio = max(0.0, min(1.0, float(stats.avg_positive or 0.0)))
+            neg_ratio = max(0.0, min(1.0, float(stats.avg_negative or 0.0)))
+            neu_ratio = max(0.0, min(1.0, float(stats.avg_neutral or 0.0)))
+            clamped_compound = max(-1.0, min(1.0, avg_compound))
 
             results.append(
                 {
                     "asset_class": ac,
-                    "compound_score": float(raw_stats.avg_compound or 0.0),
-                    "positive_ratio": float(raw_stats.avg_positive or 0.0),
-                    "negative_ratio": float(raw_stats.avg_negative or 0.0),
-                    "neutral_ratio": float(raw_stats.avg_neutral or 0.0),
-                    "sample_count": int(raw_stats.count),
-                    "momentum": 0.0,
+                    "compound_score": clamped_compound,
+                    "positive_ratio": pos_ratio,
+                    "negative_ratio": neg_ratio,
+                    "neutral_ratio": neu_ratio,
+                    "sample_count": int(stats.total_count),
+                    "momentum": momentum,
                     "timestamp": datetime.now(timezone.utc),
                 }
             )

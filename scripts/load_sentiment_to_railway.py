@@ -27,11 +27,15 @@ CSV_PATH = os.path.join(
 )
 
 # Map CSV column prefixes to sentiment_indices asset_class values
+# Frontend expects: equity, crypto, forex, commodity
+# HPC dataset has: equities, crypto, forex, cross_asset, news, social
 ASSET_MAP = {
     "equities": "equity",
     "crypto": "crypto",
     "forex": "forex",
-    "cross_asset": "cross_asset",
+    "cross_asset": "commodity",  # Map cross_asset → commodity for frontend compatibility
+    "news": "news",
+    "social": "social",
 }
 
 
