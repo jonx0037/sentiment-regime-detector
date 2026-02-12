@@ -201,13 +201,8 @@ class SentimentService:
         if asset_class:
             asset_classes = [asset_class]
         else:
-            # Dynamically get asset classes from whatever is in the DB
-            ac_result = await session.execute(
-                sql_text("SELECT DISTINCT asset_class FROM raw_texts ORDER BY asset_class")
-            )
-            asset_classes = [row[0] for row in ac_result.fetchall()]
-            if not asset_classes:
-                asset_classes = ["equity", "crypto", "forex", "commodity"]
+            # Asset classes matching actual data in Railway DB
+            asset_classes = ["cross-asset", "crypto", "equities", "forex", "news", "social"]
         results = []
 
         for ac in asset_classes:
@@ -280,12 +275,8 @@ class SentimentService:
                 )
                 .join(RawText, SentimentScore.text_id == RawText.id)
                 .where(RawText.asset_class == ac)
-                .where(
-                    SentimentScore.processed_at
-                    >= func.now() - func.cast("7 days", func.text("interval"))
-                )
+                .where(SentimentScore.processed_at >= func.now() - sql_text("INTERVAL '7 days'"))
             )
-
             result = await session.execute(query)
             raw_stats = result.one()
 
