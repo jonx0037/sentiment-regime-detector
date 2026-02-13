@@ -22,24 +22,27 @@ from psycopg2.extras import execute_values
 
 CSV_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "results",
-    "daily_sentiment.csv",
+    "data",
+    "daily_sentiment_corrected.csv",
 )
 
 # Map CSV column prefixes to sentiment_indices asset_class values
 # Frontend expects: equity, crypto, forex, commodity
-# HPC dataset has: equities, crypto, forex, cross_asset, news, social
-# - equities/crypto/forex are asset-class-specific scored texts
-# - cross_asset maps to commodity for frontend
-# - news and social are cross-asset sentiment from current market texts
-#   (financial news APIs + social media) — essential for 2024-2025 coverage
+# Corrected CSV has: equities, crypto, forex, cross-asset (proper asset classes)
+# Source-level columns: src_news_*, src_social_*, src_market_data_*
 ASSET_MAP = {
     "equities": "equity",
     "crypto": "crypto",
     "forex": "forex",
-    "cross_asset": "commodity",
-    "news": "equity",  # Financial news is primarily equity-focused
-    "social": "commodity",  # Social media → commodity for broader market pulse
+    "cross-asset": "commodity",
+}
+
+# Source-level data (src_news_*, src_social_*, src_market_data_*)
+# These get inserted with a non-null source column
+SOURCE_MAP = {
+    "src_news": "news",
+    "src_social": "social",
+    "src_market_data": "market_data",
 }
 
 
@@ -65,12 +68,13 @@ def parse_int(val):
 
 def transform_csv_to_rows(csv_path):
     """
-    Read daily_sentiment.csv and transform into sentiment_indices rows.
+    Read daily_sentiment_corrected.csv and transform into sentiment_indices rows.
 
-    The CSV has columns like:
+    The corrected CSV has columns like:
       equities_ensemble_mean, equities_ensemble_std, equities_count,
-      crypto_ensemble_mean, crypto_ensemble_std, crypto_count, ...
-      compound, positive, negative, neutral, total_count
+      crypto_ensemble_mean, ..., cross-asset_ensemble_mean, ...
+      src_news_ensemble_mean, src_social_ensemble_mean, src_market_data_ensemble_mean
+      overall_ensemble_mean, overall_vader_mean, overall_finbert_mean, ...
     """
     rows = []
     with open(csv_path, "r") as f:
@@ -86,7 +90,7 @@ def transform_csv_to_rows(csv_path):
             except ValueError:
                 continue
 
-            # Skip the bogus 1969 row
+            # Skip bogus dates
             if dt.year < 2000:
                 continue
 
@@ -94,36 +98,63 @@ def transform_csv_to_rows(csv_path):
             period_end = (dt + timedelta(days=1)).isoformat() + "+00:00"
             now = datetime.utcnow().isoformat() + "+00:00"
 
+            # --- Asset-class-level rows (source=NULL = aggregated) ---
             for csv_prefix, ac in ASSET_MAP.items():
                 ensemble_mean = parse_float(record.get(f"{csv_prefix}_ensemble_mean"))
                 ensemble_std = parse_float(record.get(f"{csv_prefix}_ensemble_std"))
                 count_val = parse_int(record.get(f"{csv_prefix}_count"))
 
-                # If no data for this asset class on this date, skip
                 if ensemble_mean is None and count_val == 0:
                     continue
 
-                # Use cross-asset-level positive/negative ratios as fallback
-                pos = parse_float(record.get("positive"))
-                neg = parse_float(record.get("negative"))
-
                 rows.append(
                     (
-                        str(uuid.uuid4()),  # id
-                        ac,  # asset_class
-                        None,  # source (NULL = aggregated)
-                        period_start,  # period_start
-                        period_end,  # period_end
-                        "daily",  # granularity
-                        ensemble_mean,  # mean_compound
-                        ensemble_std,  # std_compound
-                        count_val,  # sample_count
-                        pos,  # positive_ratio
-                        neg,  # negative_ratio
-                        None,  # sentiment_momentum
-                        None,  # sentiment_acceleration
-                        now,  # created_at
-                        now,  # updated_at
+                        str(uuid.uuid4()),
+                        ac,
+                        None,
+                        period_start,
+                        period_end,
+                        "daily",
+                        ensemble_mean,
+                        ensemble_std,
+                        count_val,
+                        None,
+                        None,
+                        None,
+                        None,
+                        now,
+                        now,
+                    )
+                )
+
+            # --- Source-level rows (source=news/social/market_data) ---
+            for csv_prefix, src_name in SOURCE_MAP.items():
+                ensemble_mean = parse_float(record.get(f"{csv_prefix}_ensemble_mean"))
+                ensemble_std = parse_float(record.get(f"{csv_prefix}_ensemble_std"))
+                count_val = parse_int(record.get(f"{csv_prefix}_count"))
+
+                if ensemble_mean is None and count_val == 0:
+                    continue
+
+                # Source rows use "cross_asset" as the asset class since
+                # they span multiple assets
+                rows.append(
+                    (
+                        str(uuid.uuid4()),
+                        "commodity",
+                        src_name,
+                        period_start,
+                        period_end,
+                        "daily",
+                        ensemble_mean,
+                        ensemble_std,
+                        count_val,
+                        None,
+                        None,
+                        None,
+                        None,
+                        now,
+                        now,
                     )
                 )
 
