@@ -1,0 +1,239 @@
+name: Daily Sentiment Data Refresh
+
+on:
+  schedule:
+    # Run daily at 6:00 AM UTC (midnight CST)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub UI
+
+env:
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
+  FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+
+jobs:
+  refresh-sentiment-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install psycopg2-binary yfinance vaderSentiment httpx requests numpy
+
+      - name: Fetch and score news articles
+        run: |
+          python3 << 'SCRIPT'
+          import os
+          import json
+          import uuid
+          import httpx
+          import psycopg2
+          import numpy as np
+          from datetime import datetime, timedelta, timezone
+          from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+          from psycopg2.extras import execute_values
+
+          DB_URL = os.environ["DATABASE_URL"]
+          NEWS_API_KEY = os.environ.get("NEWS_API_KEY", "")
+          FINNHUB_API_KEY = os.environ.get("FINNHUB_API_KEY", "")
+
+          analyzer = SentimentIntensityAnalyzer()
+          now = datetime.now(timezone.utc)
+          today_str = now.strftime("%Y-%m-%d")
+          from_date = (now - timedelta(days=2)).strftime("%Y-%m-%d")
+
+          articles = []
+
+          # --- Finnhub ---
+          if FINNHUB_API_KEY:
+              for cat in ["general", "forex", "crypto"]:
+                  try:
+                      resp = httpx.get(
+                          "https://finnhub.io/api/v1/news",
+                          params={"category": cat, "minId": 0, "token": FINNHUB_API_KEY},
+                          timeout=15,
+                      )
+                      if resp.status_code == 200:
+                          for item in resp.json()[:50]:
+                              articles.append({
+                                  "headline": item.get("headline", ""),
+                                  "summary": item.get("summary", ""),
+                                  "category": item.get("category", cat),
+                                  "dt": datetime.fromtimestamp(item.get("datetime", 0), tz=timezone.utc),
+                              })
+                  except Exception as e:
+                      print(f"Finnhub {cat} error: {e}")
+
+          # --- NewsAPI ---
+          if NEWS_API_KEY:
+              queries = {
+                  "equity": "stock market OR S&P 500 OR Wall Street",
+                  "crypto": "bitcoin OR ethereum OR cryptocurrency",
+                  "commodity": "oil price OR gold price OR commodities",
+                  "forex": "forex OR currency OR US dollar",
+              }
+              for asset, query in queries.items():
+                  try:
+                      resp = httpx.get(
+                          "https://newsapi.org/v2/everything",
+                          params={
+                              "q": query, "from": from_date,
+                              "sortBy": "publishedAt", "pageSize": 25, "apiKey": NEWS_API_KEY,
+                          },
+                          timeout=15,
+                      )
+                      if resp.status_code == 200:
+                          for item in resp.json().get("articles", []):
+                              pub = item.get("publishedAt", "")
+                              dt = datetime.fromisoformat(pub.replace("Z", "+00:00")) if pub else now
+                              articles.append({
+                                  "headline": item.get("title", ""),
+                                  "summary": item.get("description", ""),
+                                  "category": asset,
+                                  "dt": dt,
+                              })
+                  except Exception as e:
+                      print(f"NewsAPI {asset} error: {e}")
+
+          print(f"Fetched {len(articles)} articles total")
+
+          if not articles:
+              print("No articles fetched, exiting.")
+              exit(0)
+
+          # --- Score & aggregate ---
+          from collections import defaultdict
+          daily = defaultdict(lambda: defaultdict(list))
+
+          cat_map = {
+              "crypto": "crypto", "cryptocurrency": "crypto", "bitcoin": "crypto",
+              "forex": "forex", "currency": "forex",
+              "commodity": "commodity", "commodities": "commodity", "oil": "commodity", "gold": "commodity",
+          }
+
+          for a in articles:
+              text = f"{a['headline']} {a.get('summary', '')}"
+              if len(text.strip()) < 10:
+                  continue
+              scores = analyzer.polarity_scores(text)
+              asset = cat_map.get(a["category"].lower(), "equity")
+              date_key = a["dt"].strftime("%Y-%m-%d")
+              daily[date_key][asset].append(scores)
+
+          # --- Upsert to DB ---
+          conn = psycopg2.connect(DB_URL)
+          cur = conn.cursor()
+          inserted = 0
+
+          for date_str, asset_data in daily.items():
+              for asset_class, scores_list in asset_data.items():
+                  if not scores_list:
+                      continue
+                  compounds = [s["compound"] for s in scores_list]
+                  positives = [s["pos"] for s in scores_list]
+                  negatives = [s["neg"] for s in scores_list]
+
+                  mean_c = sum(compounds) / len(compounds)
+                  std_c = (sum((c - mean_c)**2 for c in compounds) / len(compounds))**0.5 if len(compounds) > 1 else 0.0
+
+                  # Check existing
+                  cur.execute(
+                      "SELECT COUNT(*) FROM sentiment_indices WHERE asset_class = %s AND source IS NULL AND DATE(period_start) = %s",
+                      (asset_class, date_str),
+                  )
+                  exists = cur.fetchone()[0] > 0
+
+                  if exists:
+                      cur.execute("""
+                          UPDATE sentiment_indices
+                          SET mean_compound = %s, std_compound = %s,
+                              sample_count = %s, positive_ratio = %s,
+                              negative_ratio = %s, updated_at = %s
+                          WHERE asset_class = %s AND source IS NULL AND DATE(period_start) = %s
+                      """, (
+                          mean_c, std_c, len(scores_list),
+                          sum(positives)/len(positives), sum(negatives)/len(negatives),
+                          now.isoformat(), asset_class, date_str,
+                      ))
+                  else:
+                      period_start = f"{date_str}T00:00:00+00:00"
+                      next_day = datetime.strptime(date_str, "%Y-%m-%d") + timedelta(days=1)
+                      period_end = f"{next_day.strftime('%Y-%m-%d')}T00:00:00+00:00"
+                      cur.execute("""
+                          INSERT INTO sentiment_indices (
+                              id, asset_class, source, period_start, period_end,
+                              granularity, mean_compound, std_compound, sample_count,
+                              positive_ratio, negative_ratio, created_at, updated_at
+                          ) VALUES (%s, %s, NULL, %s, %s, 'daily', %s, %s, %s, %s, %s, %s, %s)
+                      """, (
+                          str(uuid.uuid4()), asset_class, period_start, period_end,
+                          mean_c, std_c, len(scores_list),
+                          sum(positives)/len(positives), sum(negatives)/len(negatives),
+                          now.isoformat(), now.isoformat(),
+                      ))
+                  inserted += 1
+
+          conn.commit()
+
+          # Verify
+          cur.execute("SELECT MAX(DATE(period_start)) FROM sentiment_indices WHERE source IS NULL")
+          latest = cur.fetchone()[0]
+          cur.close()
+          conn.close()
+
+          print(f"Upserted {inserted} rows. Latest data date: {latest}")
+          SCRIPT
+
+      - name: Update VIX data from yfinance
+        run: |
+          python3 << 'SCRIPT'
+          import os
+          import yfinance as yf
+          import psycopg2
+          from datetime import datetime, timedelta, timezone
+
+          DB_URL = os.environ["DATABASE_URL"]
+          now = datetime.now(timezone.utc)
+
+          # Get latest VIX
+          try:
+              vix_data = yf.download("^VIX", period="5d", progress=False)
+              if len(vix_data) > 0:
+                  latest_vix = float(vix_data["Close"].iloc[-1].iloc[0]) if hasattr(vix_data["Close"].iloc[-1], 'iloc') else float(vix_data["Close"].iloc[-1])
+                  latest_date = vix_data.index[-1].strftime("%Y-%m-%d")
+                  print(f"Latest VIX: {latest_vix} on {latest_date}")
+
+                  # Update the regime features table or a dedicated VIX table if one exists
+                  conn = psycopg2.connect(DB_URL)
+                  cur = conn.cursor()
+                  cur.execute("""
+                      INSERT INTO market_indicators (id, indicator_name, value, date, created_at)
+                      VALUES (gen_random_uuid(), 'vix', %s, %s, %s)
+                      ON CONFLICT (indicator_name, date) DO UPDATE SET value = %s, created_at = %s
+                  """, (latest_vix, latest_date, now.isoformat(), latest_vix, now.isoformat()))
+                  conn.commit()
+                  cur.close()
+                  conn.close()
+                  print("VIX updated in DB")
+              else:
+                  print("No VIX data returned")
+          except Exception as e:
+              print(f"VIX update error (non-critical): {e}")
+          SCRIPT
+
+      - name: Summary
+        run: |
+          echo "✅ Daily sentiment refresh complete at $(date -u)"
+          echo "Data sources: Finnhub + NewsAPI"
+          echo "Scoring: VADER sentiment analysis"
+          echo "Target: Railway PostgreSQL"
