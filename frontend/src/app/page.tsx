@@ -156,6 +156,7 @@ export default function Dashboard() {
                 <CISSPanel
                   cissLevel={regime?.features?.ciss_level as number | undefined}
                   vixLevel={regime?.features?.vix_level as number | undefined}
+                  latestDataDate={data?.latest_data_date}
                 />
               </div>
               <CISSHistoryChart />
