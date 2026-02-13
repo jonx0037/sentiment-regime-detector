@@ -8,9 +8,10 @@ import { exportChartAsPNG, exportChartAsSVG } from '@/utils/exportChart'
 
 interface SentimentComparisonChartProps {
   data: AssetClassSentiment[]
+  latestDataDate?: string | null
 }
 
-export default function SentimentComparisonChart({ data }: SentimentComparisonChartProps) {
+export default function SentimentComparisonChart({ data, latestDataDate }: SentimentComparisonChartProps) {
   // Transform data for the chart
   const chartData = data.map((item) => ({
     name: formatAssetClass(item.asset_class),
@@ -25,10 +26,17 @@ export default function SentimentComparisonChart({ data }: SentimentComparisonCh
         <h3 className="text-lg font-semibold text-gray-900">
           Sentiment Comparison
         </h3>
-        <ExportButton
-          onExportPNG={() => exportChartAsPNG('sentiment-comparison-chart', 'sentiment-comparison')}
-          onExportSVG={() => exportChartAsSVG('sentiment-comparison-chart', 'sentiment-comparison')}
-        />
+        <div className="flex items-center gap-3">
+          {latestDataDate && (
+            <span className="text-xs text-gray-400">
+              Data as of {new Date(latestDataDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </span>
+          )}
+          <ExportButton
+            onExportPNG={() => exportChartAsPNG('sentiment-comparison-chart', 'sentiment-comparison')}
+            onExportSVG={() => exportChartAsSVG('sentiment-comparison-chart', 'sentiment-comparison')}
+          />
+        </div>
       </div>
 
       <ResponsiveContainer width="100%" height={300}>

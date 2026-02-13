@@ -174,11 +174,11 @@ export default function Dashboard() {
                 {data.asset_classes
                   .sort((a, b) => a.asset_class.localeCompare(b.asset_class))
                   .map((sentiment) => (
-                    <SentimentCard key={sentiment.asset_class} sentiment={sentiment} />
+                    <SentimentCard key={sentiment.asset_class} sentiment={sentiment} latestDataDate={data.latest_data_date} />
                   ))}
               </div>
               <div className="mt-6">
-                <SentimentComparisonChart data={data.asset_classes} />
+                <SentimentComparisonChart data={data.asset_classes} latestDataDate={data.latest_data_date} />
               </div>
               <div className="mt-6">
                 <SentimentHistoryChart />

@@ -14,6 +14,7 @@ import Tooltip from './Tooltip'
 
 interface SentimentCardProps {
   sentiment: AssetClassSentiment
+  latestDataDate?: string | null
 }
 
 /**
@@ -41,7 +42,7 @@ function getMomentumInfo(momentum: number): {
   return { symbol: '→', color: 'text-neutral', label: 'Stable' }
 }
 
-export default function SentimentCard({ sentiment }: SentimentCardProps) {
+export default function SentimentCard({ sentiment, latestDataDate }: SentimentCardProps) {
   const {
     asset_class,
     compound_score,
@@ -134,7 +135,7 @@ export default function SentimentCard({ sentiment }: SentimentCardProps) {
         </div>
       </div>
 
-      {/* Volume */}
+      {/* Volume & Data Freshness */}
       <div className="pt-4 border-t border-gray-200">
         <div className="flex items-center justify-between">
           <span className="text-xs text-gray-500 flex items-center gap-1">
@@ -145,6 +146,11 @@ export default function SentimentCard({ sentiment }: SentimentCardProps) {
             {formatNumber(sample_count)} texts
           </span>
         </div>
+        {latestDataDate && (
+          <div className="mt-2 text-xs text-gray-400 text-right">
+            Data as of {new Date(latestDataDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          </div>
+        )}
       </div>
     </div>
   )

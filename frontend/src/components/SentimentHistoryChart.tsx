@@ -28,6 +28,7 @@ export default function SentimentHistoryChart() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [days, setDays] = useState(90)
+  const [dateRange, setDateRange] = useState<{ start: string | null; end: string | null }>({ start: null, end: null })
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -37,6 +38,7 @@ export default function SentimentHistoryChart() {
         if (!response.ok) throw new Error('Failed to fetch sentiment history')
         const result: SentimentHistoryResponse = await response.json()
         setData(result.data)
+        setDateRange({ start: result.start_date, end: result.end_date })
         setError(null)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error')
@@ -105,6 +107,13 @@ export default function SentimentHistoryChart() {
           </select>
         </div>
       </div>
+
+      {/* Date range label */}
+      {dateRange.end && (
+        <p className="text-xs text-gray-400 mb-2">
+          Showing data from {new Date(dateRange.start + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} to {new Date(dateRange.end + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {data.length} data points
+        </p>
+      )}
 
       {/* Chart */}
       <div className="h-72">
@@ -194,7 +203,7 @@ export default function SentimentHistoryChart() {
           <p className="font-semibold text-blue-600">
             {data.filter(d => d.equity !== null && d.equity !== undefined).length > 0
               ? (data.filter(d => d.equity !== null && d.equity !== undefined).reduce((a, b) => a + (b.equity || 0), 0) /
-                 data.filter(d => d.equity !== null && d.equity !== undefined).length).toFixed(3)
+                data.filter(d => d.equity !== null && d.equity !== undefined).length).toFixed(3)
               : 'N/A'}
           </p>
         </div>
@@ -203,7 +212,7 @@ export default function SentimentHistoryChart() {
           <p className="font-semibold text-amber-600">
             {data.filter(d => d.crypto !== null && d.crypto !== undefined).length > 0
               ? (data.filter(d => d.crypto !== null && d.crypto !== undefined).reduce((a, b) => a + (b.crypto || 0), 0) /
-                 data.filter(d => d.crypto !== null && d.crypto !== undefined).length).toFixed(3)
+                data.filter(d => d.crypto !== null && d.crypto !== undefined).length).toFixed(3)
               : 'N/A'}
           </p>
         </div>
@@ -212,7 +221,7 @@ export default function SentimentHistoryChart() {
           <p className="font-semibold text-green-600">
             {data.filter(d => d.forex !== null && d.forex !== undefined).length > 0
               ? (data.filter(d => d.forex !== null && d.forex !== undefined).reduce((a, b) => a + (b.forex || 0), 0) /
-                 data.filter(d => d.forex !== null && d.forex !== undefined).length).toFixed(3)
+                data.filter(d => d.forex !== null && d.forex !== undefined).length).toFixed(3)
               : 'N/A'}
           </p>
         </div>
@@ -221,7 +230,7 @@ export default function SentimentHistoryChart() {
           <p className="font-semibold text-purple-600">
             {data.filter(d => d.commodity !== null && d.commodity !== undefined).length > 0
               ? (data.filter(d => d.commodity !== null && d.commodity !== undefined).reduce((a, b) => a + (b.commodity || 0), 0) /
-                 data.filter(d => d.commodity !== null && d.commodity !== undefined).length).toFixed(3)
+                data.filter(d => d.commodity !== null && d.commodity !== undefined).length).toFixed(3)
               : 'N/A'}
           </p>
         </div>
