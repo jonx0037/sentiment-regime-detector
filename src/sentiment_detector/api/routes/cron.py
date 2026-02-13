@@ -215,13 +215,14 @@ async def refresh_sentiment_data() -> dict:
                 )
 
                 # Check if row already exists for this date/asset
+                date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
                 existing = await session.execute(
                     text("""
                         SELECT COUNT(*) FROM sentiment_indices
                         WHERE asset_class = :ac AND source IS NULL
                         AND DATE(period_start) = :dt
                     """),
-                    {"ac": asset_class, "dt": date_str},
+                    {"ac": asset_class, "dt": date_obj},
                 )
                 if existing.scalar() > 0:
                     # Update existing row
@@ -240,16 +241,17 @@ async def refresh_sentiment_data() -> dict:
                             "cnt": len(scores_list),
                             "pr": sum(positives) / len(positives),
                             "nr": sum(negatives) / len(negatives),
-                            "now": now.isoformat(),
+                            "now": now,
                             "ac": asset_class,
-                            "dt": date_str,
+                            "dt": date_obj,
                         },
                     )
                 else:
                     # Insert new row
-                    period_start = f"{date_str}T00:00:00+00:00"
-                    next_day = datetime.strptime(date_str, "%Y-%m-%d") + timedelta(days=1)
-                    period_end = f"{next_day.strftime('%Y-%m-%d')}T00:00:00+00:00"
+                    period_start_dt = datetime.strptime(date_str, "%Y-%m-%d").replace(
+                        tzinfo=timezone.utc
+                    )
+                    period_end_dt = period_start_dt + timedelta(days=1)
 
                     await session.execute(
                         text("""
@@ -265,14 +267,14 @@ async def refresh_sentiment_data() -> dict:
                         {
                             "id": str(uuid.uuid4()),
                             "ac": asset_class,
-                            "ps": period_start,
-                            "pe": period_end,
+                            "ps": period_start_dt,
+                            "pe": period_end_dt,
                             "mc": mean_compound,
                             "sc": std_compound,
                             "cnt": len(scores_list),
                             "pr": sum(positives) / len(positives),
                             "nr": sum(negatives) / len(negatives),
-                            "now": now.isoformat(),
+                            "now": now,
                         },
                     )
 
