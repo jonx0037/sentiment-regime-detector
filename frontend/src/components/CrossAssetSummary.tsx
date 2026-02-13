@@ -9,7 +9,7 @@ interface CrossAssetSummaryProps {
 }
 
 export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
-  const { cross_asset_mean, cross_asset_std, asset_classes } = data
+  const { cross_asset_mean, cross_asset_std, asset_classes, latest_data_date } = data
 
   const label = getSentimentLabel(cross_asset_mean)
   const colorClass = getSentimentColor(cross_asset_mean)
@@ -21,13 +21,27 @@ export default function CrossAssetSummary({ data }: CrossAssetSummaryProps) {
   const spread = maxScore - minScore
   const recentVolume = asset_classes.reduce((sum, ac) => sum + ac.sample_count, 0)
 
+  // Format the data date for display
+  const dataDateDisplay = latest_data_date
+    ? new Date(latest_data_date + 'T00:00:00').toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    })
+    : 'Unknown'
+
   return (
     <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900">
           Cross-Asset Summary
         </h2>
-        <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded">Last 7 days</span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-3 py-1 rounded-full">
+            📡 Data as of {dataDateDisplay}
+          </span>
+          <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded">Last 7 days</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-6">

@@ -28,7 +28,7 @@ DB_URL = os.environ.get(
     "DATABASE_URL",
     "postgresql://postgres:rUxfHXftLGrOpqvQTbQynXfHXfnQrJOV@yamabiko.proxy.rlwy.net:19328/railway",
 )
-NEWS_API_KEY = os.environ.get("NEWS_API_KEY", "53f3ae2e-1bcf-41fa-a3be-ede363e88165")
+NEWS_API_KEY = os.environ.get("NEWS_API_KEY", "296ce429-3a4c-4abc-a71e-cb4486fb6bd3")
 FINNHUB_API_KEY = os.environ.get(
     "FINNHUB_API_KEY", "d5vq0a9r01qihi8nc2i0d5vq0a9r01qihi8nc2ig"
 )

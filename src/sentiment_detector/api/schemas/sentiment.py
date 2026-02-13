@@ -42,6 +42,9 @@ class SentimentResponse(BaseModel):
     cross_asset_std: float = Field(
         ..., description="Standard deviation of sentiment across asset classes"
     )
+    latest_data_date: str | None = Field(
+        None, description="Most recent date of sentiment data in the database (YYYY-MM-DD)"
+    )
 
 
 class SentimentDataPoint(BaseModel):

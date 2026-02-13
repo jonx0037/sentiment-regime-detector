@@ -51,6 +51,15 @@ async def get_current_sentiment(
 
         raise HTTPException(status_code=500, detail=f"Database query failed: {str(e)}")
 
+    # Get the latest data date for freshness indicator
+    from sqlalchemy import text as sql_text
+
+    latest_date_result = await session.execute(
+        sql_text("SELECT MAX(period_start)::date FROM sentiment_indices WHERE source IS NULL")
+    )
+    latest_date_row = latest_date_result.one_or_none()
+    latest_data_date = str(latest_date_row[0]) if latest_date_row and latest_date_row[0] else None
+
     # Convert to response model
     asset_classes = [
         AssetClassSentiment(
@@ -79,6 +88,7 @@ async def get_current_sentiment(
         asset_classes=asset_classes,
         cross_asset_mean=cross_asset_mean,
         cross_asset_std=cross_asset_std,
+        latest_data_date=latest_data_date,
     )
 
 

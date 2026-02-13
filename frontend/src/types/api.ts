@@ -17,6 +17,7 @@ export interface SentimentResponse {
   asset_classes: AssetClassSentiment[]
   cross_asset_mean: number
   cross_asset_std: number
+  latest_data_date: string | null
 }
 
 export interface SentimentDataPoint {
