@@ -64,6 +64,7 @@ dev/data/*.h5
 *.dump
 
 # Main data directories (processed batches and outputs)
+data/processed/
 data/processed/maneframe_batches/
 data/processed/maneframe_output/
 data/processed/test_sentiment_results/
