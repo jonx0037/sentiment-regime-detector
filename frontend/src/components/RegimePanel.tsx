@@ -128,6 +128,9 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
   const currentRegime = regime?.regime || 'normal'
   const confidence = regime?.confidence || 0
   const config = regimeConfig[currentRegime] || regimeConfig.normal
+  const volatilityState = regime?.volatility_regime || 'normal'
+  const volatilityConfig = regimeConfig[volatilityState] || regimeConfig.normal
+  const volatilityScore = regime?.volatility_score ?? 0.25
 
   return (
     <div className={`p-6 bg-white rounded-xl shadow-sm border ${config.borderColor} ${className}`}>
@@ -187,6 +190,33 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
               Risk Off
               <Tooltip content="Probability of bearish regime - flight to safety, negative sentiment, elevated stress" />
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Volatility Regime */}
+      {regime && (
+        <div className="mt-4 p-4 border border-gray-100 rounded-lg bg-gray-50">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1">
+            Volatility Regime (Jump Model)
+            <Tooltip content="Layer 1 output. Combines VIX, ECB CISS, and sentiment dispersion to approximate the four jump-model regimes described in Draft 1." />
+          </p>
+          <div className={`flex items-center gap-3 p-3 rounded-lg ${volatilityConfig.bgColor}`}>
+            {volatilityConfig.icon}
+            <div>
+              <p className={`text-lg font-semibold ${volatilityConfig.color}`}>{volatilityConfig.label}</p>
+              <p className={`text-xs ${volatilityConfig.color} opacity-80`}>{volatilityConfig.description}</p>
+            </div>
+            <div className="ml-auto text-right">
+              <p className="text-xs text-gray-500">Volatility Score</p>
+              <p className="text-lg font-bold text-gray-900">{(volatilityScore * 100).toFixed(0)}%</p>
+            </div>
+          </div>
+          <div className="mt-2 h-2 bg-white rounded-full overflow-hidden">
+            <div
+              className={`${volatilityConfig.color?.replace('text', 'bg') || 'bg-purple-500'} h-full transition-all`}
+              style={{ width: `${Math.min(volatilityScore * 100, 100)}%` }}
+            />
           </div>
         </div>
       )}

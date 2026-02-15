@@ -54,6 +54,8 @@ export interface RegimeResponse {
   timestamp: string
   regime: RegimeState
   confidence: number
+  volatility_regime: 'low_volatility' | 'normal' | 'elevated' | 'high_volatility'
+  volatility_score: number
   probabilities: Record<RegimeState, number>
   features: RegimeFeatures
   model_version: string
