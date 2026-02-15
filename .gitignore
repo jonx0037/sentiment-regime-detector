@@ -68,6 +68,7 @@ data/processed/
 data/processed/maneframe_batches/
 data/processed/maneframe_output/
 data/processed/test_sentiment_results/
+data/processed/sentiment_scored/
 data/raw/scheduled/
 data/raw/*.json
 data/processed/*.json
