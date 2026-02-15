@@ -1,9 +1,9 @@
 {
   "manifest_version": "1.0",
-  "generated_at_utc": "2026-02-15T22:05:06.514283+00:00",
-  "canonical_run_id": "pipeline_output_20260211",
+  "generated_at_utc": "2026-02-15T22:52:47.357491+00:00",
+  "canonical_run_id": "pipeline_output_20260211_plus_validation_20260215_225156",
   "quality_tier": "provisional",
-  "quality_reason": "Fitted GARCH parameters present for canonical pipeline run; full walk-forward validation artifacts not yet canonicalized.",
+  "quality_reason": "Canonical run includes walk-forward/hypothesis validation artifacts; quality remains provisional because asymmetric GARCH-MIDAS and full entropy/transfer-entropy implementations are not yet canonicalized.",
   "active_artifacts": [
     {
       "path": "results/pipeline_output/pipeline_summary.json",
@@ -29,6 +29,26 @@
       "path": "results/garch_midas_results_20260211.json",
       "sha256": "d56b23e9d7db51cfb4d10fd2376c9e29826a4d2677b79a94f435b171f00db737",
       "size_bytes": 4580
+    },
+    {
+      "path": "results/validation/validation_20260215_225156.json",
+      "sha256": "b5cc87da7db7f46d79cb00e4a08248ced7e66a5b49abed8a0030f3589e811bd9",
+      "size_bytes": 29024
+    },
+    {
+      "path": "results/validation/validation_20260215_225156.md",
+      "sha256": "5434de7e8249384ace618902e44264833071ad5c908c3d6adcd908d39e8e9084",
+      "size_bytes": 678
+    },
+    {
+      "path": "results/validation/validation_20260215_225156_hypothesis_report.txt",
+      "sha256": "c78dc28d701266a82972b81ddf9980b716fdb01ed488caca2eb9ec7106f72cb9",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/parquet_compat_migration_report.json",
+      "sha256": "511201f16c0f3a9554fb83d17855ccaaea381ad3425ba35d4d72a39efdcfa5f5",
+      "size_bytes": 5145
     }
   ],
   "archived_artifacts": [
@@ -55,6 +75,24 @@
       "sha256": "e3f5ee19084e94ec193940526f79463bf7ecb7ce29cea514b11bb0b2470bed34",
       "size_bytes": 18306,
       "archive_reason": "superseded_or_fallback"
+    },
+    {
+      "path": "results/_archive/validation_superseded/validation_20260215_224626.json",
+      "sha256": "48d4a13e85b1006231940b2c847939a414cd82323d9b72968356b56953ace943",
+      "size_bytes": 28676,
+      "archive_reason": "superseded_validation"
+    },
+    {
+      "path": "results/_archive/validation_superseded/validation_20260215_224626.md",
+      "sha256": "7e7d944e516a628266e2e5c4ed183510cca9842c6d1968c9edf57de4f85358a3",
+      "size_bytes": 682,
+      "archive_reason": "superseded_validation"
+    },
+    {
+      "path": "results/_archive/validation_superseded/validation_20260215_224626_hypothesis_report.txt",
+      "sha256": "1c74b26e0f3ea6da6460ed16cd9107d87ec65f7cefcb16f5ea9108d5c8a3a431",
+      "size_bytes": 1393,
+      "archive_reason": "superseded_validation"
     }
   ],
   "invalid_artifacts": [
@@ -66,7 +104,8 @@
     }
   ],
   "known_issues": [
-    "results/sentiment_processed parquet files failed to load in this environment (PyArrow repetition-level mismatch).",
-    "Canonical run currently represents event-aligned pipeline outputs; walk-forward outputs are not yet in canonical artifacts."
+    "Asymmetric GARCH-MIDAS remains an extension path; current canonical pipeline uses GARCH(1,1)-based volatility features.",
+    "Entropy-based connectedness and transfer-entropy mechanisms are currently represented by proxy features in canonical outputs.",
+    "Latest canonical validation supports H2 and H3 but not H1, indicating lead-time sensitivity still needs feature/model refinement."
   ]
 }

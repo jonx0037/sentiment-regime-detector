@@ -9,6 +9,10 @@ Define one canonical result set for reporting, and keep all non-canonical output
 - `results/pipeline_output/regime_labels.csv`
 - `results/pipeline_output/regime_transitions.csv`
 - `results/garch_midas_results_20260211.json`
+- `results/validation/validation_20260215_225156.json`
+- `results/validation/validation_20260215_225156.md`
+- `results/validation/validation_20260215_225156_hypothesis_report.txt`
+- `results/parquet_compat_migration_report.json`
 
 These files are the only active artifacts to cite in Draft-1.x unless a newer canonical run is explicitly promoted.
 
