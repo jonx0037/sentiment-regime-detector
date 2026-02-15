@@ -24,7 +24,6 @@ PARQUET_BASE = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     "results",
     "sentiment_processed",
-    "sentiment_processed",
 )
 
 

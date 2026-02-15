@@ -1,0 +1,72 @@
+{
+  "manifest_version": "1.0",
+  "generated_at_utc": "2026-02-15T22:05:06.514283+00:00",
+  "canonical_run_id": "pipeline_output_20260211",
+  "quality_tier": "provisional",
+  "quality_reason": "Fitted GARCH parameters present for canonical pipeline run; full walk-forward validation artifacts not yet canonicalized.",
+  "active_artifacts": [
+    {
+      "path": "results/pipeline_output/pipeline_summary.json",
+      "sha256": "aefd6f2ed3ddd0f37482d53c25b99c947298b229e8a966507c6762e6dbca7f1a",
+      "size_bytes": 1289
+    },
+    {
+      "path": "results/pipeline_output/feature_matrix.csv",
+      "sha256": "c275bab8c63e7ae354ed83f33653d29b84041726f4d7c519bb851214747fa885",
+      "size_bytes": 1548331
+    },
+    {
+      "path": "results/pipeline_output/regime_labels.csv",
+      "sha256": "99b403dae6575ef7ba344e2d6ed83403a14a3931f9ae55bd9c437aac6f107770",
+      "size_bytes": 98077
+    },
+    {
+      "path": "results/pipeline_output/regime_transitions.csv",
+      "sha256": "402cd124557b57a475bf086dacf3d93603148211a7d1b49b6589dba65e55846b",
+      "size_bytes": 18186
+    },
+    {
+      "path": "results/garch_midas_results_20260211.json",
+      "sha256": "d56b23e9d7db51cfb4d10fd2376c9e29826a4d2677b79a94f435b171f00db737",
+      "size_bytes": 4580
+    }
+  ],
+  "archived_artifacts": [
+    {
+      "path": "results/_archive/fallback_pipeline_output_20260212/pipeline_summary.json",
+      "sha256": "779366aea45f7e62bc55e05bb8c0858a111d65ae4849010610c891f6d72f0d99",
+      "size_bytes": 1116,
+      "archive_reason": "superseded_or_fallback"
+    },
+    {
+      "path": "results/_archive/fallback_pipeline_output_20260212/feature_matrix.csv",
+      "sha256": "eabbc38fbcf909fc7da84f0983ef2fee5133bf27f9408ca1cef989c2090da557",
+      "size_bytes": 1537016,
+      "archive_reason": "superseded_or_fallback"
+    },
+    {
+      "path": "results/_archive/fallback_pipeline_output_20260212/regime_labels.csv",
+      "sha256": "44094b4e9b69b5d9c70c3bb80ee6f21eac20fd8174a80ef4b759107657dd916e",
+      "size_bytes": 98393,
+      "archive_reason": "superseded_or_fallback"
+    },
+    {
+      "path": "results/_archive/fallback_pipeline_output_20260212/regime_transitions.csv",
+      "sha256": "e3f5ee19084e94ec193940526f79463bf7ecb7ce29cea514b11bb0b2470bed34",
+      "size_bytes": 18306,
+      "archive_reason": "superseded_or_fallback"
+    }
+  ],
+  "invalid_artifacts": [
+    {
+      "path": "results/_archive/invalid_garch/garch_midas_results_20260213.json",
+      "sha256": "fbb550a9b4532dcafbd48ef439681ad3f02ffcf2f388ce42a74ad2ce9c9bd2e1",
+      "size_bytes": 92313,
+      "invalid_reason": "fallback_or_zero_fit_statistics"
+    }
+  ],
+  "known_issues": [
+    "results/sentiment_processed parquet files failed to load in this environment (PyArrow repetition-level mismatch).",
+    "Canonical run currently represents event-aligned pipeline outputs; walk-forward outputs are not yet in canonical artifacts."
+  ]
+}

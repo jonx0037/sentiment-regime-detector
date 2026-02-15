@@ -3,7 +3,7 @@ import os
 import glob
 from datetime import datetime
 
-base_dir = "results/sentiment_processed/sentiment_processed"
+base_dir = "results/sentiment_processed"
 classes = ["social", "news", "equities", "crypto", "cross-asset", "forex"]
 
 print("Checking date ranges in HPC output...")

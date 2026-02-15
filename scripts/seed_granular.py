@@ -167,7 +167,7 @@ def main():
     parser = argparse.ArgumentParser(description="Seed granular sentiment data")
     parser.add_argument("--database-url", default=os.environ.get("DATABASE_URL"))
     parser.add_argument(
-        "--parquet-dir", default="results/sentiment_processed/sentiment_processed"
+        "--parquet-dir", default="results/sentiment_processed"
     )
     parser.add_argument("--days", type=int, default=30, help="Days of history to seed")
     parser.add_argument(

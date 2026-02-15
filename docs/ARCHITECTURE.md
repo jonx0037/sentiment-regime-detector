@@ -250,10 +250,10 @@ Input Text
                     [-1.0, 1.0]
 ```
 
-**Performance:**
+**Performance (Status):**
 
-- **Processing Speed:** 1,000 texts/sec (GPU), 50 texts/sec (CPU)
-- **Accuracy:** 85% backtest average on held-out data
+- **Processing Speed Target:** 1,000 texts/sec (GPU), 50 texts/sec (CPU)
+- **Modeling Status:** Ensemble pipeline implemented; canonical out-of-sample accuracy report pending
 - **Batch Size:** 32 (optimal for A100 GPU)
 - **Models:** 6 (4 GPU, 2 CPU)
 
@@ -279,11 +279,11 @@ else:
 - GARCH-MIDAS volatility forecast (conditional)
 - Day of week, month indicators
 
-**Performance:**
+**Performance (Status):**
 
-- **Accuracy:** 82% on held-out test set (2020-2024)
-- **Sharpe Ratio:** 1.45 (trading strategy)
-- **Latency:** <10ms (90th percentile)
+- **Current Evidence:** Canonical regime outputs are available in `results/pipeline_output/`
+- **Accuracy/Sharpe:** Treated as provisional until supported by reproducible walk-forward artifact set
+- **Latency Target:** <10ms (90th percentile)
 
 ---
 

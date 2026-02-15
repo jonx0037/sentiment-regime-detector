@@ -430,6 +430,49 @@ class TestGrangerCausality(TestHypothesisValidator):
         assert isinstance(result, GrangerResult)
 
 
+class TestVixSpikePrediction(TestHypothesisValidator):
+    """Tests for VIX spike prediction metrics."""
+
+    def test_vix_spike_hit_rate_is_bounded(self, validator):
+        """Hit rate should always be in [0, 1]."""
+        idx = pd.date_range(start="2024-01-01", periods=15, freq="D")
+
+        # Two strong drops before one spike.
+        sentiment = pd.Series(
+            [0, 0, 0, 0, -2, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4],
+            index=idx,
+            dtype=float,
+        )
+        vix = pd.Series([10, 10, 10, 10, 10, 10, 10, 10, 30, 10, 10, 10, 10, 10, 10], index=idx, dtype=float)
+
+        hit_rate, fpr, avg_lead = validator._vix_spike_prediction(
+            sentiment, vix, threshold=25.0, lead_window=5
+        )
+
+        assert 0.0 <= hit_rate <= 1.0
+        assert 0.0 <= fpr <= 1.0
+        assert avg_lead >= 0
+
+    def test_vix_spike_counts_each_spike_once(self, validator):
+        """Multiple drop signals should not count the same spike more than once."""
+        idx = pd.date_range(start="2024-01-01", periods=15, freq="D")
+
+        # Drops on Jan 5 and Jan 6, one spike on Jan 9.
+        sentiment = pd.Series(
+            [0, 0, 0, 0, -2, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4],
+            index=idx,
+            dtype=float,
+        )
+        vix = pd.Series([10, 10, 10, 10, 10, 10, 10, 10, 30, 10, 10, 10, 10, 10, 10], index=idx, dtype=float)
+
+        hit_rate, fpr, _ = validator._vix_spike_prediction(
+            sentiment, vix, threshold=25.0, lead_window=5
+        )
+
+        assert hit_rate == pytest.approx(1.0)
+        assert fpr == pytest.approx(0.5)
+
+
 class TestValidateAll(TestHypothesisValidator):
     """Tests for running all validations together."""
     

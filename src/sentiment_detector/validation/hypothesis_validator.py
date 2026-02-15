@@ -688,9 +688,10 @@ class HypothesisValidator:
         """
         # Identify VIX spikes
         vix_spikes = vix > threshold
-        spike_dates = vix_spikes[vix_spikes].index
+        spike_dates = set(vix_spikes[vix_spikes].index)
+        total_spikes = len(spike_dates)
         
-        if len(spike_dates) == 0:
+        if total_spikes == 0:
             return 0, 0, 0
         
         # Identify sentiment drops (potential warning signals)
@@ -704,19 +705,22 @@ class HypothesisValidator:
             # Check if VIX spike occurs within lead_window days
             future_window = [drop_date + timedelta(days=i) for i in range(1, lead_window + 1)]
             
-            spike_found = False
+            matched_spike = None
             for i, future_date in enumerate(future_window):
                 if future_date in spike_dates:
+                    # Each VIX spike can only be counted once.
+                    matched_spike = future_date
                     hits += 1
                     lead_times.append(i + 1)
-                    spike_found = True
                     break
             
-            if not spike_found:
+            if matched_spike is not None:
+                spike_dates.remove(matched_spike)
+            else:
                 false_positives += 1
         
         total_signals = hits + false_positives
-        hit_rate = hits / len(spike_dates) if len(spike_dates) > 0 else 0
+        hit_rate = hits / total_spikes if total_spikes > 0 else 0
         fpr = false_positives / total_signals if total_signals > 0 else 0
         avg_lead = np.mean(lead_times) if lead_times else 0
         
