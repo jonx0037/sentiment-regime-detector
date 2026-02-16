@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { sentimentApi, regimeApi } from '@/services/api'
-import type { SentimentResponse, RegimeResponse } from '@/types/api'
+import { useEffect, useRef, useState } from 'react'
+import { garchApi, sentimentApi, regimeApi } from '@/services/api'
+import type { SentimentResponse, RegimeResponse, GARCHBundle } from '@/types/api'
 import SentimentCard from '@/components/SentimentCard'
 import CrossAssetSummary from '@/components/CrossAssetSummary'
 import SentimentComparisonChart from '@/components/SentimentComparisonChart'
@@ -26,39 +26,194 @@ import { RefreshCw, HelpCircle } from 'lucide-react'
 export default function Dashboard() {
   const [data, setData] = useState<SentimentResponse | null>(null)
   const [regime, setRegime] = useState<RegimeResponse | null>(null)
-  const [garch, setGarch] = useState<any>(null)
+  const [garch, setGarch] = useState<GARCHBundle | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [garchError, setGarchError] = useState<string | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
+  const [lastApiSuccess, setLastApiSuccess] = useState<Date | null>(null)
+  const [lastSentimentSuccess, setLastSentimentSuccess] = useState<Date | null>(null)
+  const [lastRegimeSuccess, setLastRegimeSuccess] = useState<Date | null>(null)
+  const [lastGarchSuccess, setLastGarchSuccess] = useState<Date | null>(null)
+  const [healthStatus, setHealthStatus] = useState<'connecting' | 'live' | 'degraded' | 'offline'>('connecting')
+  const [clockNow, setClockNow] = useState<number>(Date.now())
   const [helpModalOpen, setHelpModalOpen] = useState(false)
+  const hasSentimentDataRef = useRef(false)
+  const hasGarchErrorRef = useRef(false)
   const { toasts, showToast, removeToast } = useToast()
 
-  const fetchData = async () => {
-    try {
+  useEffect(() => {
+    hasSentimentDataRef.current = Boolean(data?.asset_classes?.length)
+  }, [data])
+
+  useEffect(() => {
+    hasGarchErrorRef.current = Boolean(garchError)
+  }, [garchError])
+
+  const fetchGarchData = async (): Promise<GARCHBundle> => {
+    const [parameters, forecast] = await Promise.all([
+      garchApi.getParameters(),
+      garchApi.getVolatilityForecast(30),
+    ])
+    return { parameters, forecast }
+  }
+
+  const fetchAllData = async ({ initial = false, manual = false }: { initial?: boolean; manual?: boolean } = {}) => {
+    if (initial) {
       setLoading(true)
-      setError(null)
-      const [sentimentResponse, regimeResponse] = await Promise.all([
+    }
+    if (manual) {
+      setIsRefreshing(true)
+    }
+
+    try {
+      const [sentimentResult, regimeResult, garchResult] = await Promise.allSettled([
         sentimentApi.getCurrentSentiment(),
         regimeApi.getCurrentRegime(),
+        fetchGarchData(),
       ])
-      setData(sentimentResponse)
-      setRegime(regimeResponse)
-      setLastUpdate(new Date())
+
+      const now = new Date()
+      let hadAnySuccess = false
+      let hadAnyFailure = false
+
+      if (sentimentResult.status === 'fulfilled') {
+        setData(sentimentResult.value)
+        setLastSentimentSuccess(now)
+        hadAnySuccess = true
+      } else {
+        hadAnyFailure = true
+        console.error('Error fetching sentiment data:', sentimentResult.reason)
+      }
+
+      if (regimeResult.status === 'fulfilled') {
+        setRegime(regimeResult.value)
+        setLastRegimeSuccess(now)
+        hadAnySuccess = true
+      } else {
+        hadAnyFailure = true
+        console.error('Error fetching regime data:', regimeResult.reason)
+      }
+
+      if (garchResult.status === 'fulfilled') {
+        setGarch(garchResult.value)
+        setGarchError(null)
+        setLastGarchSuccess(now)
+        hadAnySuccess = true
+      } else {
+        hadAnyFailure = true
+        const garchMessage = garchResult.reason instanceof Error
+          ? garchResult.reason.message
+          : 'Failed to fetch GARCH data'
+        setGarchError(garchMessage)
+        console.error('Error fetching GARCH data:', garchResult.reason)
+      }
+
+      if (hadAnySuccess) {
+        setError(null)
+        setHealthStatus(hadAnyFailure ? 'degraded' : 'live')
+        setLastUpdate(now)
+        setLastApiSuccess(now)
+      } else {
+        setHealthStatus(hasSentimentDataRef.current ? 'degraded' : 'offline')
+        if (!hasSentimentDataRef.current) {
+          setError('Failed to fetch dashboard data')
+        }
+        if (manual) {
+          showToast('Refresh failed. Please try again.', 'error')
+        }
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch data')
-      console.error('Error fetching sentiment data:', err)
+      console.error('Unexpected dashboard fetch error:', err)
+      setHealthStatus(hasSentimentDataRef.current ? 'degraded' : 'offline')
+      if (!hasSentimentDataRef.current) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch dashboard data')
+      }
+      if (manual) {
+        showToast('Refresh failed. Please try again.', 'error')
+      }
     } finally {
-      setLoading(false)
+      if (initial) {
+        setLoading(false)
+      }
+      if (manual) {
+        setIsRefreshing(false)
+      }
+    }
+  }
+
+  const refreshRegimeOnly = async () => {
+    try {
+      const regimeResponse = await regimeApi.getCurrentRegime()
+      const now = new Date()
+      setRegime(regimeResponse)
+      setLastRegimeSuccess(now)
+      setHealthStatus(hasGarchErrorRef.current ? 'degraded' : 'live')
+      setLastUpdate(now)
+      setLastApiSuccess(now)
+    } catch (err) {
+      console.error('Error refreshing regime data:', err)
+      setHealthStatus(hasSentimentDataRef.current ? 'degraded' : 'offline')
     }
   }
 
   useEffect(() => {
-    fetchData()
+    fetchAllData({ initial: true })
 
-    // Auto-refresh every 60 seconds
-    const interval = setInterval(fetchData, 60000)
-    return () => clearInterval(interval)
+    // Full refresh every 60 seconds (sentiment + regime + garch)
+    const fullRefreshInterval = setInterval(() => {
+      fetchAllData()
+    }, 60000)
+
+    // Regime-only refresh every 30 seconds
+    const regimeRefreshInterval = setInterval(() => {
+      refreshRegimeOnly()
+    }, 30000)
+
+    // Update staleness indicators even without new network events
+    const heartbeatInterval = setInterval(() => {
+      setClockNow(Date.now())
+    }, 15000)
+
+    return () => {
+      clearInterval(fullRefreshInterval)
+      clearInterval(regimeRefreshInterval)
+      clearInterval(heartbeatInterval)
+    }
   }, [])
+
+  const secondsSinceLastSuccess = lastApiSuccess
+    ? Math.floor((clockNow - lastApiSuccess.getTime()) / 1000)
+    : null
+
+  const isStale = secondsSinceLastSuccess !== null && secondsSinceLastSuccess > 90
+  const effectiveHealthStatus = healthStatus === 'live' && isStale ? 'degraded' : healthStatus
+
+  const healthMap = {
+    connecting: {
+      label: 'Connecting',
+      dot: 'bg-gray-400',
+      badge: 'bg-gray-100 text-gray-700 border-gray-200',
+    },
+    live: {
+      label: 'Live',
+      dot: 'bg-emerald-500',
+      badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    },
+    degraded: {
+      label: isStale ? 'Stale' : 'Degraded',
+      dot: 'bg-amber-500',
+      badge: 'bg-amber-50 text-amber-700 border-amber-200',
+    },
+    offline: {
+      label: 'Offline',
+      dot: 'bg-red-500',
+      badge: 'bg-red-50 text-red-700 border-red-200',
+    },
+  } as const
+
+  const health = healthMap[effectiveHealthStatus]
 
   if (loading && !data) {
     return <LoadingSkeleton variant="page" message="Loading dashboard..." />
@@ -69,7 +224,7 @@ export default function Dashboard() {
       <div className="min-h-screen bg-gray-50">
         <ErrorMessage
           error={error}
-          onRetry={fetchData}
+          onRetry={() => fetchAllData({ manual: true })}
           variant="full"
         />
       </div>
@@ -87,14 +242,14 @@ export default function Dashboard() {
           </div>
         </header>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <NoSentimentData onRefresh={fetchData} />
+          <NoSentimentData onRefresh={() => fetchAllData({ manual: true })} />
         </main>
       </div>
     )
   }
 
   return (
-    <ErrorBoundary onReset={fetchData}>
+    <ErrorBoundary onReset={() => fetchAllData({ manual: true })}>
       <HelpModal isOpen={helpModalOpen} onClose={() => setHelpModalOpen(false)} />
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
@@ -127,17 +282,25 @@ export default function Dashboard() {
                 </button>
                 <button
                   type="button"
-                  onClick={fetchData}
-                  disabled={loading}
+                  onClick={() => fetchAllData({ manual: true })}
+                  disabled={isRefreshing || loading}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
-                  <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`w-4 h-4 ${(isRefreshing || loading) ? 'animate-spin' : ''}`} />
                   Refresh
                 </button>
               </div>
             </div>
-            <div className="mt-2 text-xs text-gray-500">
-              Last updated: {lastUpdate.toLocaleTimeString()}
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+              <span className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full border ${health.badge}`}>
+                <span className={`h-2 w-2 rounded-full ${health.dot}`}></span>
+                API {health.label}
+              </span>
+              <span>Last API success: {lastApiSuccess ? lastApiSuccess.toLocaleTimeString() : '—'}</span>
+              <span>Sentiment: {lastSentimentSuccess ? lastSentimentSuccess.toLocaleTimeString() : '—'}</span>
+              <span>Regime: {lastRegimeSuccess ? lastRegimeSuccess.toLocaleTimeString() : '—'}</span>
+              <span>GARCH: {lastGarchSuccess ? lastGarchSuccess.toLocaleTimeString() : '—'}</span>
+              <span>Last dashboard update: {lastUpdate.toLocaleTimeString()}</span>
             </div>
           </div>
         </header>
@@ -152,7 +315,7 @@ export default function Dashboard() {
                 Current Market Regime
               </h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <RegimePanel />
+                <RegimePanel regime={regime} />
                 <CISSPanel
                   cissLevel={regime?.features?.ciss_level as number | undefined}
                   vixLevel={regime?.features?.vix_level as number | undefined}
@@ -195,7 +358,12 @@ export default function Dashboard() {
                 Volatility Modeling & Regime History
               </h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <GARCHResultsPanel />
+                <GARCHResultsPanel
+                  data={garch}
+                  loading={loading && !garch}
+                  error={garchError}
+                  onRetry={() => fetchAllData({ manual: true })}
+                />
                 <RegimeTimeline />
               </div>
             </section>

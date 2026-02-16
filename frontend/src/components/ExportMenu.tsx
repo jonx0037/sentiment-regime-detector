@@ -248,6 +248,20 @@ export default function ExportMenu({
             <button
               onClick={() =>
                 handleExport(
+                  () => { if (garch) exportGARCHAsJSON(garch) },
+                  'GARCH results exported as JSON'
+                )
+              }
+              disabled={isExporting || !garch}
+              className="menu-item"
+              role="menuitem"
+            >
+              <FileJson className="w-4 h-4 text-gray-600" />
+              <span>GARCH Results (JSON)</span>
+            </button>
+            <button
+              onClick={() =>
+                handleExport(
                   () => {
                     if (sentiment && regime && garch) {
                       exportAllDataAsJSON(sentiment, regime, garch)
@@ -256,7 +270,7 @@ export default function ExportMenu({
                   'All data exported as JSON'
                 )
               }
-              disabled={isExporting || !sentiment || !regime}
+              disabled={isExporting || !sentiment || !regime || !garch}
               className="menu-item"
               role="menuitem"
             >

@@ -136,7 +136,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                   <h4 className="font-semibold text-gray-900 mb-2">🔄 Auto-Refresh</h4>
                   <p className="text-sm text-gray-700">
-                    Data refreshes automatically every 60 seconds. The regime panel updates every 30 seconds.
+                    Data refreshes automatically every 60 seconds, including regime classification updates.
                     You can also manually refresh using the button in the header.
                   </p>
                 </div>
@@ -267,7 +267,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 />
                 <FAQItem
                   question="How accurate is the regime classifier?"
-                  answer="The Statistical Jump Model achieved 85% average accuracy in backtests across the 2008 Financial Crisis, COVID-19 crash, GameStop mania, and 2022 crypto winter. Jump-penalty regularization reduces false regime switches."
+                  answer="Current evidence status is provisional (Feb 16, 2026): H1 lead-time remains unconfirmed under fixed thresholds, while H2 divergence and H3 connectedness are supported in the canonical validation suite (run validation_20260216_013107)."
                 />
                 <FAQItem
                   question="Can I use this for trading decisions?"
@@ -287,7 +287,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 />
                 <FAQItem
                   question="How was this system validated?"
-                  answer="Extensive backtesting across major market events: 2008 Financial Crisis, 2020 COVID-19 crash, 2022 crypto winter, and recent market volatility. See the research paper for detailed results."
+                  answer="Validation combines event-conditioned probes, lag-sensitive lead-time checks, divergence diagnostics, connectedness analysis, and regime-state benchmarking on the 2005-present corpus. See Draft 1.1 and the canonical validation artifacts for full methodology."
                 />
               </div>
             )}

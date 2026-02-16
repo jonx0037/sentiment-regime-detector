@@ -60,3 +60,54 @@ export interface RegimeResponse {
   features: RegimeFeatures
   model_version: string
 }
+
+export interface GARCHParameters {
+  mu: number
+  omega: number
+  'alpha[1]': number
+  'beta[1]': number
+}
+
+export interface GARCHInterpretation {
+  persistence: 'high' | 'moderate' | 'low'
+  shock_impact: 'high' | 'moderate' | 'low'
+  memory: 'high' | 'moderate' | 'low'
+}
+
+export interface GARCHDataRange {
+  start: string
+  end: string
+  n_observations?: number
+  num_observations?: number
+}
+
+export interface GARCHParametersResponse {
+  parameters: GARCHParameters
+  persistence: number
+  aic: number
+  bic: number
+  loglikelihood: number
+  interpretation: GARCHInterpretation
+  run_timestamp?: string
+  data_range?: GARCHDataRange
+}
+
+export interface GARCHForecastResponse {
+  horizon: number
+  forecast: number[]
+  statistics: {
+    mean: number
+    max: number
+    min: number
+  }
+  model: {
+    params: GARCHParameters
+    aic: number
+    bic: number
+  }
+}
+
+export interface GARCHBundle {
+  parameters: GARCHParametersResponse
+  forecast: GARCHForecastResponse
+}

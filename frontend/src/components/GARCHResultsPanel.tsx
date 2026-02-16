@@ -1,88 +1,26 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Activity, TrendingUp } from 'lucide-react'
+import { Activity, RefreshCw, TrendingUp } from 'lucide-react'
 import Tooltip from './Tooltip'
+import type { GARCHBundle } from '@/types/api'
 
-interface GARCHParameters {
-  mu: number
-  omega: number
-  'alpha[1]': number
-  'beta[1]': number
+interface GARCHResultsPanelProps {
+  data: GARCHBundle | null
+  loading?: boolean
+  error?: string | null
+  onRetry?: () => void
 }
 
-interface GARCHInterpretation {
-  persistence: string
-  shock_impact: string
-  memory: string
-}
+export default function GARCHResultsPanel({
+  data,
+  loading = false,
+  error = null,
+  onRetry,
+}: GARCHResultsPanelProps) {
+  const formatNumber = (value: number | null | undefined, digits: number): string =>
+    typeof value === 'number' ? value.toFixed(digits) : 'N/A'
 
-interface GARCHResponse {
-  parameters: GARCHParameters
-  persistence: number
-  aic: number
-  bic: number
-  loglikelihood: number
-  interpretation: GARCHInterpretation
-  run_timestamp?: string
-  data_range?: { start: string; end: string; num_observations: number }
-}
-
-interface VolatilityForecast {
-  horizon: number
-  forecast: number[]
-  statistics: {
-    mean: number
-    max: number
-    min: number
-  }
-  model: {
-    params: GARCHParameters
-    aic: number
-    bic: number
-  }
-}
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
-
-export default function GARCHResultsPanel() {
-  const [params, setParams] = useState<GARCHResponse | null>(null)
-  const [forecast, setForecast] = useState<VolatilityForecast | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-
-        // Fetch both parameters and forecast
-        const [paramsRes, forecastRes] = await Promise.all([
-          fetch(`${API_BASE}/garch/parameters`),
-          fetch(`${API_BASE}/garch/volatility/forecast?horizon=30`)
-        ])
-
-        if (!paramsRes.ok || !forecastRes.ok) {
-          throw new Error('Failed to fetch GARCH data')
-        }
-
-        const paramsData = await paramsRes.json()
-        const forecastData = await forecastRes.json()
-
-        setParams(paramsData)
-        setForecast(forecastData)
-        setError(null)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [])
-
-  if (loading) {
+  if (loading && !data) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="animate-pulse">
@@ -93,17 +31,34 @@ export default function GARCHResultsPanel() {
     )
   }
 
-  if (error) {
+  if (!data && error) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-red-200 p-6">
         <p className="text-red-600">Error loading GARCH results: {error}</p>
+        {onRetry && (
+          <button
+            type="button"
+            onClick={onRetry}
+            className="mt-3 inline-flex items-center gap-2 px-3 py-2 text-sm bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Retry
+          </button>
+        )}
       </div>
     )
   }
 
-  if (!params || !forecast) {
-    return null
+  if (!data) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <p className="text-gray-500">GARCH results are not available yet.</p>
+      </div>
+    )
   }
+
+  const params = data.parameters
+  const forecast = data.forecast
 
   const getColorByLevel = (level: string) => {
     switch (level) {
@@ -122,6 +77,11 @@ export default function GARCHResultsPanel() {
         <h2 className="text-lg font-semibold text-gray-900">GARCH(1,1) Volatility Model</h2>
         <Tooltip content="Layer 1 of the Two-Layer Regime Detector. GARCH-MIDAS isolates the long-term volatility component driven by sentiment. The (1,1) means 1 lag for both ARCH and GARCH terms." />
       </div>
+      {error && (
+        <div className="mt-3 mb-2 p-2 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
+          Live refresh failed; showing last successful GARCH snapshot.
+        </div>
+      )}
       {(() => {
         const dataEnd = params.data_range?.end ? new Date(params.data_range.end) : null
         const dataStart = params.data_range?.start ? new Date(params.data_range.start) : null
@@ -138,7 +98,7 @@ export default function GARCHResultsPanel() {
               )}
               {params.data_range && (
                 <> · Data: {validStart ? validStart.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'} to {dataEnd ? dataEnd.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'}
-                  {params.data_range.num_observations && ` (${params.data_range.num_observations.toLocaleString()} obs)`}
+                  {(params.data_range.num_observations || params.data_range.n_observations) && ` (${(params.data_range.num_observations || params.data_range.n_observations)?.toLocaleString()} obs)`}
                 </>
               )}
             </p>
@@ -249,15 +209,15 @@ export default function GARCHResultsPanel() {
       {/* Model Fit */}
       <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between text-xs text-gray-500">
         <span className="flex items-center gap-1">
-          AIC: {params.aic.toFixed(2)}
+          AIC: {formatNumber(params.aic, 2)}
           <Tooltip content="Akaike Information Criterion - measures model quality. Lower values indicate better fit while penalizing complexity." side="top" />
         </span>
         <span className="flex items-center gap-1">
-          BIC: {params.bic.toFixed(2)}
+          BIC: {formatNumber(params.bic, 2)}
           <Tooltip content="Bayesian Information Criterion - similar to AIC but penalizes model complexity more heavily. Lower is better." side="top" />
         </span>
         <span className="flex items-center gap-1">
-          Log-Likelihood: {params.loglikelihood.toFixed(2)}
+          Log-Likelihood: {formatNumber(params.loglikelihood, 2)}
           <Tooltip content="Measures how well the model fits the data. Higher (less negative) values indicate better fit." side="top" />
         </span>
       </div>

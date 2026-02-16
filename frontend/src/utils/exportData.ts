@@ -169,22 +169,25 @@ export function exportRegimeAsJSON(data: RegimeResponse): void {
  */
 export function exportGARCHAsCSV(data: any): void {
   try {
+    const normalized = normalizeGARCHForExport(data)
     const rows = [
-      { Parameter: 'Alpha (ARCH effect)', Value: data.alpha?.toFixed(6) || 'N/A' },
-      { Parameter: 'Beta (GARCH effect)', Value: data.beta?.toFixed(6) || 'N/A' },
+      { Parameter: 'Alpha (ARCH effect)', Value: normalized.alpha?.toFixed(6) || 'N/A' },
+      { Parameter: 'Beta (GARCH effect)', Value: normalized.beta?.toFixed(6) || 'N/A' },
       {
         Parameter: 'Persistence (α+β)',
-        Value: data.persistence?.toFixed(6) || 'N/A',
+        Value: normalized.persistence?.toFixed(6) || 'N/A',
       },
-      { Parameter: 'Omega (constant)', Value: data.omega?.toFixed(8) || 'N/A' },
+      { Parameter: 'Omega (constant)', Value: normalized.omega?.toFixed(8) || 'N/A' },
       {
-        Parameter: 'Forecast Volatility',
-        Value: data.forecast_volatility?.toFixed(6) || 'N/A',
+        Parameter: 'Forecast Volatility (mean)',
+        Value: normalized.forecast_volatility?.toFixed(6) || 'N/A',
       },
       {
         Parameter: 'Log Likelihood',
-        Value: data.log_likelihood?.toFixed(2) || 'N/A',
+        Value: normalized.log_likelihood?.toFixed(2) || 'N/A',
       },
+      { Parameter: 'AIC', Value: normalized.aic?.toFixed(2) || 'N/A' },
+      { Parameter: 'BIC', Value: normalized.bic?.toFixed(2) || 'N/A' },
     ]
 
     const csv = convertToCSV(rows, ['Parameter', 'Value'])
@@ -235,5 +238,40 @@ export function exportAllDataAsJSON(
   } catch (error) {
     console.error('Error exporting all data as JSON:', error)
     throw error
+  }
+}
+
+function normalizeGARCHForExport(data: any): {
+  alpha?: number
+  beta?: number
+  persistence?: number
+  omega?: number
+  forecast_volatility?: number
+  log_likelihood?: number
+  aic?: number
+  bic?: number
+} {
+  if (data?.parameters?.parameters && data?.forecast?.statistics) {
+    return {
+      alpha: data.parameters.parameters['alpha[1]'],
+      beta: data.parameters.parameters['beta[1]'],
+      persistence: data.parameters.persistence,
+      omega: data.parameters.parameters.omega,
+      forecast_volatility: data.forecast.statistics.mean,
+      log_likelihood: data.parameters.loglikelihood,
+      aic: data.parameters.aic,
+      bic: data.parameters.bic,
+    }
+  }
+
+  return {
+    alpha: data?.alpha,
+    beta: data?.beta,
+    persistence: data?.persistence,
+    omega: data?.omega,
+    forecast_volatility: data?.forecast_volatility,
+    log_likelihood: data?.log_likelihood,
+    aic: data?.aic,
+    bic: data?.bic,
   }
 }

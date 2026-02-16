@@ -1,16 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { regimeApi } from '@/services/api'
+import { useState } from 'react'
 import type { RegimeResponse } from '@/types/api'
 import { Activity, TrendingUp, TrendingDown, AlertTriangle, Lightbulb, BookOpen } from 'lucide-react'
-import ErrorMessage from './ErrorMessage'
-import { RegimePanelSkeleton } from './LoadingSkeleton'
+import { NoRegimeData } from './EmptyState'
 import Tooltip from './Tooltip'
 import ExplainabilityModal from './ExplainabilityModal'
 import CrisisEventsBrowser from './CrisisEventsBrowser'
 
 interface RegimePanelProps {
+  regime: RegimeResponse | null
   className?: string
 }
 
@@ -80,57 +79,20 @@ const regimeConfig: Record<string, {
   },
 }
 
-export default function RegimePanel({ className = '' }: RegimePanelProps) {
-  const [regime, setRegime] = useState<RegimeResponse | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+export default function RegimePanel({ regime, className = '' }: RegimePanelProps) {
   const [isExplainModalOpen, setIsExplainModalOpen] = useState(false)
   const [isCrisisEventsOpen, setIsCrisisEventsOpen] = useState(false)
 
-  const fetchRegime = async () => {
-    try {
-      setLoading(true)
-      const response = await regimeApi.getCurrentRegime()
-      setRegime(response)
-      setError(null)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch regime')
-      console.error('Error fetching regime:', err)
-    } finally {
-      setLoading(false)
-    }
+  if (!regime) {
+    return <NoRegimeData className={className} />
   }
 
-  useEffect(() => {
-    fetchRegime()
-
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(fetchRegime, 30000)
-    return () => clearInterval(interval)
-  }, [])
-
-  if (loading && !regime) {
-    return <RegimePanelSkeleton className={className} />
-  }
-
-  if (error) {
-    return (
-      <ErrorMessage
-        error={error}
-        onRetry={fetchRegime}
-        variant="card"
-        className={className}
-      />
-    )
-  }
-
-  // Use the flat structure from the API
-  const currentRegime = regime?.regime || 'normal'
-  const confidence = regime?.confidence || 0
+  const currentRegime = regime.regime
+  const confidence = regime.confidence
   const config = regimeConfig[currentRegime] || regimeConfig.normal
-  const volatilityState = regime?.volatility_regime || 'normal'
+  const volatilityState = regime.volatility_regime
   const volatilityConfig = regimeConfig[volatilityState] || regimeConfig.normal
-  const volatilityScore = regime?.volatility_score ?? 0.25
+  const volatilityScore = regime.volatility_score
 
   return (
     <div className={`p-6 bg-white rounded-xl shadow-sm border ${config.borderColor} ${className}`}>
@@ -162,114 +124,104 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
       </div>
 
       {/* Metrics */}
-      {regime && (
-        <div className="grid grid-cols-3 gap-4">
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <p className="text-2xl font-bold text-gray-900">
-              {(confidence * 100).toFixed(0)}%
-            </p>
-            <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
-              Confidence
-              <Tooltip content="Model confidence in the predicted regime. Based on sentiment dispersion, CISS/VIX alignment, and feature consistency. Not a probability of being correct." />
-            </p>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <p className="text-2xl font-bold text-gray-900">
-              {((regime.probabilities?.risk_on || 0) * 100).toFixed(0)}%
-            </p>
-            <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
-              Risk On
-              <Tooltip content="Probability of bullish regime - investors seeking higher returns, positive sentiment, lower stress" />
-            </p>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <p className="text-2xl font-bold text-gray-900">
-              {((regime.probabilities?.risk_off || 0) * 100).toFixed(0)}%
-            </p>
-            <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
-              Risk Off
-              <Tooltip content="Probability of bearish regime - flight to safety, negative sentiment, elevated stress" />
-            </p>
-          </div>
+      <div className="grid grid-cols-3 gap-4">
+        <div className="text-center p-3 bg-gray-50 rounded-lg">
+          <p className="text-2xl font-bold text-gray-900">
+            {(confidence * 100).toFixed(0)}%
+          </p>
+          <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
+            Confidence
+            <Tooltip content="Model confidence in the predicted regime. Based on sentiment dispersion, CISS/VIX alignment, and feature consistency. Not a probability of being correct." />
+          </p>
         </div>
-      )}
+        <div className="text-center p-3 bg-gray-50 rounded-lg">
+          <p className="text-2xl font-bold text-gray-900">
+            {((regime.probabilities?.risk_on || 0) * 100).toFixed(0)}%
+          </p>
+          <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
+            Risk On
+            <Tooltip content="Probability of bullish regime - investors seeking higher returns, positive sentiment, lower stress" />
+          </p>
+        </div>
+        <div className="text-center p-3 bg-gray-50 rounded-lg">
+          <p className="text-2xl font-bold text-gray-900">
+            {((regime.probabilities?.risk_off || 0) * 100).toFixed(0)}%
+          </p>
+          <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
+            Risk Off
+            <Tooltip content="Probability of bearish regime - flight to safety, negative sentiment, elevated stress" />
+          </p>
+        </div>
+      </div>
 
       {/* Volatility Regime */}
-      {regime && (
-        <div className="mt-4 p-4 border border-gray-100 rounded-lg bg-gray-50">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1">
-            Volatility Regime (Jump Model)
-            <Tooltip content="Layer 1 output. Combines VIX, ECB CISS, and sentiment dispersion to approximate the four jump-model regimes described in Draft 1." />
-          </p>
-          <div className={`flex items-center gap-3 p-3 rounded-lg ${volatilityConfig.bgColor}`}>
-            {volatilityConfig.icon}
-            <div>
-              <p className={`text-lg font-semibold ${volatilityConfig.color}`}>{volatilityConfig.label}</p>
-              <p className={`text-xs ${volatilityConfig.color} opacity-80`}>{volatilityConfig.description}</p>
-            </div>
-            <div className="ml-auto text-right">
-              <p className="text-xs text-gray-500">Volatility Score</p>
-              <p className="text-lg font-bold text-gray-900">{(volatilityScore * 100).toFixed(0)}%</p>
-            </div>
+      <div className="mt-4 p-4 border border-gray-100 rounded-lg bg-gray-50">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1">
+          Volatility Regime (Jump Model)
+          <Tooltip content="Layer 1 output. Combines VIX, ECB CISS, and sentiment dispersion to approximate the four jump-model regimes described in Draft 1." />
+        </p>
+        <div className={`flex items-center gap-3 p-3 rounded-lg ${volatilityConfig.bgColor}`}>
+          {volatilityConfig.icon}
+          <div>
+            <p className={`text-lg font-semibold ${volatilityConfig.color}`}>{volatilityConfig.label}</p>
+            <p className={`text-xs ${volatilityConfig.color} opacity-80`}>{volatilityConfig.description}</p>
           </div>
-          <div className="mt-2 h-2 bg-white rounded-full overflow-hidden">
-            <div
-              className={`${volatilityConfig.color?.replace('text', 'bg') || 'bg-purple-500'} h-full transition-all`}
-              style={{ width: `${Math.min(volatilityScore * 100, 100)}%` }}
-            />
+          <div className="ml-auto text-right">
+            <p className="text-xs text-gray-500">Volatility Score</p>
+            <p className="text-lg font-bold text-gray-900">{(volatilityScore * 100).toFixed(0)}%</p>
           </div>
         </div>
-      )}
+        <div className="mt-2 h-2 bg-white rounded-full overflow-hidden">
+          <div
+            className={`${volatilityConfig.color?.replace('text', 'bg') || 'bg-purple-500'} h-full transition-all`}
+            style={{ width: `${Math.min(volatilityScore * 100, 100)}%` }}
+          />
+        </div>
+      </div>
 
       {/* Action Buttons */}
-      {regime && (
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => setIsExplainModalOpen(true)}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm hover:shadow-md font-medium text-sm"
-          >
-            <Lightbulb className="w-4 h-4" />
-            Explain
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsCrisisEventsOpen(true)}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-sm hover:shadow-md font-medium text-sm"
-          >
-            <BookOpen className="w-4 h-4" />
-            History
-          </button>
-        </div>
-      )}
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          onClick={() => setIsExplainModalOpen(true)}
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm hover:shadow-md font-medium text-sm"
+        >
+          <Lightbulb className="w-4 h-4" />
+          Explain
+        </button>
+        <button
+          type="button"
+          onClick={() => setIsCrisisEventsOpen(true)}
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-sm hover:shadow-md font-medium text-sm"
+        >
+          <BookOpen className="w-4 h-4" />
+          History
+        </button>
+      </div>
 
       {/* Data Provenance */}
       <div className="mt-4 text-xs text-gray-400 text-center space-y-1">
         <div>Classification from ECB CISS, CBOE VIX &amp; cross-asset sentiment</div>
         <div>Total corpus: ~33M texts (21 Kaggle datasets + live APIs · 2005–present)</div>
         <div>Draft-1.1 status: provisional (H1 unconfirmed; H2/H3 supported)</div>
-        {regime && (
-          <div className="font-medium text-gray-500">
-            Data as of {new Date(regime.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-          </div>
-        )}
+        <div className="font-medium text-gray-500">
+          Data as of {new Date(regime.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+        </div>
       </div>
 
       {/* Explainability Modal */}
-      {regime && (
-        <>
-          <ExplainabilityModal
-            isOpen={isExplainModalOpen}
-            onClose={() => setIsExplainModalOpen(false)}
-            regime={currentRegime as 'risk_on' | 'risk_off' | 'transition'}
-            confidence={confidence}
-          />
-          <CrisisEventsBrowser
-            isOpen={isCrisisEventsOpen}
-            onClose={() => setIsCrisisEventsOpen(false)}
-          />
-        </>
-      )}
+      <>
+        <ExplainabilityModal
+          isOpen={isExplainModalOpen}
+          onClose={() => setIsExplainModalOpen(false)}
+          regime={currentRegime as 'risk_on' | 'risk_off' | 'transition'}
+          confidence={confidence}
+        />
+        <CrisisEventsBrowser
+          isOpen={isCrisisEventsOpen}
+          onClose={() => setIsCrisisEventsOpen(false)}
+        />
+      </>
     </div>
   )
 }

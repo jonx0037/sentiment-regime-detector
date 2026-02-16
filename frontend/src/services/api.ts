@@ -3,6 +3,8 @@ import type {
   SentimentHistoryResponse,
   RegimeResponse,
   AssetClass,
+  GARCHParametersResponse,
+  GARCHForecastResponse,
 } from '@/types/api'
 import type {
   ExplanationResponse,
@@ -114,6 +116,22 @@ export const regimeApi = {
       params.append('end_date', endDate)
     }
     return fetchApi(`/regime/transitions?${params}`)
+  },
+}
+
+export const garchApi = {
+  /**
+   * Get GARCH model parameters and diagnostics
+   */
+  async getParameters(): Promise<GARCHParametersResponse> {
+    return fetchApi<GARCHParametersResponse>('/garch/parameters')
+  },
+
+  /**
+   * Get volatility forecast for the next N days
+   */
+  async getVolatilityForecast(horizon: number = 30): Promise<GARCHForecastResponse> {
+    return fetchApi<GARCHForecastResponse>(`/garch/volatility/forecast?horizon=${horizon}`)
   },
 }
 
