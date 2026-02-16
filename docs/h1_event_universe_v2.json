@@ -1,0 +1,57 @@
+[
+  {
+    "name": "Global Financial Crisis (Lehman)",
+    "start_date": "2008-09-01",
+    "end_date": "2008-10-31"
+  },
+  {
+    "name": "US Credit Downgrade / Euro Debt Stress",
+    "start_date": "2011-07-25",
+    "end_date": "2011-10-04"
+  },
+  {
+    "name": "China Devaluation Selloff",
+    "start_date": "2015-08-10",
+    "end_date": "2015-09-30"
+  },
+  {
+    "name": "Volmageddon",
+    "start_date": "2018-02-01",
+    "end_date": "2018-02-28"
+  },
+  {
+    "name": "Q4 2018 Equity Selloff",
+    "start_date": "2018-10-01",
+    "end_date": "2018-12-24"
+  },
+  {
+    "name": "COVID-19 Crash",
+    "start_date": "2020-02-20",
+    "end_date": "2020-03-23"
+  },
+  {
+    "name": "GameStop Short Squeeze",
+    "start_date": "2021-01-25",
+    "end_date": "2021-02-05"
+  },
+  {
+    "name": "Russia-Ukraine War Shock",
+    "start_date": "2022-02-21",
+    "end_date": "2022-03-18"
+  },
+  {
+    "name": "Crypto Winter 2022",
+    "start_date": "2022-05-01",
+    "end_date": "2022-12-31"
+  },
+  {
+    "name": "FTX Collapse",
+    "start_date": "2022-11-02",
+    "end_date": "2022-11-20"
+  },
+  {
+    "name": "SVB Bank Collapse",
+    "start_date": "2023-03-08",
+    "end_date": "2023-03-20"
+  }
+]

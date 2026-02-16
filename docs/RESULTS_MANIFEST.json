@@ -1,10 +1,10 @@
 {
   "manifest_version": "1.2",
-  "generated_at_utc": "2026-02-16T02:05:46.268022+00:00",
-  "canonical_run_id": "pipeline_output_plus_backend_validation_suite_20260216_020514",
+  "generated_at_utc": "2026-02-16T02:26:40.909526+00:00",
+  "canonical_run_id": "pipeline_output_plus_backend_validation_suite_20260216_022558",
   "draft_1_1_reporting_run_id": "validation_20260216_013107",
   "quality_tier": "provisional",
-  "quality_reason": "Canonical suite includes robustness/sensitivity, backend-backed A/B runs, subperiod diagnostics, H1 remediation, event-conditioned probe, and locked H1 confirmation protocol run; quality remains provisional because locked H1 confirmation outcome is not_confirmed.",
+  "quality_reason": "Canonical suite includes robustness/sensitivity, backend-backed A/B runs, subperiod diagnostics, H1 remediation, event-conditioned probe, and locked H1 confirmation protocol V1/V2/V3 runs; quality remains provisional because strict H1 confirmation is still not achieved (1/2 required event confirmations, including after horizon extension to 1-7 days).",
   "active_artifacts": [
     {
       "path": "results/pipeline_output/pipeline_summary.json",
@@ -455,6 +455,26 @@
       "path": "results/validation/h1_confirmation/locked_protocol/h1_locked_confirmation_20260216_020514.md",
       "sha256": "f6d18fe4ae53efe4140267006e499b9a925ae7cd9baf400440163ee282f24c66",
       "size_bytes": 1094
+    },
+    {
+      "path": "results/validation/h1_confirmation/locked_protocol/h1_locked_confirmation_20260216_021242.json",
+      "sha256": "ddc47693e5e6aa05a82a8edc2b292ddcec78f3250f03848093d5577d0acf0984",
+      "size_bytes": 7365
+    },
+    {
+      "path": "results/validation/h1_confirmation/locked_protocol/h1_locked_confirmation_20260216_021242.md",
+      "sha256": "db24f60a1303c1e40139a4b15599c132d9a6d850c44274b0a938fc47d3ae03ed",
+      "size_bytes": 1700
+    },
+    {
+      "path": "results/validation/h1_confirmation/locked_protocol/h1_locked_confirmation_20260216_022558.json",
+      "sha256": "8351cbc360dfca2fb2c4cb5b2ac9540a326d3eed006ce41c768c9eb88cd8147e",
+      "size_bytes": 7435
+    },
+    {
+      "path": "results/validation/h1_confirmation/locked_protocol/h1_locked_confirmation_20260216_022558.md",
+      "sha256": "1ca3f4e0eecce91055c377b7b13eb2ae1fe68b45e37f523bda66726a8c61449c",
+      "size_bytes": 1708
     }
   ],
   "archived_artifacts": [
@@ -528,7 +548,7 @@
     }
   ],
   "known_issues": [
-    "Locked H1 confirmation protocol V1 outcome is not_confirmed: global criterion failed and only 1/2 required event confirmations was achieved.",
+    "Locked H1 confirmation protocol V1/V2/V3 outcomes are not_confirmed: global criterion failed and only 1/2 required event confirmations was achieved across all three locked runs.",
     "Recent subperiod slices (2020-2022 and post-2023) still have short-window instability, limiting inferential strength.",
     "pyinform support on Apple Silicon currently depends on a locally built `libinform` binary; packaging this path for reproducible environments is still pending."
   ]

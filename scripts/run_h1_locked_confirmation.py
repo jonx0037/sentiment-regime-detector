@@ -53,6 +53,51 @@ def _bh_fdr(p_values: list[float]) -> list[float]:
     return out.tolist()
 
 
+def _load_event_universe(events_json: Path | None) -> list[dict[str, Any]]:
+    if events_json is None:
+        return [
+            {
+                "name": ev.name,
+                "start_date": pd.Timestamp(ev.start_date),
+                "end_date": pd.Timestamp(ev.end_date),
+            }
+            for ev in KEY_MARKET_EVENTS
+        ]
+
+    payload = json.loads(events_json.read_text())
+    if not isinstance(payload, list):
+        raise ValueError("events-json must contain a list of event objects")
+
+    events: list[dict[str, Any]] = []
+    for row in payload:
+        if not isinstance(row, dict):
+            continue
+        name = row.get("name")
+        start = pd.to_datetime(row.get("start_date"), errors="coerce")
+        end = pd.to_datetime(row.get("end_date"), errors="coerce")
+        if not name or pd.isna(start) or pd.isna(end):
+            continue
+        events.append(
+            {
+                "name": str(name),
+                "start_date": pd.Timestamp(start),
+                "end_date": pd.Timestamp(end),
+            }
+        )
+    if not events:
+        raise ValueError("events-json parsed to zero valid events")
+    return events
+
+
+def _fmt_num(value: Any, precision: str) -> str:
+    if value is None:
+        return "NA"
+    try:
+        return format(float(value), precision)
+    except Exception:
+        return "NA"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run locked H1 confirmation analysis")
     parser.add_argument("--feature-matrix", default="results/pipeline_output/feature_matrix.csv")
@@ -61,16 +106,31 @@ def main() -> int:
         "--output-dir",
         default="results/validation/h1_confirmation/locked_protocol",
     )
+    parser.add_argument("--events-json", default=None, help="Optional path to expanded event universe JSON")
+    parser.add_argument("--protocol-id", default="H1_LOCKED_CONFIRMATION_PROTOCOL_V1")
+    parser.add_argument("--alpha", type=float, default=0.05)
+    parser.add_argument("--h1-max-lag-days", type=int, default=10)
+    parser.add_argument("--h1-vix-threshold", type=float, default=25.0)
+    parser.add_argument("--confirm-lag-min", type=int, default=1)
+    parser.add_argument("--confirm-lag-max", type=int, default=5)
+    parser.add_argument("--pre-event-days", type=int, default=180)
+    parser.add_argument("--post-event-days", type=int, default=90)
+    parser.add_argument("--min-event-observations", type=int, default=80)
+    parser.add_argument("--event-max-fpr", type=float, default=0.25)
+    parser.add_argument("--required-event-confirmations", type=int, default=2)
     args = parser.parse_args()
 
-    # Locked protocol constants.
-    alpha = 0.05
-    max_lag_days = 10
-    vix_threshold = 25.0
-    pre_event_days = 180
-    post_event_days = 90
-    min_event_observations = 80
-    max_fpr_event = 0.25
+    alpha = float(args.alpha)
+    max_lag_days = int(args.h1_max_lag_days)
+    vix_threshold = float(args.h1_vix_threshold)
+    confirm_lag_min = int(args.confirm_lag_min)
+    confirm_lag_max = int(args.confirm_lag_max)
+    pre_event_days = int(args.pre_event_days)
+    post_event_days = int(args.post_event_days)
+    min_event_observations = int(args.min_event_observations)
+    max_fpr_event = float(args.event_max_fpr)
+    required_event_confirmations = int(args.required_event_confirmations)
+    events_json = Path(args.events_json) if args.events_json else None
 
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -88,6 +148,7 @@ def main() -> int:
     regime = labels_df.loc[common_idx, "regime"].astype(str)
     vix = feature_df["vix"].astype(float)
     h1_sentiment = _build_h1_sentiment_series(feature_df)
+    event_universe = _load_event_universe(events_json)
 
     validator = HypothesisValidator(significance_level=alpha, max_lag_days=max_lag_days)
     global_h1 = validator.validate_h1(
@@ -98,9 +159,9 @@ def main() -> int:
     )
 
     event_rows: list[dict[str, Any]] = []
-    for event in KEY_MARKET_EVENTS:
-        start = event.start_date - pd.Timedelta(days=pre_event_days)
-        end = event.end_date + pd.Timedelta(days=post_event_days)
+    for event in event_universe:
+        start = event["start_date"] - pd.Timedelta(days=pre_event_days)
+        end = event["end_date"] + pd.Timedelta(days=post_event_days)
         idx = vix.index[(vix.index >= start) & (vix.index <= end)]
         if len(idx) < min_event_observations:
             continue
@@ -112,7 +173,7 @@ def main() -> int:
         )
         event_rows.append(
             {
-                "event": event.name,
+                "event": event["name"],
                 "window_start": start.date().isoformat(),
                 "window_end": end.date().isoformat(),
                 "n_observations": int(len(idx)),
@@ -143,7 +204,7 @@ def main() -> int:
     primary_global_ok = bool(
         global_h1.result.value == "supported"
         and global_h1.lead_lag is not None
-        and 1 <= int(global_h1.lead_lag.optimal_lag) <= 5
+        and confirm_lag_min <= int(global_h1.lead_lag.optimal_lag) <= confirm_lag_max
     )
 
     event_support_count = 0
@@ -151,7 +212,7 @@ def main() -> int:
         event_ok = bool(
             row["h1_result"] == "supported"
             and row["optimal_lag"] is not None
-            and 1 <= int(row["optimal_lag"]) <= 5
+            and confirm_lag_min <= int(row["optimal_lag"]) <= confirm_lag_max
             and row["granger_sig_bonferroni"]
             and row["granger_sig_bh_fdr"]
             and row["false_positive_rate"] is not None
@@ -161,7 +222,7 @@ def main() -> int:
         if event_ok:
             event_support_count += 1
 
-    confirmed = bool(primary_global_ok or event_support_count >= 2)
+    confirmed = bool(primary_global_ok or event_support_count >= required_event_confirmations)
     if confirmed:
         outcome = "confirmed"
     else:
@@ -171,24 +232,33 @@ def main() -> int:
         "run_id": run_id,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "protocol": {
-            "id": "H1_LOCKED_CONFIRMATION_PROTOCOL_V1",
+            "id": args.protocol_id,
             "alpha": alpha,
             "max_lag_days": max_lag_days,
             "vix_threshold": vix_threshold,
             "h1_sentiment_transform": "compound_x_abs_returns",
+            "confirmation_lag_min": confirm_lag_min,
+            "confirmation_lag_max": confirm_lag_max,
             "event_window_pre_days": pre_event_days,
             "event_window_post_days": post_event_days,
             "min_event_observations": min_event_observations,
             "event_max_false_positive_rate": max_fpr_event,
+            "required_event_confirmations": required_event_confirmations,
+            "event_universe_source": str(events_json) if events_json else "KEY_MARKET_EVENTS",
+            "event_universe_size": len(event_universe),
             "multiple_testing": {
                 "bonferroni_alpha": bonf_alpha,
                 "bh_fdr_alpha": alpha,
                 "m_tests": len(ps),
             },
             "decision_rule": {
-                "primary_global_required": "H1 supported AND optimal_lag in [1,5]",
+                "primary_global_required": (
+                    f"H1 supported AND optimal_lag in [{confirm_lag_min},{confirm_lag_max}]"
+                ),
                 "secondary_event_required": (
-                    "At least 2 events with H1 supported, lag in [1,5], Bonferroni+BH significance, and FPR <= 0.25"
+                    f"At least {required_event_confirmations} events with H1 supported, "
+                    f"lag in [{confirm_lag_min},{confirm_lag_max}], "
+                    "Bonferroni+BH significance, and FPR <= configured threshold"
                 ),
             },
         },
@@ -236,10 +306,12 @@ def main() -> int:
         "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for row in event_rows:
+        granger_p = _fmt_num(row.get("granger_p_value"), ".4g")
+        granger_q = _fmt_num(row.get("granger_q_value_bh"), ".4g")
+        fpr = _fmt_num(row.get("false_positive_rate"), ".4f")
         lines.append(
-            "| {event} | {h1_result} | {optimal_lag} | {granger_p_value:.4g} | {granger_q_value_bh:.4g} | {granger_sig_bonferroni} | {granger_sig_bh_fdr} | {false_positive_rate:.4f} | {event_confirm_eligible} |".format(
-                **row
-            )
+            f"| {row['event']} | {row['h1_result']} | {row['optimal_lag']} | {granger_p} | {granger_q} | "
+            f"{row['granger_sig_bonferroni']} | {row['granger_sig_bh_fdr']} | {fpr} | {row['event_confirm_eligible']} |"
         )
     lines.extend(
         [

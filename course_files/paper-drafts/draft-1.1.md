@@ -1000,6 +1000,37 @@ Observed outcome:
 
 Interpretation: the locked analysis confirms meaningful context-dependent signal but does not yet satisfy full confirmation under the pre-registered rule. H1 therefore remains provisional at project level.
 
+### 5.0.16 Locked H1 Confirmation Analysis (Protocol V2: Expanded Event Universe)
+
+To execute the next remaining H1 priority, we reran locked confirmation with an expanded event universe (`docs/h1_event_universe_v2.json`, 11 events from 2008-2023) under `docs/H1_LOCKED_CONFIRMATION_PROTOCOL_V2.md`.
+
+- Artifact: `h1_locked_confirmation_20260216_021242`
+- Decision outcome: `not_confirmed`
+
+Observed outcome:
+
+- Global H1 remained `inconclusive` (optimal lag = 0; Granger p = 7.08e-08; FPR = 0.4334).
+- Event-confirmed windows: 1 (`COVID-19 Crash`, lag 3, corrected-significant, FPR = 0.0714).
+- Additional significant lead candidate: `China Devaluation Selloff` (`supported`, lag 1, corrected-significant) but excluded by strict confirmation due to high FPR (0.7778 > 0.25).
+- Required event-confirmed windows: 2.
+
+Interpretation: expanding the event universe increased stress-test coverage and surfaced a second directional lead episode, but strict false-positive controls still prevent full H1 confirmation. H1 remains provisional and context-dependent at project level.
+
+### 5.0.17 Locked H1 Confirmation Analysis (Protocol V3: Horizon Extension)
+
+We then executed the remaining planned confirmation pass by widening the confirmation lag horizon from `1-5` days to `1-7` days while keeping all other controls fixed (same event universe, corrected significance tests, and FPR cap), under `H1_LOCKED_CONFIRMATION_PROTOCOL_V3_HORIZON`.
+
+- Artifact: `h1_locked_confirmation_20260216_022558`
+- Decision outcome: `not_confirmed`
+
+Observed outcome:
+
+- Global H1 remained `inconclusive` with optimal lag `0` (outside the widened 1-7 confirmation horizon).
+- Event-confirmed windows remained `1` (`COVID-19 Crash`).
+- Required event-confirmed windows remained `2`.
+
+Interpretation: horizon extension did not change the confirmation outcome. Under fixed multiple-testing and false-positive controls, H1 remains unconfirmed at project level.
+
 ### 5.1 Sentiment Model Performance Targets
 
 Based on benchmark performance from FinBERT (Araci, 2019) and ensemble approaches:
@@ -1099,7 +1130,7 @@ These outcomes establish that the core engineering workflow is functional and re
 
 Current evidence is still provisional, not final confirmatory validation. The strongest support today is for pipeline execution and coherent regime segmentation, while hypothesis-level claims (H1-H3) remain partially tested.
 
-- **H1 (lead-time over VIX):** Canonical lead-time outputs now exist across baseline, sensitivity, remediation, and event-conditioned probe runs. A volatility-weighted transform improved global H1 to `Inconclusive`, and the COVID event window shows `Supported` at lag 3, but global H1 is still unconfirmed.
+- **H1 (lead-time over VIX):** Canonical lead-time outputs now exist across baseline, sensitivity, remediation, event-conditioned probe, and locked confirmation V1/V2/V3 runs. A volatility-weighted transform improved global H1 to `Inconclusive`, COVID remains `Supported` at lag 3 with corrected significance and low FPR, and a second event (China devaluation selloff) shows corrected-significant lag support but fails strict FPR control; global H1 remains unconfirmed even after widened-horizon confirmation (1-7 days).
 - **H2 (transition detection quality):** Holdout walk-forward performance is now canonicalized and stable across tested settings, but transition-specific quality remains below the strongest aggregate metrics.
 - **H3 (cross-asset connectedness/divergence):** Proxy and pyinform-backed `full_granger_te` modes now both have canonical A/B outputs, with subperiod diagnostics added; the main residual limitation is short-window instability in recent eras.
 
@@ -1109,7 +1140,7 @@ Interpretations should therefore be framed as early directional evidence, pendin
 
 The next validation cycle is focused on moving from provisional to validated results:
 
-1. **Completed (February 16, 2026):** Freeze and manifest the expanded canonical validation suite (baseline + robustness + sensitivity + feature-mode A/B + backend-backed reruns + subperiod diagnostics + H1 remediation sweep + event-conditioned H1 probe + locked H1 confirmation) in `docs/RESULTS_MANIFEST.json` (`manifest_version=1.2`, `canonical_run_id=pipeline_output_plus_backend_validation_suite_20260216_020514`).
+1. **Completed (February 16, 2026):** Freeze and manifest the expanded canonical validation suite (baseline + robustness + sensitivity + feature-mode A/B + backend-backed reruns + subperiod diagnostics + H1 remediation sweep + event-conditioned H1 probe + locked H1 confirmation V1/V2/V3) in `docs/RESULTS_MANIFEST.json` (`manifest_version=1.2`, `canonical_run_id=pipeline_output_plus_backend_validation_suite_20260216_022558`).
 2. **Completed (February 16, 2026):** Enable true asymmetric GARCH-MIDAS path (`arch` backend) and rerun volatility-mode A/B (`validation_20260216_012945`).
 3. **Completed (February 16, 2026):** Enable pyinform-backed connectedness path, run full-network tuning sweep, and publish updated connectedness tables (`validation_20260216_013107`, `013134`, `013203`).
 4. **Completed (February 16, 2026):** Lock Draft-1.1 canonical reporting configuration to `validation_20260216_013107` for consistent Methods/Results wording.
@@ -1117,7 +1148,9 @@ The next validation cycle is focused on moving from provisional to validated res
 6. **Completed (February 16, 2026):** Execute first targeted H1 remediation sweep (alternative sentiment transforms), including `compound_x_abs_returns` which improved H1 to `Inconclusive`.
 7. **Completed (February 16, 2026):** Run event-conditioned H1 probe (`h1_event_probe_20260216_015024`) with multiple-testing controls, showing context-dependent lead behavior and COVID support at lag 3.
 8. **Completed (February 16, 2026):** Execute locked H1 confirmation run (`h1_locked_confirmation_20260216_020514`) under pre-registered protocol V1.
-9. Remaining: expand event universe (or extend time horizon) and rerun locked protocol to test whether >=2 independently confirmed lead events can be achieved.
+9. **Completed (February 16, 2026):** Expanded event universe to 11 events and reran locked confirmation (`h1_locked_confirmation_20260216_021242`); outcome remained `not_confirmed` with 1/2 required event confirmations.
+10. **Completed (February 16, 2026):** Executed pre-registered horizon-extension confirmation pass (`h1_locked_confirmation_20260216_022558`) with widened lag target (1-7); outcome remained `not_confirmed` with 1/2 required event confirmations.
+11. Remaining: no additional high-priority H1 confirmation passes are pending under the current locked decision framework; next progress should prioritize H2/H3 claim strengthening and visualization-ready reporting outputs.
 
 Completion of these steps determines whether claims are promoted from provisional findings to confirmed empirical results.
 
