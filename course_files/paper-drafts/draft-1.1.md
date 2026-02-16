@@ -831,6 +831,31 @@ Hypothesis validation yielded mixed but informative evidence:
 
 These results increase confidence in H2-H3 mechanisms in the current prototype while indicating that H1 lead-time behavior remains unresolved and requires further refinement.
 
+### 5.0.3 Baseline vs. H1-Remediation Experiment (Lagged Features)
+
+To prioritize H1 remediation, we reran canonical validation with 10 lagged compound sentiment features (`compound_lag_1` ... `compound_lag_10`) in the walk-forward model input.
+
+| Run | Configuration | Accuracy | F1 (Weighted) | MCC | Transition Accuracy | H1 | H2 | H3 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `validation_20260215_225156` | Baseline (no lagged compound features) | 0.9247 | 0.9213 | 0.8190 | 0.8220 | Not Supported | Supported | Supported |
+| `validation_20260216_002914` | +10 lagged compound features | 0.9284 | 0.9244 | 0.8281 | 0.7984 | Not Supported | Supported | Supported |
+| `robustness_seed11/42/77` | +10 lagged compound features (3-seed robustness) | 0.9286 ± 0.0003 | 0.9242 ± 0.0002 | 0.8284 ± 0.0006 | 0.7984 ± 0.0000 | Not Supported (3/3) | Supported (3/3) | Supported (3/3) |
+
+Interpretation: lagged sentiment features improved aggregate classification metrics (Accuracy/F1/MCC), but did not change H1 status and reduced transition accuracy. This indicates better static regime discrimination without measurable lead-time confirmation versus VIX in the current setup.
+Across three random seeds, the updated configuration remained stable on core metrics and kept the same H1/H2/H3 verdict pattern, indicating low seed sensitivity for this experiment scope.
+
+### 5.0.4 H1 Threshold Sensitivity (Updated Run)
+
+We tested H1 using three VIX spike thresholds (20, 25, 30) on the updated run (`validation_20260216_002914`) to evaluate threshold dependence.
+
+| VIX Threshold | H1 Verdict | Hit Rate | Avg Warning Days | False Positive Rate | Warning-Day Distribution (1-5 days) |
+| --- | --- | --- | --- | --- | --- |
+| 20 | Not Supported | 0.1937 | 1.83 | 0.5524 | 1d: 201, 2d: 10, 3d: 67, 4d: 21, 5d: 13 |
+| 25 | Not Supported | 0.1957 | 1.98 | 0.7661 | 1d: 93, 2d: 11, 3d: 39, 4d: 9, 5d: 11 |
+| 30 | Not Supported | 0.1843 | 1.85 | 0.8852 | 1d: 48, 2d: 8, 3d: 17, 4d: 2, 5d: 5 |
+
+Interpretation: H1 remains unsupported across all tested thresholds. While average warning time is near 2 days when a hit occurs, hit-rate is low and false-positive rates increase materially at higher thresholds. This confirms that lead-time claims should remain provisional pending additional feature/model refinement.
+
 ### 5.1 Sentiment Model Performance Targets
 
 Based on benchmark performance from FinBERT (Araci, 2019) and ensemble approaches:

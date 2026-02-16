@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 from dataclasses import asdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -82,6 +82,76 @@ def _transition_accuracy(y_true: pd.Series, y_pred: pd.Series) -> float:
     return float(correct / transitions) if transitions > 0 else 0.0
 
 
+def _add_compound_lags(features: pd.DataFrame, max_lag_days: int) -> tuple[pd.DataFrame, list[str]]:
+    if max_lag_days <= 0 or "compound" not in features.columns:
+        return features, []
+    out = features.copy()
+    added = []
+    for lag in range(1, max_lag_days + 1):
+        col = f"compound_lag_{lag}"
+        out[col] = out["compound"].shift(lag)
+        added.append(col)
+    out = _sanitize_features(out)
+    return out, added
+
+
+def _warning_day_distribution(
+    sentiment_series: pd.Series,
+    vix_series: pd.Series,
+    threshold: float,
+    lead_window_days: int = 5,
+) -> dict[str, Any]:
+    sentiment, vix = sentiment_series.align(vix_series, join="inner")
+    if len(sentiment) == 0:
+        return {
+            "threshold": threshold,
+            "lead_window_days": lead_window_days,
+            "total_spikes": 0,
+            "matched_spikes": 0,
+            "unmatched_spikes": 0,
+            "warning_distribution": {},
+            "avg_warning_days": 0.0,
+        }
+
+    spike_dates = set(vix[vix > threshold].index)
+    total_spikes = len(spike_dates)
+    if total_spikes == 0:
+        return {
+            "threshold": threshold,
+            "lead_window_days": lead_window_days,
+            "total_spikes": 0,
+            "matched_spikes": 0,
+            "unmatched_spikes": 0,
+            "warning_distribution": {},
+            "avg_warning_days": 0.0,
+        }
+
+    sentiment_drop = sentiment.diff() < -sentiment.std()
+    lead_times: list[int] = []
+    for drop_date in sentiment.index[sentiment_drop.fillna(False)]:
+        for i in range(1, lead_window_days + 1):
+            candidate = drop_date + timedelta(days=i)
+            if candidate in spike_dates:
+                lead_times.append(i)
+                spike_dates.remove(candidate)
+                break
+
+    dist: dict[str, int] = {}
+    for lt in lead_times:
+        key = str(lt)
+        dist[key] = dist.get(key, 0) + 1
+
+    return {
+        "threshold": threshold,
+        "lead_window_days": lead_window_days,
+        "total_spikes": total_spikes,
+        "matched_spikes": len(lead_times),
+        "unmatched_spikes": len(spike_dates),
+        "warning_distribution": dist,
+        "avg_warning_days": float(np.mean(lead_times)) if lead_times else 0.0,
+    }
+
+
 def _result_to_dict(obj: Any) -> dict[str, Any]:
     return _json_safe(asdict(obj))
 
@@ -130,6 +200,29 @@ def main() -> int:
     parser.add_argument("--step-days", type=int, default=63)
     parser.add_argument("--purge-days", type=int, default=5)
     parser.add_argument("--rf-estimators", type=int, default=300)
+    parser.add_argument(
+        "--rf-random-state",
+        type=int,
+        default=42,
+        help="Random seed for RandomForest walk-forward model",
+    )
+    parser.add_argument(
+        "--compound-lag-days",
+        type=int,
+        default=0,
+        help="Add lagged compound sentiment features from 1..N days to model inputs",
+    )
+    parser.add_argument(
+        "--h1-vix-thresholds",
+        default="20,25,30",
+        help="Comma-separated VIX thresholds for H1 sensitivity checks",
+    )
+    parser.add_argument(
+        "--h1-lead-window-days",
+        type=int,
+        default=5,
+        help="Lead-window days used for H1 warning distribution analysis",
+    )
     args = parser.parse_args()
 
     out_dir = Path(args.output_dir)
@@ -147,11 +240,12 @@ def main() -> int:
 
     model_features = feature_df.drop(columns=[c for c in ["regime", "regime_id"] if c in feature_df.columns])
     model_features = _sanitize_features(model_features)
+    model_features, lag_cols = _add_compound_lags(model_features, args.compound_lag_days)
 
     def model_fn(x_train: pd.DataFrame, y_train: pd.Series) -> RandomForestClassifier:
         model = RandomForestClassifier(
             n_estimators=args.rf_estimators,
-            random_state=42,
+            random_state=args.rf_random_state,
             n_jobs=-1,
             class_weight="balanced_subsample",
         )
@@ -202,20 +296,54 @@ def main() -> int:
 
     tci_col = "te_proxy" if "te_proxy" in feature_df.columns else "cross_asset_std"
     crash_dates = [ev.start_date for ev in KEY_MARKET_EVENTS]
+    h1_thresholds = [
+        float(x.strip())
+        for x in args.h1_vix_thresholds.split(",")
+        if x.strip()
+    ]
+    if not h1_thresholds:
+        h1_thresholds = [25.0]
+    primary_h1_threshold = 25.0 if 25.0 in h1_thresholds else h1_thresholds[0]
 
     hyp_input = feature_df[[c for c in ["compound", "vix", tci_col] + sent_cols if c in feature_df.columns]].copy()
     hyp_input = _sanitize_features(hyp_input)
 
     validator = HypothesisValidator(significance_level=0.05, max_lag_days=10)
-    hyp_results = validator.validate_all(
+    h1_result = validator.validate_h1(
         sentiment_series=hyp_input["compound"],
-        sentiment_by_asset=hyp_input[sent_cols],
         vix_series=hyp_input["vix"],
+        regime_series=regime,
+        vix_spike_threshold=primary_h1_threshold,
+    )
+    h2_result = validator.validate_h2(
+        sentiment_by_asset=hyp_input[sent_cols],
+        regime_series=regime,
+    )
+    h3_result = validator.validate_h3(
         tci_series=hyp_input[tci_col],
         regime_series=regime,
         crash_dates=crash_dates,
     )
+    hyp_results = {"H1": h1_result, "H2": h2_result, "H3": h3_result}
     hypothesis_report_text = generate_hypothesis_report(hyp_results)
+
+    h1_sensitivity = {}
+    for threshold in h1_thresholds:
+        h1_thr = validator.validate_h1(
+            sentiment_series=hyp_input["compound"],
+            vix_series=hyp_input["vix"],
+            regime_series=regime,
+            vix_spike_threshold=threshold,
+        )
+        h1_sensitivity[str(int(threshold) if threshold.is_integer() else threshold)] = {
+            "summary": _result_to_dict(h1_thr),
+            "warning_day_distribution": _warning_day_distribution(
+                hyp_input["compound"],
+                hyp_input["vix"],
+                threshold=threshold,
+                lead_window_days=args.h1_lead_window_days,
+            ),
+        }
 
     wf_summary = {
         "overall_accuracy": float(wf.overall_accuracy),
@@ -275,6 +403,15 @@ def main() -> int:
             "feature_matrix": str(Path(args.feature_matrix)),
             "regime_labels": str(Path(args.regime_labels)),
         },
+        "methodology_experiments": {
+            "compound_lag_days": int(args.compound_lag_days),
+            "added_compound_lag_features": lag_cols,
+            "rf_random_state": int(args.rf_random_state),
+            "h1_primary_vix_threshold": float(primary_h1_threshold),
+            "h1_vix_thresholds_evaluated": h1_thresholds,
+            "h1_lead_window_days": int(args.h1_lead_window_days),
+            "h1_threshold_sensitivity": h1_sensitivity,
+        },
         "walk_forward": wf_summary,
         "classification": classification_metrics,
         "window_metrics": window_metrics,
@@ -303,6 +440,13 @@ def main() -> int:
         f"- Precision (weighted): {wf_summary['overall_precision']:.4f}",
         f"- Recall (weighted): {wf_summary['overall_recall']:.4f}",
         f"- F1 (weighted): {wf_summary['overall_f1']:.4f}",
+        "",
+        "## Methodology Experiments",
+        "",
+        f"- Added lagged compound features: `{len(lag_cols)}`",
+        f"- Random seed: `{args.rf_random_state}`",
+        f"- Primary H1 VIX threshold: `{primary_h1_threshold}`",
+        f"- H1 thresholds evaluated: `{', '.join(str(t) for t in h1_thresholds)}`",
         "",
         "## Classification Metrics",
         "",
