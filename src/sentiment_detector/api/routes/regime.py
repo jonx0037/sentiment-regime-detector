@@ -298,12 +298,32 @@ async def get_ciss_history(
     Returns daily CISS and VIX values for the specified period.
     """
     result = await session.execute(text("""
-        SELECT si.date, si.value as ciss, md.close as vix
-        FROM stress_indices si
-        LEFT JOIN market_data md ON si.date = md.date AND md.symbol = '^VIX'
-        WHERE si.source = 'ecb_ciss'
-          AND si.date >= CURRENT_DATE - :days * INTERVAL '1 day'
-        ORDER BY si.date
+        WITH date_range AS (
+            SELECT generate_series(
+                CURRENT_DATE - :days * INTERVAL '1 day',
+                CURRENT_DATE,
+                INTERVAL '1 day'
+            )::date AS date
+        ),
+        ciss_daily AS (
+            SELECT date::date AS date, value
+            FROM stress_indices
+            WHERE source = 'ecb_ciss'
+        ),
+        vix_daily AS (
+            SELECT date::date AS date, close
+            FROM market_data
+            WHERE symbol = '^VIX'
+        )
+        SELECT
+            d.date,
+            c.value AS ciss,
+            v.close AS vix
+        FROM date_range d
+        LEFT JOIN ciss_daily c ON c.date = d.date
+        LEFT JOIN vix_daily v ON v.date = d.date
+        WHERE c.value IS NOT NULL OR v.close IS NOT NULL OR d.date = CURRENT_DATE
+        ORDER BY d.date
     """), {"days": days})
     rows = result.fetchall()
     
