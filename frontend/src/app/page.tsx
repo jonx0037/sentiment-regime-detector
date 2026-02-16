@@ -307,8 +307,17 @@ export default function Dashboard() {
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-          {/* Section 1: Regime & Market Stress */}
           <FadeIn delay={0}>
+            <section>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-xs text-amber-800">
+                This dashboard is for educational and research insight only. It is not personal financial advice;
+                consult a licensed financial professional before making investment decisions.
+              </div>
+            </section>
+          </FadeIn>
+
+          {/* Section 1: Regime & Market Stress */}
+          <FadeIn delay={80}>
             <section>
               <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <span className="text-2xl">📊</span>
@@ -327,7 +336,7 @@ export default function Dashboard() {
           </FadeIn>
 
           {/* Section 2: Cross-Asset Sentiment */}
-          <FadeIn delay={100}>
+          <FadeIn delay={160}>
             <section>
               <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <span className="text-2xl">💭</span>
@@ -351,7 +360,7 @@ export default function Dashboard() {
           </FadeIn>
 
           {/* Section 3: Volatility & Transitions */}
-          <FadeIn delay={200}>
+          <FadeIn delay={240}>
             <section>
               <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <span className="text-2xl">📈</span>
@@ -370,7 +379,7 @@ export default function Dashboard() {
           </FadeIn>
 
           {/* Footer Info */}
-          <FadeIn delay={300}>
+          <FadeIn delay={320}>
             <section className="mt-8">
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
                 <div className="flex items-start gap-4">
@@ -437,11 +446,10 @@ export default function Dashboard() {
                         </p>
                       </div>
                       <div>
-                        <p className="font-medium mb-1">Evidence Status (Feb 16, 2026)</p>
+                        <p className="font-medium mb-1">How To Use This Signal</p>
                         <p className="text-xs">
-                          Reporting run locked to <code>validation_20260216_013107</code>.
-                          Quality tier is <strong>provisional</strong>: H1 lead-time remains unconfirmed,
-                          while H2 divergence and H3 connectedness are supported in the canonical validation suite.
+                          Treat this as a research-grade market monitoring tool, not a stand-alone trade signal.
+                          It is most useful for tracking broad shifts in market tone and stress across assets over time.
                         </p>
                       </div>
                     </div>

@@ -267,11 +267,11 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 />
                 <FAQItem
                   question="How accurate is the regime classifier?"
-                  answer="Current evidence status is provisional (Feb 16, 2026): H1 lead-time remains unconfirmed under fixed thresholds, while H2 divergence and H3 connectedness are supported in the canonical validation suite (run validation_20260216_013107)."
+                  answer="Performance varies by market condition. In practice, this tool is strongest for monitoring broad shifts in sentiment and stress across assets, and less reliable for precise short-term timing."
                 />
                 <FAQItem
                   question="Can I use this for trading decisions?"
-                  answer="This dashboard is for educational and research purposes. While it provides valuable market insights, it should not be the sole basis for investment decisions. Always consult with financial advisors."
+                  answer="This dashboard is for educational and research purposes. It is not personal financial advice and should not be the sole basis for investment decisions. Consult a licensed financial professional."
                 />
                 <FAQItem
                   question="What do the sentiment scores mean?"
@@ -287,7 +287,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 />
                 <FAQItem
                   question="How was this system validated?"
-                  answer="Validation combines event-conditioned probes, lag-sensitive lead-time checks, divergence diagnostics, connectedness analysis, and regime-state benchmarking on the 2005-present corpus. See Draft 1.1 and the canonical validation artifacts for full methodology."
+                  answer="The model was tested across multiple historical market regimes and stress periods using out-of-sample checks and robustness diagnostics on the 2005-present dataset."
                 />
               </div>
             )}
