@@ -247,6 +247,7 @@ export default function RegimePanel({ className = '' }: RegimePanelProps) {
       <div className="mt-4 text-xs text-gray-400 text-center space-y-1">
         <div>Classification from ECB CISS, CBOE VIX &amp; cross-asset sentiment</div>
         <div>Total corpus: ~33M texts (21 Kaggle datasets + live APIs · 2005–present)</div>
+        <div>Draft-1.1 status: provisional (H1 unconfirmed; H2/H3 supported)</div>
         {regime && (
           <div className="font-medium text-gray-500">
             Data as of {new Date(regime.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}

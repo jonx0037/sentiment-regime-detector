@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 
 RegimeState = Literal["risk_on", "risk_off", "transition"]
+VolatilityRegime = Literal["low_volatility", "normal", "elevated", "high_volatility"]
 
 
 class RegimeResponse(BaseModel):
@@ -16,6 +17,12 @@ class RegimeResponse(BaseModel):
     regime: RegimeState = Field(..., description="Current market regime")
     confidence: float = Field(
         ..., ge=0, le=1, description="Confidence in the classification"
+    )
+    volatility_regime: VolatilityRegime = Field(
+        ..., description="Current volatility regime derived from CISS and VIX"
+    )
+    volatility_score: float = Field(
+        ..., ge=0, le=1, description="Normalized volatility intensity score"
     )
     probabilities: dict[RegimeState, float] = Field(
         ..., description="Probability distribution across regime states"

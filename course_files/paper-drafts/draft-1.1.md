@@ -8,7 +8,7 @@ Master of Science in Data Science, Southern Methodist University, Dallas, TX 752
 
 Market regime shifts often precede measurable price movements, driven by changes in collective market psychology. However, traditional risk indicators such as the VIX are inherently lagging, registering stress only after volatility has materialized. This research develops an automated **Cross-Asset Sentiment Regime Detector** to identify market transitions 1–5 trading days prior to volatility spikes. By applying ensemble transformer models (FinBERT, Llama 3) to financial news and social media across Equities, Crypto, Forex, and Commodities, we construct asset-specific sentiment indices.
 
-Methodologically, the current implementation uses a practical **Two-Layer approximation**: first, **GARCH(1,1)** volatility features are estimated from aligned market/sentiment inputs; second, these features—augmented by proxy connectedness and divergence variables—feed a **Statistical Jump Model (JM)** to enforce regime persistence and reduce whipsaw transitions. We hypothesize that high sentiment connectedness and cross-asset divergence serve as leading indicators of "Risk-Off" transitions. Full **Asymmetric GARCH-MIDAS** and complete **walk-forward backtesting** are retained as planned Draft-1.x extensions.
+Methodologically, the current implementation uses a practical **Two-Layer architecture**: first, **GARCH(1,1)-based volatility features** are estimated from aligned market/sentiment inputs, with backend-backed asymmetric GARCH-MIDAS modes available for A/B validation; second, these features—augmented by connectedness and divergence variables—feed a **Statistical Jump Model (JM)** to enforce regime persistence and reduce whipsaw transitions. We hypothesize that high sentiment connectedness and cross-asset divergence serve as leading indicators of "Risk-Off" transitions. As of the locked Draft-1.1 reporting cycle, evidence remains **provisional** because strict project-level H1 confirmation is still unmet.
 
 ## 1. Introduction
 
@@ -42,13 +42,13 @@ This research bridges the gap between theoretical behavioral finance and practic
 
 This research addresses these limitations by developing an automated, cross-asset sentiment analysis system designed explicitly for market regime detection. The goal is to build a framework that identifies regime transitions as leading indicators rather than contemporaneous reflections of price behavior, while remaining accessible through an intuitive web interface. Methodologically, the project applies ensemble transformer models to aggregate sentiment across diverse text sources and asset classes, extending recent advances in financial NLP to a multi-source, cross-asset setting. Practically, it delivers an open-source system that lowers the barrier to institutional-grade sentiment analysis and makes regime-level insights available beyond large buy-side firms. Theoretically, it proposes and tests a structured mapping from multi-source sentiment patterns to macroeconomic regime states, contributing to a richer understanding of how collective market psychology manifests in text data and precedes observable price and volatility dynamics.
 
-### 1.5 Current Project Status (As of February 15, 2026)
+### 1.5 Current Project Status (As of February 16, 2026)
 
 - **Implemented core pipeline:** Daily sentiment aggregation, engineered market/sentiment features, GARCH(1,1) volatility features, and Statistical Jump Model regime labeling.
 - **Canonical active artifacts established:** A single active results set is maintained under `results/pipeline_output/` and tracked in `docs/RESULTS_MANIFEST.json`.
 - **Conflicting outputs separated:** Prior fallback and duplicate outputs were archived under `results/_archive/` for traceability.
-- **Validation framework available:** H1/H2/H3 modules are implemented; full walk-forward result reporting is still pending canonicalization.
-- **Current evidence level:** Provisional. This draft distinguishes implemented components from planned extensions (full asymmetric GARCH-MIDAS and complete walk-forward reporting).
+- **Validation framework executed:** Canonical walk-forward, robustness/sensitivity, feature-mode A/B, subperiod diagnostics, and locked H1 confirmation V1/V2/V3 are archived and manifest-tracked.
+- **Current evidence level:** Provisional. H2/H3 are supported in current canonical runs; H1 remains unconfirmed under the locked project-level rule.
 
 ## 2. Literature Review
 
@@ -684,11 +684,13 @@ $$\Delta_{lead} = t_{start}(VIX_{threshold}) - t_{start}(Model_{pred})$$
 - Confusion matrix analysis
 - Sharpe ratio of regime-based trading strategy
 
-#### 3.8.5 Canonical Validation Execution (Current Prototype)
+#### 3.8.5 Canonical Validation Execution (Locked Draft-1.1 Reporting Run)
 
-To produce a reproducible evaluation baseline for Draft-1.1, we executed a canonical validation run (`validation_20260215_225156`) using the canonical artifacts `results/pipeline_output/feature_matrix.csv` and `results/pipeline_output/regime_labels.csv`. Validation was run with a walk-forward design (756-day training window, 63-day test window, 63-day step size, 5-day purge gap), with model retraining at each step to reduce temporal leakage.
+To produce a reproducible Draft-1.1 baseline, we first executed `validation_20260215_225156`, then locked the reporting configuration to `validation_20260216_013107` (documented in `docs/RESULTS_MANIFEST.json` as `draft_1_1_reporting_run_id`).
 
-For this validation cycle, we used a balanced Random Forest classifier (`n_estimators=300`) as the walk-forward prediction model, then aggregated predictions across all scored windows to compute weighted Accuracy/Precision/Recall/F1, Matthews Correlation Coefficient (MCC), and transition accuracy. We then applied the H1-H3 statistical framework (\(\alpha = 0.05\), max lag = 10) using canonical sentiment, VIX, and connectedness-proxy series. Outputs are stored in `results/validation/validation_20260215_225156.json`, `results/validation/validation_20260215_225156.md`, and `results/validation/validation_20260215_225156_hypothesis_report.txt`.
+The locked run uses canonical artifacts (`results/pipeline_output/feature_matrix.csv`, `results/pipeline_output/regime_labels.csv`) and a walk-forward design (756-day training window, 63-day test window, 63-day step size, 5-day purge gap), with retraining at each step to reduce temporal leakage. The classifier is a balanced Random Forest (`n_estimators=300`), and reporting includes weighted Accuracy/Precision/Recall/F1, MCC, transition accuracy, and H1-H3 diagnostics.
+
+For the locked reporting run, network features use the pyinform-backed `full_granger_te` mode (`window_days=126`, `step_days=21`, 208 anchors), while volatility mode remains baseline GARCH(1,1)-based for top-line reporting comparability. Corresponding artifacts are stored under `results/validation/methodology_ab_backend/network_tuning_pyinform/cfg_default/`.
 
 ### 3.9 Dashboard Development
 
@@ -696,25 +698,30 @@ For this validation cycle, we used a balanced Random Forest classifier (`n_estim
 
 - **Framework**: FastAPI (Python)
 - **Database**: PostgreSQL (time-series data)
-- **APIs**:
-  - /sentiment/{asset_class}: Returns sentiment index time series
-  - /regime/current: Returns current regime prediction + confidence
-  - /alerts/divergence: Returns cross-asset divergence alerts
+- **Primary APIs (current implementation)**:
+  - `/api/v1/sentiment/current`: Latest cross-asset sentiment state
+  - `/api/v1/sentiment/cross-asset/history`: Historical series for equity/crypto/forex/commodity
+  - `/api/v1/regime/current`: Current regime classification with probabilities and feature context
+  - `/api/v1/regime/transitions`: Historical regime transition events
+  - `/api/v1/regime/ciss/history`: Joined CISS + VIX chart history
+  - `/api/v1/garch/parameters`: Layer-1 volatility model parameters and fit diagnostics
+  - `/api/v1/explainability/current`: SHAP-style local explanation payload
 **Frontend**:
 
-- **Framework**: React (Vite build tool)
-- **Visualization**: Recharts or D3.js for interactive time-series charts
+- **Framework**: Next.js 14 (React + TypeScript + Tailwind CSS)
+- **Visualization**: Recharts-based interactive time-series components
 - **Components**:
   - Real-time sentiment gauge (per asset class)
   - Historical sentiment trends (line charts)
   - Regime indicator (Risk-On/Off/Transition)
-  - Divergence alerts (when sentiment contradicts price or cross-asset sentiment diverges)
+  - Regime timeline, CISS/VIX panels, and GARCH diagnostics
+  - Explainability and historical crisis-event drill-down views
 
 **Deployment**:
 
-- **Backend**: Cloud hosting (AWS EC2, Google Cloud Run, or Heroku)
-- **Frontend**: Vercel or Netlify
-- **CI/CD**: GitHub Actions
+- **Backend**: Railway (FastAPI service + PostgreSQL)
+- **Frontend**: Vercel (Next.js deployment)
+- **CI/CD**: GitHub + platform-native deployment hooks
 
 ## 4. Implementation Plan
 
@@ -792,7 +799,7 @@ The backtester will use an event-driven loop to handle the mixed frequencies of 
 
 ## 5. Current Status and Expected Results
 
-### 5.0 Current Implementation Snapshot (As of February 15, 2026)
+### 5.0 Current Implementation Snapshot (As of February 16, 2026)
 
 The current system has produced a reproducible canonical output set for regime labeling and feature export:
 
@@ -800,7 +807,7 @@ The current system has produced a reproducible canonical output set for regime l
 - **Companion volatility artifact:** `results/garch_midas_results_20260211.json`
 - **Quality tier:** Provisional (documented in `docs/RESULTS_MANIFEST.json`)
 
-These artifacts support a credible prototype baseline, but they do not yet constitute final confirmatory evidence for all hypotheses. In particular, full walk-forward reporting and complete asymmetric GARCH-MIDAS integration remain active work items.
+These artifacts support a credible prototype baseline, but they do not yet constitute final confirmatory evidence for all hypotheses. Walk-forward reporting and backend-backed methodology A/B runs are now canonicalized; remaining work is focused on H1 confirmation criteria and claim-strengthening outputs for H2/H3.
 
 ### 5.0.1 Current Evidence Table (Canonical Artifacts)
 
@@ -809,10 +816,10 @@ These artifacts support a credible prototype baseline, but they do not yet const
 | Reproducible pipeline run | `results/pipeline_output/pipeline_summary.json` (`pipeline_version=2.0`, run timestamp `2026-02-11T10:22:41`) | Implemented | Add repeated-run stability summary across windows |
 | Cross-asset feature construction | `results/pipeline_output/feature_matrix.csv` (`n_features=22`, `feature_matrix_days=4490`) | Implemented | Add feature-level QA table (missingness, drift, leakage checks) |
 | Regime state labeling | `results/pipeline_output/regime_labels.csv` and `results/pipeline_output/regime_transitions.csv` | Implemented | Add holdout/walk-forward transition quality metrics |
-| Volatility-model fit | `pipeline_summary.json` GARCH fit stats and `results/garch_midas_results_20260211.json` | Provisional | Canonicalize full asymmetric GARCH-MIDAS with stability diagnostics |
-| Overall result confidence | `docs/RESULTS_MANIFEST.json` marks quality tier as `provisional` | Provisional | Promote to validated after canonical walk-forward artifacts are added |
+| Volatility-model fit | Baseline fit in `pipeline_summary.json`; backend A/B volatility runs include non-null diagnostics (e.g., `validation_20260216_012945`) | Implemented (reporting baseline locked) | Add periodic refit monitoring + comparative stability table for baseline vs `garch_midas_ciss` |
+| Overall result confidence | `docs/RESULTS_MANIFEST.json` marks quality tier as `provisional` (`draft_1_1_reporting_run_id=validation_20260216_013107`) | Provisional | Confirm H1 under locked rule or formally bound claims to event-conditioned support only |
 
-### 5.0.2 Canonical Validation Results (As of February 15, 2026)
+### 5.0.2 Canonical Validation Results (As of February 16, 2026)
 
 The canonical walk-forward run (`validation_20260215_225156`) produced strong classification performance across 59/59 scored windows:
 
@@ -1151,6 +1158,7 @@ The next validation cycle is focused on moving from provisional to validated res
 9. **Completed (February 16, 2026):** Expanded event universe to 11 events and reran locked confirmation (`h1_locked_confirmation_20260216_021242`); outcome remained `not_confirmed` with 1/2 required event confirmations.
 10. **Completed (February 16, 2026):** Executed pre-registered horizon-extension confirmation pass (`h1_locked_confirmation_20260216_022558`) with widened lag target (1-7); outcome remained `not_confirmed` with 1/2 required event confirmations.
 11. Remaining: no additional high-priority H1 confirmation passes are pending under the current locked decision framework; next progress should prioritize H2/H3 claim strengthening and visualization-ready reporting outputs.
+12. Remaining (Draft-1.1 completion checklist): align all dashboard-method wording to implemented stack/endpoints, finalize figure-ready H2/H3 visual outputs (connectedness and divergence), and package pyinform/libinform setup steps for reproducible reruns across environments.
 
 Completion of these steps determines whether claims are promoted from provisional findings to confirmed empirical results.
 

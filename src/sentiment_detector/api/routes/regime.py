@@ -106,6 +106,36 @@ async def get_latest_features(session: AsyncSession) -> SentimentFeatures:
     )
 
 
+def compute_volatility_state(
+    ciss_level: float | None,
+    vix_level: float | None,
+) -> tuple[str, float]:
+    """Derive a 4-state volatility regime and normalized score."""
+    ciss_component = None
+    if ciss_level is not None:
+        ciss_component = max(0.0, min(ciss_level / 0.5, 1.0))
+
+    vix_component = None
+    if vix_level is not None:
+        vix_component = max(0.0, min(vix_level / 30.0, 1.0))
+
+    components = [x for x in [ciss_component, vix_component] if x is not None]
+    score = float(sum(components) / len(components)) if components else 0.25
+
+    ciss = ciss_level if ciss_level is not None else 0.0
+    vix = vix_level if vix_level is not None else 0.0
+    if ciss >= 0.50 or vix >= 30:
+        state = "high_volatility"
+    elif ciss >= 0.25 or vix >= 20:
+        state = "elevated"
+    elif (ciss_level is None or ciss < 0.15) and (vix_level is None or vix < 15):
+        state = "low_volatility"
+    else:
+        state = "normal"
+
+    return state, score
+
+
 @router.get("/current", response_model=RegimeResponse)
 async def get_current_regime(
     session: AsyncSession = Depends(get_session),
@@ -145,10 +175,16 @@ async def get_current_regime(
     if features.vix_level is not None:
         features_dict["vix_level"] = features.vix_level
 
+    volatility_regime, volatility_score = compute_volatility_state(
+        features.ciss_level, features.vix_level
+    )
+
     return RegimeResponse(
         timestamp=datetime.now(timezone.utc),
         regime=classification.state.value,
         confidence=classification.confidence,
+        volatility_regime=volatility_regime,
+        volatility_score=volatility_score,
         probabilities={
             "risk_on": classification.prob_risk_on,
             "risk_off": classification.prob_risk_off,

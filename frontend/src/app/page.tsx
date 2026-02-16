@@ -232,7 +232,7 @@ export default function Dashboard() {
                             term="GARCH-MIDAS"
                             definition="Generalized Autoregressive Conditional Heteroskedasticity — Mixed Data Sampling. Isolates long-term volatility driven by sentiment from short-term noise."
                           />
-                          {' '}isolates sentiment-driven volatility; a{' '}
+                          {' '}currently implemented as a GARCH(1,1)-based volatility layer; a{' '}
                           <InlineTooltip
                             term="Statistical Jump Model"
                             definition="Classifies discrete regime states while penalizing frequent switching, producing more stable and persistent regime identifications than Hidden Markov Models (Shu et al., 2024)."
@@ -266,6 +266,14 @@ export default function Dashboard() {
                         <p className="text-xs">
                           ~33M texts from 21 Kaggle datasets + live APIs (Finnhub, NewsAPI, Reddit), processed on SMU MANEFRAME HPC.
                           Systemic stress from ECB (CISS) and CBOE (VIX). Data spans 2005–present.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-medium mb-1">Evidence Status (Feb 16, 2026)</p>
+                        <p className="text-xs">
+                          Reporting run locked to <code>validation_20260216_013107</code>.
+                          Quality tier is <strong>provisional</strong>: H1 lead-time remains unconfirmed,
+                          while H2 divergence and H3 connectedness are supported in the canonical validation suite.
                         </p>
                       </div>
                     </div>

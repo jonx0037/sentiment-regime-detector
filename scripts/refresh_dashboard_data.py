@@ -403,7 +403,7 @@ def update_ciss(conn, from_date: str):
             rows.append(
                 (
                     str(uuid.uuid4()),
-                    "ecb",
+                    "ecb_ciss",
                     day,
                     "EU",
                     ciss_val,
