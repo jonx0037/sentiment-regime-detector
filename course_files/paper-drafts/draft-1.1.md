@@ -362,11 +362,11 @@ Five manuscript figures summarize lead-time behavior, transition-classification 
 
 **Figure 5.4.1. H1 lead-time summary (global and event-conditioned).**
 
-![Figure 5.4.1 H1 lead-time summary](../images/draft-1.1/fig_5_5_h1_lead_time_summary.png)
+![Figure 5.4.1 H1 lead-time summary](../images/draft-1.1/fig_5_5_h1_lead_time_summary_v2.png)
 
 **Figure 5.4.2. Regime labels vs. VIX in the COVID stress window.**
 
-![Figure 5.4.2 Regime vs VIX COVID](../images/draft-1.1/fig_5_5_regime_vs_vix_covid.png)
+![Figure 5.4.2 Regime vs VIX COVID](../images/draft-1.1/fig_5_5_regime_vs_vix_covid_v2.png)
 
 **Figure 5.4.3. Transition-performance confusion matrix.**
 

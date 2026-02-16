@@ -44,30 +44,39 @@ def figure_h1_summary(validation: dict, locked_h1: dict, outpath: Path) -> None:
         "not_supported": "#D9534F",
     }
 
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6), gridspec_kw={"width_ratios": [1.0, 1.25]})
+    fig, axes = plt.subplots(2, 1, figsize=(11, 12), gridspec_kw={"height_ratios": [1.0, 1.35]})
 
     ax0 = axes[0]
-    ax0.plot(lags, corrs, marker="o", color="#1f77b4", linewidth=2)
+    ax0.plot(lags, corrs, marker="o", color="#1f77b4", linewidth=2.2, markersize=8)
     ax0.axvspan(1, 7, color="#d3e5ff", alpha=0.35, label="Locked confirmation lag range (1-7)")
-    ax0.axvline(h1["lead_lag"]["optimal_lag"], color="#d62728", linestyle="--", linewidth=1.5)
-    ax0.set_title("Global H1 Lead-Lag Profile (Locked Reporting Run)")
-    ax0.set_xlabel("Lag (days, positive = sentiment leads)")
-    ax0.set_ylabel("Correlation")
-    ax0.legend(loc="lower left", fontsize=9)
+    ax0.axvline(h1["lead_lag"]["optimal_lag"], color="#d62728", linestyle="--", linewidth=2.0)
+    ax0.set_title("Global H1 Lead-Lag Profile (Locked Reporting Run)", fontsize=17)
+    ax0.set_xlabel("Lag (days, positive = sentiment leads)", fontsize=14)
+    ax0.set_ylabel("Correlation", fontsize=14)
+    ax0.tick_params(labelsize=12)
+    ax0.legend(loc="lower left", fontsize=12)
 
     ax1 = axes[1]
+    events = events.copy()
+    events["event_label"] = events.apply(
+        lambda row: f"{row['event']} | FPR={row['false_positive_rate']:.2f}" + (" *" if bool(row["event_confirm_eligible"]) else ""),
+        axis=1,
+    )
+
     y = np.arange(len(events))
     colors = [result_colors.get(v, "#666666") for v in events["h1_result"]]
-    ax1.scatter(events["optimal_lag"], y, c=colors, s=80, edgecolor="black", linewidth=0.5)
-    for i, row in events.iterrows():
-        marker = "*" if bool(row["event_confirm_eligible"]) else ""
-        label = f"{row['event']} (FPR={row['false_positive_rate']:.2f}){marker}"
-        ax1.text(row["optimal_lag"] + 0.1, i, label, va="center", fontsize=8)
+    ax1.hlines(y, xmin=0.0, xmax=events["optimal_lag"], color="#9aa0a6", linewidth=1.2, alpha=0.8)
+    ax1.scatter(events["optimal_lag"], y, c=colors, s=170, edgecolor="black", linewidth=0.9)
 
     ax1.axvspan(1, 7, color="#d3e5ff", alpha=0.25)
-    ax1.set_yticks([])
-    ax1.set_xlabel("Optimal lag by event window (days)")
-    ax1.set_title("Event-Conditioned H1 Outcomes (Locked Protocol V3)")
+    ax1.set_yticks(y)
+    ax1.set_yticklabels(events["event_label"], fontsize=11)
+    ax1.invert_yaxis()
+    ax1.set_xlim(-0.25, max(7.5, float(events["optimal_lag"].max()) + 1.0))
+    ax1.set_xlabel("Optimal lag by event window (days)", fontsize=14)
+    ax1.set_title("Event-Conditioned H1 Outcomes (Locked Protocol V3)", fontsize=17)
+    ax1.tick_params(axis="x", labelsize=12)
+    ax1.grid(axis="y", alpha=0.15)
 
     outcome = locked_h1["decision"]["outcome"]
     support_count = locked_h1["decision"]["event_support_count"]
@@ -76,20 +85,20 @@ def figure_h1_summary(validation: dict, locked_h1: dict, outpath: Path) -> None:
     fig.suptitle(
         f"H1 Summary: global={locked_h1['global_h1']['result']} (lag={global_lag}), "
         f"event confirmations={support_count}/{required}, decision={outcome}",
-        fontsize=12,
-        y=1.02,
+        fontsize=16,
+        y=0.995,
     )
 
     legend = [
         Line2D([0], [0], marker="o", color="w", markerfacecolor=result_colors["supported"], label="supported", markersize=8),
         Line2D([0], [0], marker="o", color="w", markerfacecolor=result_colors["inconclusive"], label="inconclusive", markersize=8),
-        Line2D([0], [0], marker="o", color="w", markerfacecolor=result_colors["not_supported"], label="not_supported", markersize=8),
-        Line2D([0], [0], marker="*", color="black", label="event_confirm_eligible", markersize=10, linewidth=0),
+        Line2D([0], [0], marker="o", color="w", markerfacecolor=result_colors["not_supported"], label="not_supported", markersize=9),
+        Line2D([0], [0], color="w", marker=None, label="* = event_confirm_eligible"),
     ]
-    ax1.legend(handles=legend, loc="lower right", fontsize=8)
+    ax1.legend(handles=legend, loc="lower right", fontsize=11)
 
-    fig.tight_layout()
-    fig.savefig(outpath, dpi=200, bbox_inches="tight")
+    fig.tight_layout(rect=[0, 0, 1, 0.97])
+    fig.savefig(outpath, dpi=240, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -116,23 +125,34 @@ def figure_regime_vix_timeline(feature_matrix: pd.DataFrame, outpath: Path) -> N
         "high_volatility": "#d62728",
     }
 
-    fig, ax = plt.subplots(figsize=(14, 5))
+    fig, ax = plt.subplots(figsize=(11, 6.5))
 
     for start, end, regime in _contiguous_segments(fm, regime_col="regime"):
         color = regime_colors.get(str(regime), "#bbbbbb")
         ax.axvspan(start, end, color=color, alpha=0.18)
 
-    ax.plot(fm.index, fm["vix"], color="black", linewidth=1.8, label="VIX")
-    ax.axhline(30.0, color="#8b0000", linestyle="--", linewidth=1.2, label="VIX=30 threshold")
-    ax.set_title("COVID Window: VIX vs Regime Labels (Canonical Pipeline Output)")
-    ax.set_ylabel("VIX")
-    ax.set_xlabel("Date")
+    ax.plot(fm.index, fm["vix"], color="black", linewidth=2.2, label="VIX")
+    ax.axhline(30.0, color="#8b0000", linestyle="--", linewidth=1.8, label="VIX=30 threshold")
+    ax.set_title("COVID Window: VIX vs Regime Labels (Canonical Pipeline Output)", fontsize=16)
+    ax.set_ylabel("VIX", fontsize=14)
+    ax.set_xlabel("Date", fontsize=14)
+    ax.tick_params(labelsize=12)
+    plt.setp(ax.get_xticklabels(), rotation=20, ha="right")
 
     patches = [Patch(facecolor=c, edgecolor="none", alpha=0.25, label=k) for k, c in regime_colors.items()]
-    ax.legend(handles=[Line2D([0], [0], color="black", lw=1.8, label="VIX"), Line2D([0], [0], color="#8b0000", lw=1.2, ls="--", label="VIX=30 threshold")] + patches, loc="upper left", ncol=3, fontsize=8)
+    ax.legend(
+        handles=[
+            Line2D([0], [0], color="black", lw=2.2, label="VIX"),
+            Line2D([0], [0], color="#8b0000", lw=1.8, ls="--", label="VIX=30 threshold"),
+        ]
+        + patches,
+        loc="upper left",
+        ncol=2,
+        fontsize=11,
+    )
 
     fig.tight_layout()
-    fig.savefig(outpath, dpi=200, bbox_inches="tight")
+    fig.savefig(outpath, dpi=240, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -272,8 +292,8 @@ def main() -> None:
     outdir = Path(args.output_dir)
     _ensure_dir(outdir)
 
-    figure_h1_summary(validation, locked_h1, outdir / "fig_5_5_h1_lead_time_summary.png")
-    figure_regime_vix_timeline(fm, outdir / "fig_5_5_regime_vs_vix_covid.png")
+    figure_h1_summary(validation, locked_h1, outdir / "fig_5_5_h1_lead_time_summary_v2.png")
+    figure_regime_vix_timeline(fm, outdir / "fig_5_5_regime_vs_vix_covid_v2.png")
     figure_confusion_matrix(validation, outdir / "fig_5_5_transition_confusion_matrix.png")
     figure_h2_divergence(fm, validation, outdir / "fig_5_6_h2_divergence_distribution.png")
     figure_h3_connectedness(validation, outdir / "fig_5_6_h3_connectedness_comparison.png")
