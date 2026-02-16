@@ -684,6 +684,12 @@ $$\Delta_{lead} = t_{start}(VIX_{threshold}) - t_{start}(Model_{pred})$$
 - Confusion matrix analysis
 - Sharpe ratio of regime-based trading strategy
 
+#### 3.8.5 Canonical Validation Execution (Current Prototype)
+
+To produce a reproducible evaluation baseline for Draft-1.1, we executed a canonical validation run (`validation_20260215_225156`) using the canonical artifacts `results/pipeline_output/feature_matrix.csv` and `results/pipeline_output/regime_labels.csv`. Validation was run with a walk-forward design (756-day training window, 63-day test window, 63-day step size, 5-day purge gap), with model retraining at each step to reduce temporal leakage.
+
+For this validation cycle, we used a balanced Random Forest classifier (`n_estimators=300`) as the walk-forward prediction model, then aggregated predictions across all scored windows to compute weighted Accuracy/Precision/Recall/F1, Matthews Correlation Coefficient (MCC), and transition accuracy. We then applied the H1-H3 statistical framework (\(\alpha = 0.05\), max lag = 10) using canonical sentiment, VIX, and connectedness-proxy series. Outputs are stored in `results/validation/validation_20260215_225156.json`, `results/validation/validation_20260215_225156.md`, and `results/validation/validation_20260215_225156_hypothesis_report.txt`.
+
 ### 3.9 Dashboard Development
 
 **Backend**:
@@ -805,6 +811,25 @@ These artifacts support a credible prototype baseline, but they do not yet const
 | Regime state labeling | `results/pipeline_output/regime_labels.csv` and `results/pipeline_output/regime_transitions.csv` | Implemented | Add holdout/walk-forward transition quality metrics |
 | Volatility-model fit | `pipeline_summary.json` GARCH fit stats and `results/garch_midas_results_20260211.json` | Provisional | Canonicalize full asymmetric GARCH-MIDAS with stability diagnostics |
 | Overall result confidence | `docs/RESULTS_MANIFEST.json` marks quality tier as `provisional` | Provisional | Promote to validated after canonical walk-forward artifacts are added |
+
+### 5.0.2 Canonical Validation Results (As of February 15, 2026)
+
+The canonical walk-forward run (`validation_20260215_225156`) produced strong classification performance across 59/59 scored windows:
+
+- Accuracy: 0.9247
+- Precision (weighted): 0.9222
+- Recall (weighted): 0.9247
+- F1 (weighted): 0.9213
+- MCC: 0.8190
+- Transition Accuracy: 0.8220
+
+Hypothesis validation yielded mixed but informative evidence:
+
+- **H1 (Leading Indicator): Not Supported** in the current run. The strongest cross-correlation occurred at lag 0, and Granger causality from sentiment to VIX was not significant (\(p=0.2128\)).
+- **H2 (Divergence Signal): Supported**. Pre-transition divergence exceeded stable-period divergence (0.3098 vs. 0.2608; 1.19x), with statistical significance (\(t=18.73\), \(p<0.001\), Cohen's \(d=0.58\)).
+- **H3 (Network Effect, proxy connectedness): Supported**. Connectedness was higher during stable regimes (0.2559) than transition regimes (0.2248), with strong regime separation (ANOVA \(F=133.93\), \(p<0.001\)).
+
+These results increase confidence in H2-H3 mechanisms in the current prototype while indicating that H1 lead-time behavior remains unresolved and requires further refinement.
 
 ### 5.1 Sentiment Model Performance Targets
 
