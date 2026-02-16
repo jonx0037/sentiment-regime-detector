@@ -856,6 +856,150 @@ We tested H1 using three VIX spike thresholds (20, 25, 30) on the updated run (`
 
 Interpretation: H1 remains unsupported across all tested thresholds. While average warning time is near 2 days when a hit occurs, hit-rate is low and false-positive rates increase materially at higher thresholds. This confirms that lead-time claims should remain provisional pending additional feature/model refinement.
 
+### 5.0.5 Walk-Forward Window Sensitivity (Methodology Robustness)
+
+Using the lagged-feature configuration (+10 compound lags, seed 42), we evaluated sensitivity to walk-forward window design.
+
+| Run | Train/Test/Step (days) | Scored Windows | Accuracy | F1 (Weighted) | MCC | Transition Accuracy | H1 | H2 | H3 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `w_base` | 756 / 63 / 63 | 59 | 0.9284 | 0.9244 | 0.8281 | 0.7984 | Not Supported | Supported | Supported |
+| `w_train_short` | 504 / 63 / 63 | 63 | 0.9229 | 0.9178 | 0.8112 | 0.7944 | Not Supported | Supported | Supported |
+| `w_train_long` | 1008 / 63 / 63 | 55 | 0.9241 | 0.9188 | 0.8205 | 0.7801 | Not Supported | Supported | Supported |
+| `w_test_short` | 756 / 42 / 42 | 88 | 0.9305 | 0.9265 | 0.8310 | 0.8063 | Not Supported | Supported | Supported |
+
+Interpretation: shorter test/step windows improved aggregate performance, while larger train windows did not improve transition detection in this run family. Hypothesis verdicts remained stable (H1 unresolved; H2/H3 supported), suggesting model-configuration sensitivity mainly affects classification strength rather than qualitative hypothesis outcomes.
+
+### 5.0.6 Purge-Gap Sensitivity (Leakage-Control Check)
+
+Using the same lagged-feature setup (train/test/step = 756/63/63), we varied purge-gap settings.
+
+| Run | Purge Days | Accuracy | F1 (Weighted) | MCC | Transition Accuracy | H1 | H2 | H3 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `w_base` | 5 | 0.9284 | 0.9244 | 0.8281 | 0.7984 | Not Supported | Supported | Supported |
+| `purge_0` | 0 | 0.9306 | 0.9266 | 0.8330 | 0.7990 | Not Supported | Supported | Supported |
+| `purge_10` | 10 | 0.9260 | 0.9217 | 0.8224 | 0.8000 | Not Supported | Supported | Supported |
+
+Interpretation: tighter leakage control (larger purge) slightly reduced aggregate classification metrics, as expected. Importantly, hypothesis verdicts remained unchanged, indicating current H1/H2/H3 conclusions are not artifacts of small purge-gap settings in this evaluation range.
+
+### 5.0.7 Volatility Feature Upgrade Check (Baseline vs. GARCH-MIDAS+CISS Mode)
+
+Using the same lagged-feature walk-forward setup (`compound_lag_days=10`, seed 42), we compared baseline volatility features against `garch_midas_ciss` after enabling the `arch` backend.
+
+| Run | Volatility Mode | Accuracy | F1 (Weighted) | MCC | Transition Accuracy | H1 | H2 | H3 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `validation_20260216_012920` | `baseline` | 0.9284 | 0.9244 | 0.8281 | 0.7984 | Not Supported | Supported | Supported |
+| `validation_20260216_012945` | `garch_midas_ciss` (`ciss_weight=0.5`, `ciss_transform=raw`) | 0.9276 | 0.9228 | 0.8259 | 0.7880 | Not Supported | Supported | Supported |
+
+Interpretation: with the true `arch` backend active, `garch_midas_ciss` did not improve classification performance in this configuration and slightly reduced transition accuracy. Hypothesis status remained unchanged (H1 unresolved; H2/H3 supported). The volatility metadata now reports non-null fit diagnostics (`AIC=10468.73`, `BIC=10500.77`, `log_likelihood=-5229.36`), confirming that this is no longer a fallback-only check.
+
+### 5.0.8 Network Feature Upgrade Check (Proxy vs. Full Granger/TE Mode)
+
+We next compared proxy connectedness features against `full_granger_te` after fixing pyinform execution in the TE path and rerunning with the same base validation configuration.
+
+| Run | Network Mode | Accuracy | F1 (Weighted) | MCC | Transition Accuracy | H1 | H2 | H3 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `validation_20260216_012920` | `proxy` | 0.9284 | 0.9244 | 0.8281 | 0.7984 | Not Supported | Supported | Supported |
+| `validation_20260216_013107` | `full_granger_te` (126-day window, 21-day step, 208 anchors; pyinform path) | 0.9284 | 0.9236 | 0.8279 | 0.8010 | Not Supported | Supported | Supported |
+
+H3 connectedness diagnostics under `full_granger_te` remained supportive, with clear regime separation (`stable_regime_tci=0.5402` vs. `transition_tci=0.4569`, ANOVA `p=3.06e-244`).
+
+Interpretation: in the corrected pyinform-backed run, full-network features kept aggregate accuracy effectively flat, slightly lowered F1/MCC, and improved transition accuracy. This indicates H3 evidence is robust under the stronger connectedness construction, while aggregate classification benefits remain limited at current parameter settings.
+
+### 5.0.9 Hypothesis Diagnostic Stability Across Feature-Mode A/B Runs
+
+To make hypothesis-level interpretation explicit, Table 5.0.9 reports core H1-H3 diagnostics for the same three canonical A/B runs.
+
+| Run | Configuration | H1 Lag (days) | H1 Granger p-value | H1 Hit Rate | H1 False Positive Rate | H2 Divergence Ratio | H2 Effect Size (Cohen's d) | H3 Stable TCI | H3 Transition TCI | H3 ANOVA p-value |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `validation_20260216_012920` | Baseline volatility + proxy network | 0 | 0.2128 | 0.1957 | 0.7661 | 1.1880 | 0.5764 | 0.2559 | 0.2248 | 4.22e-83 |
+| `validation_20260216_012945` | `garch_midas_ciss` + proxy network | 0 | 0.2128 | 0.1957 | 0.7661 | 1.1880 | 0.5764 | 0.2559 | 0.2248 | 4.22e-83 |
+| `validation_20260216_013107` | Baseline volatility + `full_granger_te` network | 0 | 0.2128 | 0.1957 | 0.7661 | 1.1880 | 0.5764 | 0.5402 | 0.4569 | 3.06e-244 |
+
+Interpretation: H1 and H2 diagnostics are numerically unchanged across these feature-mode runs because those tests are driven by shared sentiment/VIX/divergence inputs in the current implementation. H3 remains supported in both network modes, with larger absolute TCI values under `full_granger_te` (metric scale differs by construction), reinforcing that connectedness evidence is robust to the network-feature choice tested here.
+
+### 5.0.10 Full-Network Parameter Tuning (pyinform-backed)
+
+After enabling pyinform-backed TE execution, we ran a focused 3-configuration sweep for `full_granger_te`.
+
+| Run | Window / Step | TE History / Permutations | Granger Lag | Anchors | Accuracy | F1 (Weighted) | MCC | Transition Accuracy | H3 ANOVA p-value |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `validation_20260216_013107` (`cfg_default`) | 126 / 21 | 3 / 10 | 3 | 208 | 0.9284 | 0.9236 | 0.8279 | 0.8010 | 3.06e-244 |
+| `validation_20260216_013134` (`cfg_responsive`) | 84 / 14 | 2 / 20 | 2 | 315 | 0.9236 | 0.9187 | 0.8156 | 0.7984 | 8.00e-59 |
+| `validation_20260216_013203` (`cfg_long_window`) | 252 / 21 | 3 / 20 | 3 | 202 | 0.9241 | 0.9188 | 0.8169 | 0.8010 | 1.60e-100 |
+
+Interpretation: `cfg_default` and `cfg_long_window` tied on transition accuracy, but `cfg_default` provided stronger aggregate metrics and was selected as the current canonical full-network setting for subsequent comparisons.
+
+### 5.0.11 Draft-1.1 Canonical Reporting Configuration Lock
+
+For Draft-1.1 reporting consistency, we selected one canonical configuration to anchor Methods/Results language.
+
+| Candidate Run | Volatility Mode | Network Mode | Accuracy | F1 (Weighted) | MCC | Transition Accuracy |
+| --- | --- | --- | --- | --- | --- | --- |
+| `validation_20260216_012920` | `baseline` | `proxy` | 0.9284 | 0.9244 | 0.8281 | 0.7984 |
+| `validation_20260216_013107` | `baseline` | `full_granger_te` (`cfg_default`) | 0.9284 | 0.9236 | 0.8279 | 0.8010 |
+| `validation_20260216_012945` | `garch_midas_ciss` | `proxy` | 0.9276 | 0.9228 | 0.8259 | 0.7880 |
+| `validation_20260216_013252` | `garch_midas_ciss` | `full_granger_te` (`cfg_default`) | 0.9185 | 0.9129 | 0.8026 | 0.7827 |
+
+Selection decision: `validation_20260216_013107` is the locked Draft-1.1 reporting run because it preserves top-line accuracy, improves transition accuracy vs proxy baseline, and uses the upgraded connectedness methodology.
+
+### 5.0.12 Market-Subperiod Stability Diagnostics (Locked Configuration)
+
+Using the locked configuration (`validation_20260216_013107` settings), we ran subperiod checks with `train/test/step = 504/63/63`.
+
+| Subperiod | Date Range | Scored Windows | Accuracy | F1 (Weighted) | MCC | Transition Accuracy | H1 | H2 | H3 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `pre_2020` (`validation_20260216_013807`) | 2005-01-19 to 2019-12-31 | 41 | 0.9156 | 0.9100 | 0.6201 | 0.8094 | Not Supported | Inconclusive | Supported |
+| `covid_2020_2022` (`validation_20260216_013829`) | 2020-01-02 to 2022-12-30 | 3 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | Not Supported | Supported | Supported |
+| `post_2023` (`validation_20260216_013837`) | 2023-01-03 to 2025-08-14 | 1 | 1.0000 | 1.0000 | 0.0000 | 0.0000 | Not Supported | Supported | Inconclusive |
+
+Interpretation: the long pre-2020 segment provides the most statistically informative stability read and keeps H1 unresolved while preserving H3 support. Recent subperiods are too short (3 and 1 scored windows) for strong inferential claims, so perfect classification values there should be treated as small-sample artifacts rather than evidence of uniformly higher model quality.
+
+### 5.0.13 H1 Remediation Experiments (Sentiment-Series Transform Sweep)
+
+Using the locked configuration (`validation_20260216_013107`) as baseline, we ran three H1-only sentiment transforms. Classification metrics are unchanged because these transforms affect H1 testing logic only (not the walk-forward classifier inputs).
+
+| Run | H1 Sentiment Transform | H1 Verdict | Optimal Lag | Granger p-value | Hit Rate | False Positive Rate | Avg Lead Days |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `validation_20260216_013107` | `compound` (baseline) | Not Supported | 0 | 0.2128 | 0.1957 | 0.7661 | 1.98 |
+| `validation_20260216_014501` | `compound_x_abs_returns` | Inconclusive | 0 | 7.08e-08 | 0.2197 | 0.4334 | 1.71 |
+| `validation_20260216_014530` | `compound_delta_1` | Not Supported | -1 | 0.1260 | 0.2737 | 0.7608 | 1.88 |
+| `validation_20260216_014558` | `compound_zscore_63` | Not Supported | 0 | 0.2187 | 0.2413 | 0.7866 | 1.95 |
+
+Interpretation: volatility-weighted sentiment (`compound_x_abs_returns`) materially improved H1 diagnostics (lower FPR, significant Granger result) and moved H1 from `Not Supported` to `Inconclusive`. However, no transform produced the required lead-lag optimum in the 1-5 day target range (best remained lag 0), so H1 is still not confirmed.
+
+### 5.0.14 H1 Event-Conditioned Probe (Volatility-Weighted Sentiment)
+
+We then ran an event-conditioned H1 probe using `compound_x_abs_returns` with fixed windows around each crisis event (`[-180, +90]` days), producing artifact `h1_event_probe_20260216_015024`, including multiple-testing controls (Bonferroni and Benjamini-Hochberg FDR).
+
+| Event | H1 Verdict | Optimal Lag | Granger p-value | Granger q-value (BH) | Bonferroni Sig | FDR Sig | Hit Rate | False Positive Rate | Avg Lead Days | N Obs |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| COVID-19 Crash | Supported | 3 | 7.57e-05 | 3.78e-04 | Yes | Yes | 0.1585 | 0.0714 | 1.15 | 207 |
+| GameStop Short Squeeze | Inconclusive | 2 | 0.1124 | 0.1405 | No | No | 0.2540 | 0.3600 | 1.94 | 195 |
+| Crypto Winter 2022 | Inconclusive | 0 | 0.0407 | 0.1019 | No | No | 0.2158 | 0.4643 | 1.97 | 355 |
+| FTX Collapse | Not Supported | 0 | 0.1695 | 0.1695 | No | No | 0.1556 | 0.5000 | 1.64 | 198 |
+| SVB Bank Collapse | Not Supported | 9 | 0.1067 | 0.1405 | No | No | 0.1395 | 0.7600 | 1.67 | 194 |
+
+Interpretation: H1 behavior appears regime- and event-dependent rather than globally stable. The COVID window provides the first explicit 1-5 day lead support (lag 3) and remains significant after multiple-testing correction, while later events do not replicate full support. This is strong directional evidence, but still exploratory because it is event-window conditioned rather than a single pre-registered global confirmation test.
+
+### 5.0.15 Locked H1 Confirmation Analysis (Pre-Registered Protocol V1)
+
+To close the remaining H1 priority, we executed a locked confirmation run under `docs/H1_LOCKED_CONFIRMATION_PROTOCOL.md`:
+
+- Artifact: `h1_locked_confirmation_20260216_020514`
+- Decision outcome: `not_confirmed`
+
+Protocol decision rule required either:
+1. Global H1 confirmation (`supported` with lag in 1-5), or
+2. At least two event windows meeting strict confirmation criteria (supported, lag in 1-5, Bonferroni + BH significance, and FPR <= 0.25).
+
+Observed outcome:
+
+- Global H1: `inconclusive` (optimal lag = 0; Granger p = 7.08e-08; hit rate = 0.2197; FPR = 0.4334).
+- Event-confirmed windows: 1 (`COVID-19 Crash`, lag 3, corrected-significant, FPR = 0.0714).
+- Required event-confirmed windows: 2.
+
+Interpretation: the locked analysis confirms meaningful context-dependent signal but does not yet satisfy full confirmation under the pre-registered rule. H1 therefore remains provisional at project level.
+
 ### 5.1 Sentiment Model Performance Targets
 
 Based on benchmark performance from FinBERT (Araci, 2019) and ensemble approaches:
@@ -955,9 +1099,9 @@ These outcomes establish that the core engineering workflow is functional and re
 
 Current evidence is still provisional, not final confirmatory validation. The strongest support today is for pipeline execution and coherent regime segmentation, while hypothesis-level claims (H1-H3) remain partially tested.
 
-- **H1 (lead-time over VIX):** Framework and target metrics are defined, but canonical walk-forward lead-time outputs are still pending.
-- **H2 (transition detection quality):** Transition labels are generated, but final holdout performance reporting is not yet canonicalized.
-- **H3 (cross-asset connectedness/divergence):** Proxy features exist, but full entropy-based connectedness reporting is still extension work.
+- **H1 (lead-time over VIX):** Canonical lead-time outputs now exist across baseline, sensitivity, remediation, and event-conditioned probe runs. A volatility-weighted transform improved global H1 to `Inconclusive`, and the COVID event window shows `Supported` at lag 3, but global H1 is still unconfirmed.
+- **H2 (transition detection quality):** Holdout walk-forward performance is now canonicalized and stable across tested settings, but transition-specific quality remains below the strongest aggregate metrics.
+- **H3 (cross-asset connectedness/divergence):** Proxy and pyinform-backed `full_granger_te` modes now both have canonical A/B outputs, with subperiod diagnostics added; the main residual limitation is short-window instability in recent eras.
 
 Interpretations should therefore be framed as early directional evidence, pending full validation.
 
@@ -965,9 +1109,15 @@ Interpretations should therefore be framed as early directional evidence, pendin
 
 The next validation cycle is focused on moving from provisional to validated results:
 
-1. Canonicalize walk-forward artifacts and report holdout metrics for regime prediction stability.
-2. Finalize asymmetric GARCH-MIDAS integration and add model diagnostics across periods.
-3. Add explicit lead-time and connectedness result tables tied to pre-registered hypotheses (H1-H3).
+1. **Completed (February 16, 2026):** Freeze and manifest the expanded canonical validation suite (baseline + robustness + sensitivity + feature-mode A/B + backend-backed reruns + subperiod diagnostics + H1 remediation sweep + event-conditioned H1 probe + locked H1 confirmation) in `docs/RESULTS_MANIFEST.json` (`manifest_version=1.2`, `canonical_run_id=pipeline_output_plus_backend_validation_suite_20260216_020514`).
+2. **Completed (February 16, 2026):** Enable true asymmetric GARCH-MIDAS path (`arch` backend) and rerun volatility-mode A/B (`validation_20260216_012945`).
+3. **Completed (February 16, 2026):** Enable pyinform-backed connectedness path, run full-network tuning sweep, and publish updated connectedness tables (`validation_20260216_013107`, `013134`, `013203`).
+4. **Completed (February 16, 2026):** Lock Draft-1.1 canonical reporting configuration to `validation_20260216_013107` for consistent Methods/Results wording.
+5. **Completed (February 16, 2026):** Run market-subperiod diagnostics (`validation_20260216_013807`, `013829`, `013837`) and document stability caveats for short windows.
+6. **Completed (February 16, 2026):** Execute first targeted H1 remediation sweep (alternative sentiment transforms), including `compound_x_abs_returns` which improved H1 to `Inconclusive`.
+7. **Completed (February 16, 2026):** Run event-conditioned H1 probe (`h1_event_probe_20260216_015024`) with multiple-testing controls, showing context-dependent lead behavior and COVID support at lag 3.
+8. **Completed (February 16, 2026):** Execute locked H1 confirmation run (`h1_locked_confirmation_20260216_020514`) under pre-registered protocol V1.
+9. Remaining: expand event universe (or extend time horizon) and rerun locked protocol to test whether >=2 independently confirmed lead events can be achieved.
 
 Completion of these steps determines whether claims are promoted from provisional findings to confirmed empirical results.
 

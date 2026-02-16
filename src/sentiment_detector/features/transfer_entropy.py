@@ -26,11 +26,11 @@ logger = logging.getLogger(__name__)
 # Try to import pyinform for entropy calculations
 # Note: pyinform has known compatibility issues with Apple Silicon (ARM)
 PYINFORM_AVAILABLE = False
-pyinform_te = None
+pyinform_transfer_entropy = None
 
 try:
     import pyinform
-    from pyinform import transfer_entropy as pyinform_te
+    from pyinform import transfer_entropy as pyinform_transfer_entropy
     PYINFORM_AVAILABLE = True
 except (ImportError, OSError) as e:
     # OSError occurs when the C library is incompatible (e.g., x86 on ARM)
@@ -259,10 +259,7 @@ class TransferEntropyAnalyzer:
     def _calculate_te_pyinform(self, source: np.ndarray, target: np.ndarray) -> float:
         """Calculate TE using pyinform library."""
         try:
-            te = pyinform_te.transfer_entropy(
-                source, target, 
-                k=self.history_length
-            )
+            te = pyinform_transfer_entropy(source, target, k=self.history_length)
             return float(te)
         except Exception as e:
             logger.warning(f"pyinform TE failed: {e}. Using manual calculation.")

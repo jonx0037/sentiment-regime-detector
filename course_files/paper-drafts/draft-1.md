@@ -1,6 +1,7 @@
 # Cross-Asset Sentiment Regime Detector: Automating Market Psychology Analysis Through Multi-Source NLP
 
-Jonathan Rocha, [Advisor Name - TBD]
+Jonathan Rocha
+Advisor: Dr. David (King Ip) Lin 
 Master of Science in Data Science, Southern Methodist University, Dallas, TX 75275 USA
 <jrocha@smu.edu>
 

@@ -1,9 +1,10 @@
 {
-  "manifest_version": "1.0",
-  "generated_at_utc": "2026-02-15T22:52:47.357491+00:00",
-  "canonical_run_id": "pipeline_output_20260211_plus_validation_20260215_225156",
+  "manifest_version": "1.2",
+  "generated_at_utc": "2026-02-16T02:05:46.268022+00:00",
+  "canonical_run_id": "pipeline_output_plus_backend_validation_suite_20260216_020514",
+  "draft_1_1_reporting_run_id": "validation_20260216_013107",
   "quality_tier": "provisional",
-  "quality_reason": "Canonical run includes walk-forward/hypothesis validation artifacts; quality remains provisional because asymmetric GARCH-MIDAS and full entropy/transfer-entropy implementations are not yet canonicalized.",
+  "quality_reason": "Canonical suite includes robustness/sensitivity, backend-backed A/B runs, subperiod diagnostics, H1 remediation, event-conditioned probe, and locked H1 confirmation protocol run; quality remains provisional because locked H1 confirmation outcome is not_confirmed.",
   "active_artifacts": [
     {
       "path": "results/pipeline_output/pipeline_summary.json",
@@ -31,6 +32,11 @@
       "size_bytes": 4580
     },
     {
+      "path": "results/parquet_compat_migration_report.json",
+      "sha256": "511201f16c0f3a9554fb83d17855ccaaea381ad3425ba35d4d72a39efdcfa5f5",
+      "size_bytes": 5145
+    },
+    {
       "path": "results/validation/validation_20260215_225156.json",
       "sha256": "b5cc87da7db7f46d79cb00e4a08248ced7e66a5b49abed8a0030f3589e811bd9",
       "size_bytes": 29024
@@ -46,9 +52,409 @@
       "size_bytes": 1541
     },
     {
-      "path": "results/parquet_compat_migration_report.json",
-      "sha256": "511201f16c0f3a9554fb83d17855ccaaea381ad3425ba35d4d72a39efdcfa5f5",
-      "size_bytes": 5145
+      "path": "results/validation/validation_20260216_002914.json",
+      "sha256": "8f81488c26ddea25dd9b3a97e3597ec1403a588af82fe951dbbaa941e7b0c2a6",
+      "size_bytes": 35852
+    },
+    {
+      "path": "results/validation/validation_20260216_002914.md",
+      "sha256": "64f2f342abbbbd4610f2f3bfb2837ed06bf9e7f84f847efead6ede112b5a65c3",
+      "size_bytes": 827
+    },
+    {
+      "path": "results/validation/validation_20260216_002914_hypothesis_report.txt",
+      "sha256": "f3b8651a832914c4a89ca1e0ef053fb1dd14ad12a472ef90b3d34e0c615d6822",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/robustness_seed11/validation_20260216_005731.json",
+      "sha256": "ddcbb9df6e2f4faf0dcaacd406b5abafac5f8041d1a8c0aa21797b243a18a8b6",
+      "size_bytes": 35815
+    },
+    {
+      "path": "results/validation/robustness_seed11/validation_20260216_005731.md",
+      "sha256": "5a9e0526f025c5c7e76149a123e6d36b6bf5ace43d3770e1ad1e2d3e104d333c",
+      "size_bytes": 865
+    },
+    {
+      "path": "results/validation/robustness_seed11/validation_20260216_005731_hypothesis_report.txt",
+      "sha256": "0f2f7ffb181896828377cfd7cba48c3495b840f6b40b8f0d22814af352135c78",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/robustness_seed42/validation_20260216_005755.json",
+      "sha256": "74f516325d95e2037abc153db60cbd67fa45fc12e8b551235d3714dfc728c064",
+      "size_bytes": 35879
+    },
+    {
+      "path": "results/validation/robustness_seed42/validation_20260216_005755.md",
+      "sha256": "4a0ea544dd563303c6068103bbad2c4e7f89eb7bfebf87d6a327ee9f546bdf30",
+      "size_bytes": 865
+    },
+    {
+      "path": "results/validation/robustness_seed42/validation_20260216_005755_hypothesis_report.txt",
+      "sha256": "909565b5f7caec1390389394bc8979029b7cdfbfc7951252454f47f1bf2a029a",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/robustness_seed77/validation_20260216_005818.json",
+      "sha256": "96951194b9196927a705f305972e7b02bb0931d7f9966de992e8699242600489",
+      "size_bytes": 35901
+    },
+    {
+      "path": "results/validation/robustness_seed77/validation_20260216_005818.md",
+      "sha256": "597aed55866fab6dc262a58c1a0258c58800390fba903c109097ac2e438bf460",
+      "size_bytes": 865
+    },
+    {
+      "path": "results/validation/robustness_seed77/validation_20260216_005818_hypothesis_report.txt",
+      "sha256": "8b2ca689765d1c7ed25cfa565ab0bf3ee69ec0f089b1274456a9486a828ab048",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_base/validation_20260216_010248.json",
+      "sha256": "8a7fef8cfb7d9f82c438d160768a4433262937be0c5da8e4b61d96bffc7d594d",
+      "size_bytes": 35879
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_base/validation_20260216_010248.md",
+      "sha256": "c1174722b169387adfdd6ca7cd4f86fed3b885718038fd82c4ecef3062cb4617",
+      "size_bytes": 874
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_base/validation_20260216_010248_hypothesis_report.txt",
+      "sha256": "cd2f73e9c913e079c5d6a1189b728548e24aaacd64e637c8730466f11f56b3fd",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_train_short/validation_20260216_010312.json",
+      "sha256": "b9f71102bbc4891e5701c29f16a8f810d18839740d21049c3ef9927b8cf1b36a",
+      "size_bytes": 37304
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_train_short/validation_20260216_010312.md",
+      "sha256": "1f3920b189f3bf2f9de6d214a9fb0257abc78e5c48735217df3b713c062ad72a",
+      "size_bytes": 881
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_train_short/validation_20260216_010312_hypothesis_report.txt",
+      "sha256": "e07b3facbcdf014de892401e27a61fe2ba47ed271b85b7f0dcdb58aa6083a578",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_train_long/validation_20260216_010335.json",
+      "sha256": "762aeb1c9d6e8f684b8473412cb5034e8108af51cebb4cf4a505b764d100181d",
+      "size_bytes": 34399
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_train_long/validation_20260216_010335.md",
+      "sha256": "88f0ec6bedd2b24740a91c03aadc51b0f1d52903ee5c6652a7c26f6f71924848",
+      "size_bytes": 880
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_train_long/validation_20260216_010335_hypothesis_report.txt",
+      "sha256": "2f69706e423a452f16607066ec268f86d19d44fdf3edec29e2df3e12aeb77bb5",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_test_short/validation_20260216_010358.json",
+      "sha256": "25b102f3dd8db90fbc14da97ecfd61d946255a80ba0a9f25a1b3a3b2e7df2da0",
+      "size_bytes": 46160
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_test_short/validation_20260216_010358.md",
+      "sha256": "7fc4d939df406d39f0b83c4dce0d0713cce4dd5172140304075e312c44877fb1",
+      "size_bytes": 880
+    },
+    {
+      "path": "results/validation/sensitivity_windows/w_test_short/validation_20260216_010358_hypothesis_report.txt",
+      "sha256": "3b62e6787d2977077d06a30fe14e7f758d81819f28c08f720b4dbb02f5ef0958",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/sensitivity_purge/purge_0/validation_20260216_010429.json",
+      "sha256": "4489a6a4ef1ed30cb4028894e458b5726df2c52dcf393351d284ace1678cc495",
+      "size_bytes": 35884
+    },
+    {
+      "path": "results/validation/sensitivity_purge/purge_0/validation_20260216_010429.md",
+      "sha256": "7825fd61c4c0fa1d640d14211574a42bad3b973d28e6cb92121a0bf3cbc57307",
+      "size_bytes": 873
+    },
+    {
+      "path": "results/validation/sensitivity_purge/purge_0/validation_20260216_010429_hypothesis_report.txt",
+      "sha256": "429ad1fcb458e1c73c37a9d8c20550c60cdb575cccc492c3aeeaedceefb997ba",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/sensitivity_purge/purge_10/validation_20260216_010452.json",
+      "sha256": "9d1201541f90f3979d02b632b868888beb6661571140c10f1d498aad324494d3",
+      "size_bytes": 35905
+    },
+    {
+      "path": "results/validation/sensitivity_purge/purge_10/validation_20260216_010452.md",
+      "sha256": "400ed4cfbbdf976d9817911cec878b5ed539e6969e89565383427b03d6d3c7e9",
+      "size_bytes": 874
+    },
+    {
+      "path": "results/validation/sensitivity_purge/purge_10/validation_20260216_010452_hypothesis_report.txt",
+      "sha256": "1461ebd303e08c07e0ebd8511f75baab4c63967d4b256128bb9a783df222e5e2",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/smoke_baseline/validation_20260216_011653.json",
+      "sha256": "49b3464b1612b578d0c1182d6406e76964f73f4ee7d10a4533e03985e25c420e",
+      "size_bytes": 36133
+    },
+    {
+      "path": "results/validation/smoke_baseline/validation_20260216_011653.md",
+      "sha256": "f9d1e6766e07bc3fbecae0ddca094c7678e65cfbc1b110c6db1e2c94ab44858f",
+      "size_bytes": 932
+    },
+    {
+      "path": "results/validation/smoke_baseline/validation_20260216_011653_hypothesis_report.txt",
+      "sha256": "fa5f74d0bd3c85fe206f3193c4aad93efeb7c062f803d5f19415bc6973682b60",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/methodology_ab/vol_garch_midas_ciss/validation_20260216_011722.json",
+      "sha256": "75faa478ad18377d4cff3cad7cea83866eca1a008dfda9912a2c01294f951074",
+      "size_bytes": 36419
+    },
+    {
+      "path": "results/validation/methodology_ab/vol_garch_midas_ciss/validation_20260216_011722.md",
+      "sha256": "58ef18d2197d7d5d85a046a084e797c8b81fe1f6b0f3fcad6e799aadcfc23b97",
+      "size_bytes": 961
+    },
+    {
+      "path": "results/validation/methodology_ab/vol_garch_midas_ciss/validation_20260216_011722_hypothesis_report.txt",
+      "sha256": "fcd25c15d34bb1e95f74e32df6eda36401579d99411e5fe9d0281ef04380929c",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/methodology_ab/network_full_granger_te/validation_20260216_011747.json",
+      "sha256": "5449b0a3528cc937dc1ffd43fb94b3bb7b36c6674ba0fa5fa91fa7f0072d74e0",
+      "size_bytes": 36389
+    },
+    {
+      "path": "results/validation/methodology_ab/network_full_granger_te/validation_20260216_011747.md",
+      "sha256": "b44ad48ba7808ffac49e39701d69366a9adb50794be062727d464ce7b605332d",
+      "size_bytes": 966
+    },
+    {
+      "path": "results/validation/methodology_ab/network_full_granger_te/validation_20260216_011747_hypothesis_report.txt",
+      "sha256": "62d4e5fae0252c6d4a70c600fefd7580f1c1b06a58e40f828ba4e96fa550bb03",
+      "size_bytes": 1540
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/baseline_proxy/validation_20260216_012920.json",
+      "sha256": "fb0877945c2e12802c9351df29109bdfb6338f1171e978ad0fb628f53b92a6cc",
+      "size_bytes": 36137
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/baseline_proxy/validation_20260216_012920.md",
+      "sha256": "067ca03ec75ab16e5910ed11c6d06a113537b771c41606bab837c33f6ef934d5",
+      "size_bytes": 955
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/baseline_proxy/validation_20260216_012920_hypothesis_report.txt",
+      "sha256": "68e22f98f37ab77a6784a9fcd6a3f4eb2c3b4dc9e55f4afb7f0f1404d2696c0d",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/vol_garch_midas_ciss/validation_20260216_012945.json",
+      "sha256": "c9bcd174aebaad0acb360f8d2b3f8ff66bcc976aa65b9b21d2a3388f42350bf9",
+      "size_bytes": 36481
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/vol_garch_midas_ciss/validation_20260216_012945.md",
+      "sha256": "1f8909ad41232b64f966eb93f56e9e4ee43bd37beabaf4d77eabae961621184d",
+      "size_bytes": 969
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/vol_garch_midas_ciss/validation_20260216_012945_hypothesis_report.txt",
+      "sha256": "714d663f351097d708f54ba95ac7fa029e644a3f1a02a74c4283558dd1472ab4",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning_pyinform/cfg_default/validation_20260216_013107.json",
+      "sha256": "681f1a12b0f66fb2821ae4c99262da1be9b7c5716365ea46174c047f742159f5",
+      "size_bytes": 36520
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning_pyinform/cfg_default/validation_20260216_013107.md",
+      "sha256": "6f5bfc04cd61be088402115637c141e9d5d46a85d165fc0da2acbc33bdd12260",
+      "size_bytes": 986
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning_pyinform/cfg_default/validation_20260216_013107_hypothesis_report.txt",
+      "sha256": "f8c6d96cac55b3dc9ab6e806cdc8fa7e28e67bf89f121e8623d1a342e4da9b9b",
+      "size_bytes": 1597
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning_pyinform/cfg_responsive/validation_20260216_013134.json",
+      "sha256": "f20fd21e53e5809f5ea73e9dc9be4e541feee80c9d9df185bb1eb0d9d2e46fd0",
+      "size_bytes": 36372
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning_pyinform/cfg_responsive/validation_20260216_013134.md",
+      "sha256": "65dd51d054984baf8424949cf242a9e81a3fee56a046a042b26e01d529043db2",
+      "size_bytes": 989
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning_pyinform/cfg_responsive/validation_20260216_013134_hypothesis_report.txt",
+      "sha256": "ace60a2ffc4469b460e763ab08f200d7a9bf032c8a27d78614e51dd5b21895f2",
+      "size_bytes": 1540
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning_pyinform/cfg_long_window/validation_20260216_013203.json",
+      "sha256": "01ec061eb020444a862dfca34467c34cc365cd4cb614f21f91d90468ad85fc6e",
+      "size_bytes": 36373
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning_pyinform/cfg_long_window/validation_20260216_013203.md",
+      "sha256": "f049dc7f0c09a126e4fecc1835f4f23383658bf5f7ec0e1cf81ec314ad756dcd",
+      "size_bytes": 990
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning_pyinform/cfg_long_window/validation_20260216_013203_hypothesis_report.txt",
+      "sha256": "7a1b0454f74308181a5730c4a1fe286d89b950dfbd3730daad02d92c71460823",
+      "size_bytes": 1541
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/hybrid_vol_garch_network_default/validation_20260216_013252.json",
+      "sha256": "fdc3f9d64b747302036be53c05ee198fbfe5480ad2cec315f5653fe5fe21210c",
+      "size_bytes": 36858
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/hybrid_vol_garch_network_default/validation_20260216_013252.md",
+      "sha256": "5848e34e13a2127b9b5c41577302883c2b13f6296a8d6d04d73a1ca767567d03",
+      "size_bytes": 991
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/hybrid_vol_garch_network_default/validation_20260216_013252_hypothesis_report.txt",
+      "sha256": "3a3e3e177adc8d7c60367fb1494afe83652f50f42ded2e92fb2a000f3a8ed2b2",
+      "size_bytes": 1597
+    },
+    {
+      "path": "results/validation/subperiod_runs/pre_2020/validation_20260216_013807.json",
+      "sha256": "98e993acae7649bbae0b654c002b93a99e8a5bf2d02851a6cc5cdb800208c124",
+      "size_bytes": 28119
+    },
+    {
+      "path": "results/validation/subperiod_runs/pre_2020/validation_20260216_013807.md",
+      "sha256": "8af3e01508154352e3992d5f073a52b11c8823263c8dc2784a526ce9a6f5e7e5",
+      "size_bytes": 996
+    },
+    {
+      "path": "results/validation/subperiod_runs/pre_2020/validation_20260216_013807_hypothesis_report.txt",
+      "sha256": "3145149bbe16cd62df16341e77801dd21e96bfd86ced86cd084acad68bfa1d7c",
+      "size_bytes": 1454
+    },
+    {
+      "path": "results/validation/subperiod_runs/covid_2020_2022/validation_20260216_013829.json",
+      "sha256": "67976c9ca6c4e696761fea22b7f4f8d0c7012dda38bb5dafd247fea57881141f",
+      "size_bytes": 14801
+    },
+    {
+      "path": "results/validation/subperiod_runs/covid_2020_2022/validation_20260216_013829.md",
+      "sha256": "aec5531d29fc84c6d0ccb1c782e3047b40b735485e5229133f44ac70ec41b6b0",
+      "size_bytes": 1012
+    },
+    {
+      "path": "results/validation/subperiod_runs/covid_2020_2022/validation_20260216_013829_hypothesis_report.txt",
+      "sha256": "f37833ecae8432bbd1a3a625382955aac567f255f14af2ba4ecbade370f3cdb5",
+      "size_bytes": 1595
+    },
+    {
+      "path": "results/validation/subperiod_runs/post_2023/validation_20260216_013837.json",
+      "sha256": "2fcad117724b3f55dd96164c2622a102051d72bd654ad72410da5376a2d7e389",
+      "size_bytes": 12379
+    },
+    {
+      "path": "results/validation/subperiod_runs/post_2023/validation_20260216_013837.md",
+      "sha256": "7765d22e5ebc07923af987172602d3953fa937d5ba328c06e26ead37a0671b53",
+      "size_bytes": 997
+    },
+    {
+      "path": "results/validation/subperiod_runs/post_2023/validation_20260216_013837_hypothesis_report.txt",
+      "sha256": "3053d6a8f9fa67fe3f4ded8c8a481dc888f6d7a5a4df57a98988d3c7d255fa97",
+      "size_bytes": 1324
+    },
+    {
+      "path": "results/validation/h1_remediation/h1_compound_x_abs_returns/validation_20260216_014501.json",
+      "sha256": "d3cffb4f49d9d369cb49e545112f53f86d6622a43aed4345bc30686ca4d400fe",
+      "size_bytes": 37026
+    },
+    {
+      "path": "results/validation/h1_remediation/h1_compound_x_abs_returns/validation_20260216_014501.md",
+      "sha256": "cf1398e306d5996abcec515ff1a735e235791ac8c5879c0d3b5541ea954ed935",
+      "size_bytes": 1042
+    },
+    {
+      "path": "results/validation/h1_remediation/h1_compound_x_abs_returns/validation_20260216_014501_hypothesis_report.txt",
+      "sha256": "84134f4b08a06806b836eef391aa288d60f92051f7bb6a8ea5ccba4dbb71ed50",
+      "size_bytes": 1667
+    },
+    {
+      "path": "results/validation/h1_remediation/h1_compound_delta_1/validation_20260216_014530.json",
+      "sha256": "4f10290d4dfca8de0da7804733357fb7235d1dbb77caa0bf1eaed591293623c2",
+      "size_bytes": 36841
+    },
+    {
+      "path": "results/validation/h1_remediation/h1_compound_delta_1/validation_20260216_014530.md",
+      "sha256": "60c0e607174f9ddb1ab5aa6a5107b52ad46bbe85c3b0dd41a0e17024a6b56b2a",
+      "size_bytes": 1031
+    },
+    {
+      "path": "results/validation/h1_remediation/h1_compound_delta_1/validation_20260216_014530_hypothesis_report.txt",
+      "sha256": "e37290dfbc9bdd3344fc2579f9a11312fa926481d9f396ce33c110e1d225c916",
+      "size_bytes": 1598
+    },
+    {
+      "path": "results/validation/h1_remediation/h1_compound_zscore_63/validation_20260216_014558.json",
+      "sha256": "8cb32f7cd4b8e8f969cf592c5d00610030f873271f783d1be37296075e8ce2c0",
+      "size_bytes": 36806
+    },
+    {
+      "path": "results/validation/h1_remediation/h1_compound_zscore_63/validation_20260216_014558.md",
+      "sha256": "1228fa01ca5c71ac55afde0b45e5ea72ff92593adbe1581c421137cf6aff2515",
+      "size_bytes": 1035
+    },
+    {
+      "path": "results/validation/h1_remediation/h1_compound_zscore_63/validation_20260216_014558_hypothesis_report.txt",
+      "sha256": "4e491dba2a63d64dc16d621d1ba79d0cb85f0f2c00be8a2b837f9c4c9b73c4c4",
+      "size_bytes": 1597
+    },
+    {
+      "path": "results/validation/h1_remediation/event_conditioned_probe/h1_event_probe_20260216_014853.json",
+      "sha256": "34726a1ff0213a1b344a08679241e5e5f662177ba65acde350ce4a28cba3dbb3",
+      "size_bytes": 2563
+    },
+    {
+      "path": "results/validation/h1_remediation/event_conditioned_probe/h1_event_probe_20260216_014853.md",
+      "sha256": "583d165992f59a00a8c8f58575fb52a1fb8a156a5c6ea6f7be87aaa3dcca76ac",
+      "size_bytes": 768
+    },
+    {
+      "path": "results/validation/h1_remediation/event_conditioned_probe/h1_event_probe_20260216_015024.json",
+      "sha256": "7654939b8bc65157e85da24a5bca6698b81abe4c7124eb624a733b338936151b",
+      "size_bytes": 3360
+    },
+    {
+      "path": "results/validation/h1_remediation/event_conditioned_probe/h1_event_probe_20260216_015024.md",
+      "sha256": "3641deee1e17962acca4fa90ff84a1e68ff49bb35599601673d450344c246809",
+      "size_bytes": 950
+    },
+    {
+      "path": "results/validation/h1_confirmation/locked_protocol/h1_locked_confirmation_20260216_020514.json",
+      "sha256": "61f05de283a17fa6bc551f8db211a1b830d6991e56c9c1cec2bd12c157b83f39",
+      "size_bytes": 3940
+    },
+    {
+      "path": "results/validation/h1_confirmation/locked_protocol/h1_locked_confirmation_20260216_020514.md",
+      "sha256": "f6d18fe4ae53efe4140267006e499b9a925ae7cd9baf400440163ee282f24c66",
+      "size_bytes": 1094
     }
   ],
   "archived_artifacts": [
@@ -101,11 +507,29 @@
       "sha256": "fbb550a9b4532dcafbd48ef439681ad3f02ffcf2f388ce42a74ad2ce9c9bd2e1",
       "size_bytes": 92313,
       "invalid_reason": "fallback_or_zero_fit_statistics"
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning/cfg_default/validation_20260216_013012.json",
+      "sha256": "e5b84496918e9ba30925c848fd573b92d707971752473dd8070a057b2f13d289",
+      "size_bytes": 36520,
+      "invalid_reason": "superseded_pyinform_invocation_bug"
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning/cfg_default/validation_20260216_013012.md",
+      "sha256": "d8c73027a6d35c7690169a719fb62a6b971978a4ed74ccc7cd3b1d24f3a79498",
+      "size_bytes": 977,
+      "invalid_reason": "superseded_pyinform_invocation_bug"
+    },
+    {
+      "path": "results/validation/methodology_ab_backend/network_tuning/cfg_default/validation_20260216_013012_hypothesis_report.txt",
+      "sha256": "1e739431a83c6fdccff0e4d6281a5f7ed499043b31f6a56623c5f64439776112",
+      "size_bytes": 1597,
+      "invalid_reason": "superseded_pyinform_invocation_bug"
     }
   ],
   "known_issues": [
-    "Asymmetric GARCH-MIDAS remains an extension path; current canonical pipeline uses GARCH(1,1)-based volatility features.",
-    "Entropy-based connectedness and transfer-entropy mechanisms are currently represented by proxy features in canonical outputs.",
-    "Latest canonical validation supports H2 and H3 but not H1, indicating lead-time sensitivity still needs feature/model refinement."
+    "Locked H1 confirmation protocol V1 outcome is not_confirmed: global criterion failed and only 1/2 required event confirmations was achieved.",
+    "Recent subperiod slices (2020-2022 and post-2023) still have short-window instability, limiting inferential strength.",
+    "pyinform support on Apple Silicon currently depends on a locally built `libinform` binary; packaging this path for reproducible environments is still pending."
   ]
 }

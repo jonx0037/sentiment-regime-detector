@@ -152,6 +152,184 @@ def _warning_day_distribution(
     }
 
 
+def _build_h1_sentiment_series(
+    feature_df: pd.DataFrame,
+    transform: str,
+) -> pd.Series:
+    if "compound" not in feature_df.columns:
+        raise ValueError("feature_matrix.csv must include 'compound' for H1 validation")
+
+    compound = feature_df["compound"].astype(float)
+    returns = feature_df["returns"].astype(float) if "returns" in feature_df.columns else None
+    vix = feature_df["vix"].astype(float) if "vix" in feature_df.columns else None
+
+    if transform == "compound":
+        out = compound.copy()
+    elif transform == "compound_delta_1":
+        out = compound.diff(1)
+    elif transform == "compound_delta_3":
+        out = compound.diff(3)
+    elif transform == "compound_ema_10":
+        out = compound.ewm(span=10, adjust=False).mean()
+    elif transform == "compound_deviation_ema_10":
+        out = compound - compound.ewm(span=10, adjust=False).mean()
+    elif transform == "compound_zscore_63":
+        roll_mean = compound.rolling(63, min_periods=10).mean()
+        roll_std = compound.rolling(63, min_periods=10).std()
+        out = (compound - roll_mean) / (roll_std + 1e-9)
+    elif transform == "compound_x_abs_returns":
+        if returns is None:
+            raise ValueError("H1 transform 'compound_x_abs_returns' requires 'returns' column")
+        out = compound * returns.abs()
+    elif transform == "compound_vol_scaled_delta_1":
+        if vix is None:
+            raise ValueError("H1 transform 'compound_vol_scaled_delta_1' requires 'vix' column")
+        out = compound.diff(1) / (vix.rolling(5, min_periods=2).mean() + 1e-9)
+    else:
+        raise ValueError(f"Unsupported h1 sentiment transform: {transform}")
+
+    return out.replace([np.inf, -np.inf], np.nan).ffill().bfill().fillna(0.0)
+
+
+def _apply_garch_midas_ciss_features(
+    features: pd.DataFrame,
+    ciss_weight: float = 0.5,
+    ciss_transform: str = "raw",
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    out = features.copy()
+    metadata: dict[str, Any] = {"mode": "baseline"}
+    try:
+        from sentiment_detector.models.garch_midas import GARCHMIDASWithCISS
+    except Exception as exc:
+        metadata.update({"mode": "baseline", "error": f"import_failed: {exc}"})
+        return out, metadata
+
+    if "returns" not in out.columns or "compound" not in out.columns:
+        metadata.update({"mode": "baseline", "error": "missing_returns_or_compound"})
+        return out, metadata
+
+    try:
+        model = GARCHMIDASWithCISS(ciss_weight=ciss_weight, distribution="t")
+        result = model.fit_with_ciss(
+            returns=out["returns"].astype(float),
+            sentiment=out["compound"].astype(float),
+            ciss=out["ciss"].astype(float) if "ciss" in out.columns else None,
+            ciss_transform=ciss_transform,
+        )
+
+        out["garch_vol"] = result.conditional_volatility.reindex(out.index).ffill().bfill()
+        out["long_run_vol"] = result.long_run_volatility.reindex(out.index).ffill().bfill()
+        out["garch_midas_short_run_vol"] = result.short_run_volatility.reindex(out.index).ffill().bfill()
+
+        metadata = {
+            "mode": "garch_midas_ciss",
+            "ciss_weight": ciss_weight,
+            "ciss_transform": ciss_transform,
+            "convergence": bool(result.convergence),
+            "aic": float(result.aic) if result.aic is not None and not np.isnan(result.aic) else None,
+            "bic": float(result.bic) if result.bic is not None and not np.isnan(result.bic) else None,
+            "log_likelihood": float(result.log_likelihood)
+            if result.log_likelihood is not None and not np.isnan(result.log_likelihood)
+            else None,
+            "sentiment_coefficient": result.sentiment_coefficient,
+            "ciss_coefficient": getattr(result, "ciss_coefficient", None),
+        }
+        return out, metadata
+    except Exception as exc:
+        metadata = {"mode": "baseline", "error": f"fit_failed: {exc}"}
+        return out, metadata
+
+
+def _apply_full_network_features(
+    features: pd.DataFrame,
+    sent_cols: list[str],
+    window_days: int = 126,
+    step_days: int = 21,
+    te_history_length: int = 3,
+    te_permutations: int = 10,
+    granger_max_lag: int = 3,
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    out = features.copy()
+    metadata: dict[str, Any] = {"mode": "proxy"}
+    if len(sent_cols) < 2:
+        metadata.update({"mode": "proxy", "error": "insufficient_sent_cols"})
+        return out, metadata
+
+    try:
+        from sentiment_detector.features.transfer_entropy import TransferEntropyAnalyzer
+        from sentiment_detector.features.connectedness import ConnectednessAnalyzer
+    except Exception as exc:
+        metadata.update({"mode": "proxy", "error": f"import_failed: {exc}"})
+        return out, metadata
+
+    tci_series = pd.Series(np.nan, index=out.index, dtype=float)
+    te_netflow = pd.Series(np.nan, index=out.index, dtype=float)
+
+    # Prefer equities/crypto pair for directional divergence if available.
+    pair_a = "sent_equities" if "sent_equities" in sent_cols else sent_cols[0]
+    pair_b = "sent_crypto" if "sent_crypto" in sent_cols else sent_cols[1]
+
+    conn = ConnectednessAnalyzer(var_lag=granger_max_lag, forecast_horizon=10, generalized=True)
+    te = TransferEntropyAnalyzer(
+        history_length=te_history_length,
+        n_permutations=te_permutations,
+        significance_level=0.05,
+    )
+
+    n = len(out)
+    anchors = 0
+    for i in range(window_days, n, step_days):
+        window = out[sent_cols].iloc[i - window_days : i].copy()
+        window = window.replace([np.inf, -np.inf], np.nan).dropna()
+        if len(window) < max(50, granger_max_lag * 6):
+            continue
+        date = out.index[i]
+        anchors += 1
+        try:
+            c_res = conn.from_data(window, columns=sent_cols, method="granger")
+            # ConnectednessAnalyzer returns percentage-like values; normalize to 0..1 scale.
+            tci_series.loc[date] = float(c_res.total_connectedness) / 100.0
+        except Exception:
+            pass
+
+        try:
+            te_ab = te.calculate_te(
+                source=window[pair_a].values,
+                target=window[pair_b].values,
+                source_name=pair_a,
+                target_name=pair_b,
+            )
+            te_ba = te.calculate_te(
+                source=window[pair_b].values,
+                target=window[pair_a].values,
+                source_name=pair_b,
+                target_name=pair_a,
+            )
+            te_netflow.loc[date] = float(te_ab.effective_te - te_ba.effective_te)
+        except Exception:
+            pass
+
+    tci_series = tci_series.ffill().bfill().fillna(0.0)
+    te_netflow = te_netflow.ffill().bfill().fillna(0.0)
+
+    out["tci_full_granger"] = tci_series
+    out["te_netflow_full"] = te_netflow
+    # Maintain backward-compatible proxy column name while swapping in full feature.
+    out["te_proxy"] = te_netflow.abs()
+
+    metadata = {
+        "mode": "full_granger_te",
+        "window_days": int(window_days),
+        "step_days": int(step_days),
+        "anchors_computed": int(anchors),
+        "te_history_length": int(te_history_length),
+        "te_permutations": int(te_permutations),
+        "granger_max_lag": int(granger_max_lag),
+        "netflow_pair": [pair_a, pair_b],
+    }
+    return out, metadata
+
+
 def _result_to_dict(obj: Any) -> dict[str, Any]:
     return _json_safe(asdict(obj))
 
@@ -207,6 +385,29 @@ def main() -> int:
         help="Random seed for RandomForest walk-forward model",
     )
     parser.add_argument(
+        "--volatility-feature-mode",
+        choices=["baseline", "garch_midas_ciss"],
+        default="baseline",
+        help="How to construct volatility features before walk-forward modeling",
+    )
+    parser.add_argument("--ciss-weight", type=float, default=0.5)
+    parser.add_argument(
+        "--ciss-transform",
+        choices=["raw", "log", "zscore", "rank"],
+        default="raw",
+    )
+    parser.add_argument(
+        "--network-feature-mode",
+        choices=["proxy", "full_granger_te"],
+        default="proxy",
+        help="Use existing proxy network features or coarse full granger/TE network features",
+    )
+    parser.add_argument("--network-window-days", type=int, default=126)
+    parser.add_argument("--network-step-days", type=int, default=21)
+    parser.add_argument("--network-te-history-length", type=int, default=3)
+    parser.add_argument("--network-te-permutations", type=int, default=10)
+    parser.add_argument("--network-granger-max-lag", type=int, default=3)
+    parser.add_argument(
         "--compound-lag-days",
         type=int,
         default=0,
@@ -223,6 +424,27 @@ def main() -> int:
         default=5,
         help="Lead-window days used for H1 warning distribution analysis",
     )
+    parser.add_argument(
+        "--h1-sentiment-transform",
+        choices=[
+            "compound",
+            "compound_delta_1",
+            "compound_delta_3",
+            "compound_ema_10",
+            "compound_deviation_ema_10",
+            "compound_zscore_63",
+            "compound_x_abs_returns",
+            "compound_vol_scaled_delta_1",
+        ],
+        default="compound",
+        help="Sentiment series transform used for H1 validation only",
+    )
+    parser.add_argument(
+        "--h1-max-lag-days",
+        type=int,
+        default=10,
+        help="Maximum lag tested in H1 lead-lag analysis",
+    )
     args = parser.parse_args()
 
     out_dir = Path(args.output_dir)
@@ -237,6 +459,29 @@ def main() -> int:
     common_idx = feature_df.index.intersection(labels_df.index)
     feature_df = feature_df.loc[common_idx].sort_index()
     regime = labels_df.loc[common_idx, "regime"].astype(str)
+
+    # Optional methodology upgrades before model feature selection.
+    vol_feature_metadata: dict[str, Any] = {"mode": "baseline"}
+    if args.volatility_feature_mode == "garch_midas_ciss":
+        feature_df, vol_feature_metadata = _apply_garch_midas_ciss_features(
+            feature_df,
+            ciss_weight=args.ciss_weight,
+            ciss_transform=args.ciss_transform,
+        )
+
+    sent_cols = [c for c in feature_df.columns if c.startswith("sent_")]
+    network_feature_metadata: dict[str, Any] = {"mode": "proxy"}
+    if args.network_feature_mode == "full_granger_te":
+        feature_df, network_feature_metadata = _apply_full_network_features(
+            feature_df,
+            sent_cols=sent_cols,
+            window_days=args.network_window_days,
+            step_days=args.network_step_days,
+            te_history_length=args.network_te_history_length,
+            te_permutations=args.network_te_permutations,
+            granger_max_lag=args.network_granger_max_lag,
+        )
+        sent_cols = [c for c in feature_df.columns if c.startswith("sent_")]
 
     model_features = feature_df.drop(columns=[c for c in ["regime", "regime_id"] if c in feature_df.columns])
     model_features = _sanitize_features(model_features)
@@ -288,13 +533,17 @@ def main() -> int:
         "confusion_matrix": cm.tolist(),
     }
 
-    sent_cols = [c for c in feature_df.columns if c.startswith("sent_")]
     if not sent_cols:
         raise ValueError("feature_matrix.csv must include sent_* columns for H2 validation")
     if "vix" not in feature_df.columns:
         raise ValueError("feature_matrix.csv must include 'vix' for H1 validation")
+    if "compound" not in feature_df.columns:
+        raise ValueError("feature_matrix.csv must include 'compound' for H1 validation")
 
-    tci_col = "te_proxy" if "te_proxy" in feature_df.columns else "cross_asset_std"
+    if args.network_feature_mode == "full_granger_te" and "tci_full_granger" in feature_df.columns:
+        tci_col = "tci_full_granger"
+    else:
+        tci_col = "te_proxy" if "te_proxy" in feature_df.columns else "cross_asset_std"
     crash_dates = [ev.start_date for ev in KEY_MARKET_EVENTS]
     h1_thresholds = [
         float(x.strip())
@@ -305,12 +554,14 @@ def main() -> int:
         h1_thresholds = [25.0]
     primary_h1_threshold = 25.0 if 25.0 in h1_thresholds else h1_thresholds[0]
 
+    h1_sentiment = _build_h1_sentiment_series(feature_df, args.h1_sentiment_transform)
     hyp_input = feature_df[[c for c in ["compound", "vix", tci_col] + sent_cols if c in feature_df.columns]].copy()
+    hyp_input["h1_sentiment_series"] = h1_sentiment
     hyp_input = _sanitize_features(hyp_input)
 
-    validator = HypothesisValidator(significance_level=0.05, max_lag_days=10)
+    validator = HypothesisValidator(significance_level=0.05, max_lag_days=args.h1_max_lag_days)
     h1_result = validator.validate_h1(
-        sentiment_series=hyp_input["compound"],
+        sentiment_series=hyp_input["h1_sentiment_series"],
         vix_series=hyp_input["vix"],
         regime_series=regime,
         vix_spike_threshold=primary_h1_threshold,
@@ -330,7 +581,7 @@ def main() -> int:
     h1_sensitivity = {}
     for threshold in h1_thresholds:
         h1_thr = validator.validate_h1(
-            sentiment_series=hyp_input["compound"],
+            sentiment_series=hyp_input["h1_sentiment_series"],
             vix_series=hyp_input["vix"],
             regime_series=regime,
             vix_spike_threshold=threshold,
@@ -338,7 +589,7 @@ def main() -> int:
         h1_sensitivity[str(int(threshold) if threshold.is_integer() else threshold)] = {
             "summary": _result_to_dict(h1_thr),
             "warning_day_distribution": _warning_day_distribution(
-                hyp_input["compound"],
+                hyp_input["h1_sentiment_series"],
                 hyp_input["vix"],
                 threshold=threshold,
                 lead_window_days=args.h1_lead_window_days,
@@ -407,9 +658,16 @@ def main() -> int:
             "compound_lag_days": int(args.compound_lag_days),
             "added_compound_lag_features": lag_cols,
             "rf_random_state": int(args.rf_random_state),
+            "volatility_feature_mode": args.volatility_feature_mode,
+            "volatility_feature_metadata": vol_feature_metadata,
+            "network_feature_mode": args.network_feature_mode,
+            "network_feature_metadata": network_feature_metadata,
+            "tci_series_used_for_h3": tci_col,
             "h1_primary_vix_threshold": float(primary_h1_threshold),
             "h1_vix_thresholds_evaluated": h1_thresholds,
             "h1_lead_window_days": int(args.h1_lead_window_days),
+            "h1_sentiment_transform": args.h1_sentiment_transform,
+            "h1_max_lag_days": int(args.h1_max_lag_days),
             "h1_threshold_sensitivity": h1_sensitivity,
         },
         "walk_forward": wf_summary,
@@ -445,8 +703,12 @@ def main() -> int:
         "",
         f"- Added lagged compound features: `{len(lag_cols)}`",
         f"- Random seed: `{args.rf_random_state}`",
+        f"- Volatility feature mode: `{args.volatility_feature_mode}`",
+        f"- Network feature mode: `{args.network_feature_mode}`",
         f"- Primary H1 VIX threshold: `{primary_h1_threshold}`",
         f"- H1 thresholds evaluated: `{', '.join(str(t) for t in h1_thresholds)}`",
+        f"- H1 sentiment transform: `{args.h1_sentiment_transform}`",
+        f"- H1 max lag days: `{args.h1_max_lag_days}`",
         "",
         "## Classification Metrics",
         "",
