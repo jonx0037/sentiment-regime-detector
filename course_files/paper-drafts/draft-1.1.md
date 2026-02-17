@@ -267,7 +267,7 @@ The empirical pipeline uses pre-aggregated daily sentiment inputs and market/str
 
 Feature construction was executed in `scripts/hpc/run_analysis.py`. Sentiment and market series were aligned to a shared trading-day index; missing values were forward-filled where necessary and then stabilized for modeling. The engineered matrix includes sentiment level and polarity fields (`compound`, `positive`, `negative`), dispersion/divergence fields (`cross_asset_std`, `sent_dispersion`, `max_divergence`), market-risk fields (`returns`, `realized_vol`, `vix`, `vix_change`, `ciss`, `ciss_change`), and temporal sentiment dynamics (`sent_momentum`, `sent_acceleration`).
 
-Let \(s_{c,t}\) denote the daily sentiment level for asset class \(c \in \{1,\dots,C\}\) on day \(t\). The aggregate sentiment signal and principal divergence feature are:
+Let $s_{c,t}$ denote the daily sentiment level for asset class $c \in \{1,\dots,C\}$ on day $t$. The aggregate sentiment signal and principal divergence feature are:
 
 $$
 \bar{s}_t = \frac{1}{C}\sum_{c=1}^{C}s_{c,t}, \qquad D_t = \max_c s_{c,t} - \min_c s_{c,t}.
@@ -320,7 +320,7 @@ $$
 \rho_{SV}(k) = \mathrm{Corr}(S_{t-k}, V_t), \qquad \hat{k}=\arg\max_{k \in \{0,\dots,5\}} |\rho_{SV}(k)|
 $$
 
-where \(S_t\) is the sentiment signal and \(V_t\) is the stress reference series.
+where $S_t$ is the sentiment signal and $V_t$ is the stress reference series.
 
 H2 (divergence signal) compared pre-transition versus stable-period divergence and reported t-tests with effect size using:
 
@@ -329,7 +329,7 @@ t = \frac{\bar{D}_{\mathrm{pre}}-\bar{D}_{\mathrm{stable}}}
 {\sqrt{\frac{s^2_{\mathrm{pre}}}{n_{\mathrm{pre}}}+\frac{s^2_{\mathrm{stable}}}{n_{\mathrm{stable}}}}}
 $$
 
-where \(D_t\) is the divergence feature from Section 3.2.
+where $D_t$ is the divergence feature from Section 3.2.
 
 H3 (network effect) tested connectedness separation across regime conditions and reported ANOVA-based evidence under proxy and full-network feature modes:
 
@@ -360,6 +360,7 @@ The implemented system is a production-style research stack spanning data proces
 Modeling and evaluation are implemented in the Python pipeline and validation modules. The feature/regime pipeline is executed through `scripts/hpc/run_analysis.py`, while walk-forward and hypothesis protocols are executed through `scripts/run_canonical_validation.py`, `src/sentiment_detector/validation/walk_forward_backtest.py`, and `src/sentiment_detector/validation/hypothesis_validator.py`. Methodology A/B paths for volatility and network-feature modes are stored under `results/validation/` and manifest-tracked for auditability.
 
 Deployment is handled with Railway (backend) and Vercel (frontend), with repository-driven CI/CD hooks. This architecture was selected to ensure that manuscript claims are directly connected to executable artifacts rather than stand-alone notebook outputs.
+The production frontend dashboard is available at https://sentiment-regime-detector.vercel.app/.
 
 ## 5. Results
  
@@ -372,8 +373,8 @@ Hypothesis-level results are summarized in Table 5.1.
 | Hypothesis | Result | Key Diagnostic Evidence |
 | --- | --- | --- |
 | H1 (Leading Indicator) | Not confirmed | Strongest lead-lag alignment at lag 0; global confirmation criteria for a 1-5 day lead not met |
-| H2 (Divergence Signal) | Supported | Pre-transition divergence > stable divergence (ratio 1.19x; \(t=18.73\), \(p<0.001\), Cohen's \(d=0.58\)) |
-| H3 (Network Effect) | Supported | Stable-regime connectedness > transition connectedness (TCI 0.5402 vs. 0.4569; ANOVA \(F=427.44\), \(p<0.001\)) |
+| H2 (Divergence Signal) | Supported | Pre-transition divergence > stable divergence (ratio 1.19x; $t=18.73$, $p<0.001$, Cohen's $d=0.58$) |
+| H3 (Network Effect) | Supported | Stable-regime connectedness > transition connectedness (TCI 0.5402 vs. 0.4569; ANOVA $F=427.44$, $p<0.001$) |
 
 ### 5.2 Robustness and Sensitivity Synthesis
 
@@ -638,3 +639,9 @@ python scripts/generate_draft11_figures.py
 ```
 
 On Apple Silicon systems, `full_granger_te` execution may require a locally built `libinform` binary for pyinform-backed transfer entropy. When unavailable, the fallback path should be documented explicitly in reproduction notes.
+
+### A.4 Deployment Access Points
+
+| Component | URL | Notes |
+| --- | --- | --- |
+| Frontend dashboard | https://sentiment-regime-detector.vercel.app/ | Public interface used for sentiment/regime monitoring. |

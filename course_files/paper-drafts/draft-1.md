@@ -438,18 +438,6 @@ For each asset class $c$ (Equities, Crypto, Forex, Commodities) and time window 
 
 $$\text{SentimentIndex}_{c,t} = \frac{\sum_{i \in D_{c,t}} (P_i - N_i) \cdot w_i}{\sum_{i \in D_{c,t}} w_i}$$
 
-To keep notation consistent with the implemented pipeline features, let \(s_{c,t}\) denote the daily sentiment level by asset class. The aggregate sentiment and divergence operators are:
-
-$$
-\bar{s}_t = \frac{1}{C}\sum_{c=1}^{C}s_{c,t}, \qquad D_t = \max_c s_{c,t} - \min_c s_{c,t}
-$$
-
-and temporal dynamics are represented as:
-
-$$
-\Delta \bar{s}_t = \bar{s}_t - \bar{s}_{t-1}, \qquad \Delta^2 \bar{s}_t = \Delta \bar{s}_t - \Delta \bar{s}_{t-1}
-$$
-
 Where:
 
 - $D_{c,t}$ = all documents for asset class $c$ in time window $t$
@@ -679,12 +667,6 @@ We define the onset of a regime $k$ as $t_{start}(k)$. The Lead-Time is calculat
 
 $$\Delta_{lead} = t_{start}(VIX_{threshold}) - t_{start}(Model_{pred})$$
 
-The lead-lag cross-correlation diagnostic used for H1 is:
-
-$$
-\rho_{SV}(k) = \mathrm{Corr}(S_{t-k}, V_t), \qquad \hat{k}=\arg\max_{k \in \{0,\dots,5\}} |\rho_{SV}(k)|
-$$
-
 - **$\Delta_{lead} > 0$:** The model provides an early warning (Positive Lead Time).
 - **$\Delta_{lead} \le 0$:** The model is coincident or lagging.
 - **Target:** Based on Bollen et al. (2011) and Trushkovskyi (2025), we aim for a mean $\Delta_{lead} \in [1, 5]$ trading days.
@@ -694,14 +676,6 @@ $$
 - Accuracy, Precision, Recall, F1-score per regime class
 - Confusion matrix analysis
 - Sharpe ratio of regime-based trading strategy
-
-For H2 and H3 hypothesis testing, the corresponding inferential statistics are:
-
-$$
-t = \frac{\bar{D}_{\mathrm{pre}}-\bar{D}_{\mathrm{stable}}}
-{\sqrt{\frac{s^2_{\mathrm{pre}}}{n_{\mathrm{pre}}}+\frac{s^2_{\mathrm{stable}}}{n_{\mathrm{stable}}}}}, \qquad
-F=\frac{MS_{\mathrm{between}}}{MS_{\mathrm{within}}}
-$$
 
 ### 3.9 Dashboard Development
 
@@ -970,8 +944,8 @@ The real-time dashboard deployment ensures accessibility for retail investors, t
 
 **Acknowledgments**
 
-[Advisor name], PhD. - Capstone Advisor
-Jacquelyn Cheun, PhD. – Capstone Professor
+David (King Ip) Lin, PhD. - Capstone Advisor
+Jacquelyn Cheun, PhD. – Capstone Professors
 SMU MANEFRAME team - HPC support
 
 **References**:
