@@ -267,11 +267,34 @@ The empirical pipeline uses pre-aggregated daily sentiment inputs and market/str
 
 Feature construction was executed in `scripts/hpc/run_analysis.py`. Sentiment and market series were aligned to a shared trading-day index; missing values were forward-filled where necessary and then stabilized for modeling. The engineered matrix includes sentiment level and polarity fields (`compound`, `positive`, `negative`), dispersion/divergence fields (`cross_asset_std`, `sent_dispersion`, `max_divergence`), market-risk fields (`returns`, `realized_vol`, `vix`, `vix_change`, `ciss`, `ciss_change`), and temporal sentiment dynamics (`sent_momentum`, `sent_acceleration`).
 
+Let \(s_{c,t}\) denote the daily sentiment level for asset class \(c \in \{1,\dots,C\}\) on day \(t\). The aggregate sentiment signal and principal divergence feature are:
+
+$$
+\bar{s}_t = \frac{1}{C}\sum_{c=1}^{C}s_{c,t}, \qquad D_t = \max_c s_{c,t} - \min_c s_{c,t}.
+$$
+
+Temporal dynamics are represented as first- and second-difference operators:
+
+$$
+\Delta \bar{s}_t = \bar{s}_t - \bar{s}_{t-1}, \qquad \Delta^2 \bar{s}_t = \Delta \bar{s}_t - \Delta \bar{s}_{t-1}
+$$
+
+which correspond to the implemented momentum and acceleration fields.
+
 For connectedness and spillover behavior, the validation framework uses two feature modes. The baseline mode uses proxy-connectedness features, while the upgraded mode (`full_granger_te`) computes rolling Granger- and transfer-entropy-based network features and total connectedness diagnostics. This dual-mode design underpins the methodology A/B comparison in Section 5.
 
 ### 3.3 Two-Layer Regime Modeling
 
 The implemented model is a two-layer pipeline. Layer 1 estimates conditional volatility features using a fitted GARCH(1,1) model with the `arch` backend, and reports the analyses. Layer 2 applies a Statistical Jump Model that segments the multivariate feature path into persistent regime states using dynamic programming with an explicit jump penalty.
+
+The Layer 1 volatility recursion follows the standard form:
+
+$$
+r_t = \mu + \epsilon_t,\quad \epsilon_t = \sigma_t z_t,\quad z_t \sim \mathcal{N}(0,1)
+$$
+$$
+\sigma_t^2 = \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2,\quad \omega>0,\ \alpha,\beta\ge 0,\ \alpha+\beta<1.
+$$
 
 In the jump-model stage, the optimization target is:
 
@@ -291,7 +314,28 @@ Primary model-quality metrics are weighted accuracy, weighted precision/recall/F
 
 Hypothesis diagnostics were implemented in `src/sentiment_detector/validation/hypothesis_validator.py`.
 
-H1 (leading indicator) used lead-lag cross-correlation, Granger causality, and event/spike-oriented warning diagnostics against VIX-based stress reference behavior. H2 (divergence signal) compared pre-transition versus stable-period divergence and reported t-tests with effect size. H3 (network effect) tested connectedness separation across regime conditions and reported ANOVA-based evidence under proxy and full-network feature modes.
+H1 (leading indicator) used lead-lag cross-correlation, Granger causality, and event/spike-oriented warning diagnostics against VIX-based stress reference behavior. The lead-lag diagnostic was computed as
+
+$$
+\rho_{SV}(k) = \mathrm{Corr}(S_{t-k}, V_t), \qquad \hat{k}=\arg\max_{k \in \{0,\dots,5\}} |\rho_{SV}(k)|
+$$
+
+where \(S_t\) is the sentiment signal and \(V_t\) is the stress reference series.
+
+H2 (divergence signal) compared pre-transition versus stable-period divergence and reported t-tests with effect size using:
+
+$$
+t = \frac{\bar{D}_{\mathrm{pre}}-\bar{D}_{\mathrm{stable}}}
+{\sqrt{\frac{s^2_{\mathrm{pre}}}{n_{\mathrm{pre}}}+\frac{s^2_{\mathrm{stable}}}{n_{\mathrm{stable}}}}}
+$$
+
+where \(D_t\) is the divergence feature from Section 3.2.
+
+H3 (network effect) tested connectedness separation across regime conditions and reported ANOVA-based evidence under proxy and full-network feature modes:
+
+$$
+F=\frac{MS_{\mathrm{between}}}{MS_{\mathrm{within}}}.
+$$
 
 The locked confirmation framework for H1 was executed via `scripts/run_h1_locked_confirmation.py` and documented in the protocol artifacts in `docs/H1_LOCKED_CONFIRMATION_PROTOCOL*.md`.
 
