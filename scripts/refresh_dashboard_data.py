@@ -405,7 +405,7 @@ def update_ciss(conn, from_date: str):
                     str(uuid.uuid4()),
                     "ecb_ciss",
                     day,
-                    "EU",
+                    "ea",
                     ciss_val,
                     now,
                     now,
@@ -512,10 +512,22 @@ def main():
 
     # ── Step 5: Update market indicators ──────────────────────────────
     print(f"\n📉 Step 5: Updating VIX...")
-    update_vix(conn, from_date)
+    cur_vix = conn.cursor()
+    cur_vix.execute("SELECT MAX(date)::date FROM market_data WHERE symbol = '^VIX'")
+    vix_latest = cur_vix.fetchone()[0]
+    vix_from = (vix_latest + timedelta(days=1)).strftime("%Y-%m-%d") if vix_latest else "2024-01-01"
+    cur_vix.close()
+    print(f"  VIX: filling from {vix_from}")
+    update_vix(conn, vix_from)
 
     print(f"\n🏛️  Step 6: Updating CISS...")
-    update_ciss(conn, from_date)
+    cur_ciss = conn.cursor()
+    cur_ciss.execute("SELECT MAX(date)::date FROM stress_indices WHERE source = 'ecb_ciss'")
+    ciss_latest = cur_ciss.fetchone()[0]
+    ciss_from = (ciss_latest + timedelta(days=1)).strftime("%Y-%m-%d") if ciss_latest else "2024-01-01"
+    cur_ciss.close()
+    print(f"  CISS: filling from {ciss_from}")
+    update_ciss(conn, ciss_from)
 
     # ── Step 7: Verify ────────────────────────────────────────────────
     conn.rollback()  # Clear any failed transaction state before verify
