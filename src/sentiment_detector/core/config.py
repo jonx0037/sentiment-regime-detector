@@ -60,6 +60,7 @@ class Settings(BaseSettings):
     coinapi_key_2: str = Field(default="", description="CoinAPI key 2")
     coinapi_key_3: str = Field(default="", description="CoinAPI key 3")
     alpha_vantage_api_key: str = Field(default="", description="Alpha Vantage API key")
+    anthropic_api_key: str = Field(default="", description="Anthropic API key for chatbot")
 
     # -------------------------------------------------------------------------
     # Model Configuration
