@@ -22,6 +22,7 @@ import HelpModal from '@/components/HelpModal'
 import ExportMenu from '@/components/ExportMenu'
 import { ToastContainer, useToast } from '@/components/Toast'
 import { RefreshCw, HelpCircle } from 'lucide-react'
+import { ChatbotWidget } from '@/components/chatbot'
 
 export default function Dashboard() {
   const [data, setData] = useState<SentimentResponse | null>(null)
@@ -461,6 +462,7 @@ export default function Dashboard() {
         </main>
       </div>
       <ToastContainer toasts={toasts} onRemove={removeToast} />
+      <ChatbotWidget />
     </ErrorBoundary>
   )
 }

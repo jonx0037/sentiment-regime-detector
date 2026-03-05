@@ -11,6 +11,11 @@ import type {
   CrisisEvent,
   EventDetailResponse,
 } from '@/types/explainability'
+import type {
+  ChatQueryRequest,
+  ChatQueryResponse,
+  ChatContextResponse,
+} from '@/types/chatbot'
 
 // In production (no env var set), use relative URLs to leverage Vercel proxy
 // In development, use localhost or custom NEXT_PUBLIC_API_URL
@@ -164,5 +169,18 @@ export const explainabilityApi = {
    */
   async getEventExplanation(eventId: string): Promise<EventDetailResponse> {
     return fetchApi<EventDetailResponse>(`/explainability/events/${eventId}`)
+  },
+}
+
+export const chatbotApi = {
+  async query(request: ChatQueryRequest): Promise<ChatQueryResponse> {
+    return fetchApi<ChatQueryResponse>('/chatbot/query', {
+      method: 'POST',
+      body: JSON.stringify(request),
+    })
+  },
+
+  async getContext(): Promise<ChatContextResponse> {
+    return fetchApi<ChatContextResponse>('/chatbot/context')
   },
 }
