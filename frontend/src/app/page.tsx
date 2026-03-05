@@ -22,6 +22,7 @@ import HelpModal from '@/components/HelpModal'
 import ExportMenu from '@/components/ExportMenu'
 import { ToastContainer, useToast } from '@/components/Toast'
 import { RefreshCw, HelpCircle } from 'lucide-react'
+import { ChatbotWidget } from '@/components/chatbot'
 
 export default function Dashboard() {
   const [data, setData] = useState<SentimentResponse | null>(null)
@@ -216,7 +217,12 @@ export default function Dashboard() {
   const health = healthMap[effectiveHealthStatus]
 
   if (loading && !data) {
-    return <LoadingSkeleton variant="page" message="Loading dashboard..." />
+    return (
+      <>
+        <LoadingSkeleton variant="page" message="Loading dashboard..." />
+        <ChatbotWidget />
+      </>
+    )
   }
 
   if (error) {
@@ -227,6 +233,7 @@ export default function Dashboard() {
           onRetry={() => fetchAllData({ manual: true })}
           variant="full"
         />
+        <ChatbotWidget />
       </div>
     )
   }
@@ -244,6 +251,7 @@ export default function Dashboard() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <NoSentimentData onRefresh={() => fetchAllData({ manual: true })} />
         </main>
+        <ChatbotWidget />
       </div>
     )
   }
@@ -461,6 +469,7 @@ export default function Dashboard() {
         </main>
       </div>
       <ToastContainer toasts={toasts} onRemove={removeToast} />
+      <ChatbotWidget />
     </ErrorBoundary>
   )
 }

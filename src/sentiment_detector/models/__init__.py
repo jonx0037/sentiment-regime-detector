@@ -6,6 +6,7 @@ from sentiment_detector.models.sentiment import SentimentScore, SentimentIndex
 from sentiment_detector.models.regime import RegimeState, RegimeTransition
 from sentiment_detector.models.stress_index import StressIndex
 from sentiment_detector.models.market_data import MarketData
+from sentiment_detector.models.document_chunk import DocumentChunk
 
 # ML Models
 from sentiment_detector.models.garch_midas import (
@@ -32,6 +33,7 @@ __all__ = [
     "RegimeTransition",
     "StressIndex",
     "MarketData",
+    "DocumentChunk",
     # ML Models - GARCH-MIDAS
     "GARCHMIDASModel",
     "GARCHMIDASResult",

@@ -3,23 +3,16 @@ import type {
   SentimentHistoryResponse,
   RegimeResponse,
   AssetClass,
-  GARCHParametersResponse,
-  GARCHForecastResponse,
 } from '@/types/api'
 import type {
   ExplanationResponse,
   CrisisEvent,
   EventDetailResponse,
 } from '@/types/explainability'
-import type {
-  ChatQueryRequest,
-  ChatQueryResponse,
-  ChatContextResponse,
-} from '@/types/chatbot'
 
 // In production (no env var set), use relative URLs to leverage Vercel proxy
 // In development, use localhost or custom NEXT_PUBLIC_API_URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ||
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ||
   (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
     ? '/api/v1'
     : 'http://localhost:8000/api/v1')
@@ -125,18 +118,12 @@ export const regimeApi = {
 }
 
 export const garchApi = {
-  /**
-   * Get GARCH model parameters and diagnostics
-   */
-  async getParameters(): Promise<GARCHParametersResponse> {
-    return fetchApi<GARCHParametersResponse>('/garch/parameters')
+  async getParameters(): Promise<any> {
+    return fetchApi('/garch/parameters')
   },
 
-  /**
-   * Get volatility forecast for the next N days
-   */
-  async getVolatilityForecast(horizon: number = 30): Promise<GARCHForecastResponse> {
-    return fetchApi<GARCHForecastResponse>(`/garch/volatility/forecast?horizon=${horizon}`)
+  async getVolatilityForecast(horizon = 30): Promise<any> {
+    return fetchApi(`/garch/volatility/forecast?horizon=${horizon}`)
   },
 }
 
@@ -169,18 +156,5 @@ export const explainabilityApi = {
    */
   async getEventExplanation(eventId: string): Promise<EventDetailResponse> {
     return fetchApi<EventDetailResponse>(`/explainability/events/${eventId}`)
-  },
-}
-
-export const chatbotApi = {
-  async query(request: ChatQueryRequest): Promise<ChatQueryResponse> {
-    return fetchApi<ChatQueryResponse>('/chatbot/query', {
-      method: 'POST',
-      body: JSON.stringify(request),
-    })
-  },
-
-  async getContext(): Promise<ChatContextResponse> {
-    return fetchApi<ChatContextResponse>('/chatbot/context')
   },
 }
