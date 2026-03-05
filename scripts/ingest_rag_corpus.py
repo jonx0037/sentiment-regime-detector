@@ -118,11 +118,12 @@ async def ingest(project_root: Path) -> None:
             batch_embeddings = embeddings[i:i + batch_size]
 
             for chunk, emb in zip(batch, batch_embeddings):
-                emb_str = "[" + ",".join(str(float(x)) for x in emb) + "]"
+                # PostgreSQL array literal format: {1.0,2.0,3.0}
+                emb_str = "{" + ",".join(str(float(x)) for x in emb) + "}"
                 await session.execute(
                     text("""
                         INSERT INTO document_chunks (source, chunk_text, metadata, embedding, created_at, updated_at)
-                        VALUES (:source, :chunk_text, :metadata::jsonb, :embedding::vector, now(), now())
+                        VALUES (:source, :chunk_text, :metadata::jsonb, :embedding::float8[], now(), now())
                     """),
                     {
                         "source": chunk["source"],

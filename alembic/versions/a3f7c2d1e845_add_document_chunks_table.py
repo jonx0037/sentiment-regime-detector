@@ -19,10 +19,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # Enable pgvector extension
-    op.execute("CREATE EXTENSION IF NOT EXISTS vector")
-
-    # Create base table
+    # Create base table with float8[] embedding column
+    # (uses native PostgreSQL arrays instead of pgvector for Railway compatibility)
     op.create_table('document_chunks',
         sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
         sa.Column('source', sa.String(), nullable=False, comment='Source file path'),
@@ -33,15 +31,23 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('id')
     )
 
-    # Add vector column (pgvector — not supported by SQLAlchemy autogenerate)
-    op.execute("ALTER TABLE document_chunks ADD COLUMN embedding vector(384) NOT NULL")
+    # Add embedding column as float8 array (384 dimensions for all-MiniLM-L6-v2)
+    op.execute("ALTER TABLE document_chunks ADD COLUMN embedding float8[] NOT NULL")
 
-    # Create HNSW index for cosine similarity search
+    # Create cosine similarity function for vector search
     op.execute("""
-        CREATE INDEX document_chunks_embedding_idx
-        ON document_chunks USING hnsw (embedding vector_cosine_ops)
+        CREATE OR REPLACE FUNCTION cosine_similarity(a float8[], b float8[])
+        RETURNS float8 AS $$
+            SELECT COALESCE(
+                SUM(a_val * b_val) / NULLIF(
+                    SQRT(SUM(a_val * a_val)) * SQRT(SUM(b_val * b_val)), 0
+                ), 0
+            )
+            FROM UNNEST(a, b) AS t(a_val, b_val);
+        $$ LANGUAGE sql IMMUTABLE
     """)
 
 
 def downgrade() -> None:
     op.drop_table('document_chunks')
+    op.execute("DROP FUNCTION IF EXISTS cosine_similarity(float8[], float8[])")
