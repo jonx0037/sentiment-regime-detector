@@ -19,8 +19,8 @@ COHERE_EMBED_URL = "https://api.cohere.com/v2/embed"
 COHERE_EMBED_MODEL = "embed-english-v3.0"
 
 
-async def _embed_query(query: str) -> str:
-    """Embed a query string using Cohere API. Returns PostgreSQL array literal."""
+async def _embed_query(query: str) -> list[float]:
+    """Embed a query string using Cohere API. Returns embedding as list of floats."""
     async with httpx.AsyncClient(timeout=30) as client:
         resp = await client.post(
             COHERE_EMBED_URL,
@@ -37,7 +37,7 @@ async def _embed_query(query: str) -> str:
         )
         resp.raise_for_status()
         embedding = resp.json()["embeddings"]["float"][0]
-    return "{" + ",".join(str(float(x)) for x in embedding) + "}"
+    return [float(x) for x in embedding]
 
 
 async def retrieve_chunks(session: AsyncSession, query: str, top_k: int = 5) -> list[dict]:
