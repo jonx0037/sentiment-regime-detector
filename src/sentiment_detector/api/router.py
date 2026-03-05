@@ -9,6 +9,7 @@ from sentiment_detector.api.routes.alerts import router as alerts_router
 from sentiment_detector.api.routes.garch import router as garch_router
 from sentiment_detector.api.routes.explainability import router as explainability_router
 from sentiment_detector.api.routes.cron import router as cron_router
+from sentiment_detector.api.routes.chatbot import router as chatbot_router
 
 # Main API router
 api_router = APIRouter()
@@ -21,3 +22,4 @@ api_router.include_router(alerts_router, prefix="/alerts", tags=["Alerts"])
 api_router.include_router(garch_router, prefix="/garch", tags=["GARCH"])
 api_router.include_router(explainability_router, prefix="/explainability", tags=["Explainability"])
 api_router.include_router(cron_router, prefix="/cron", tags=["Cron"])
+api_router.include_router(chatbot_router, prefix="/chatbot", tags=["Chatbot"])
