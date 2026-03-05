@@ -46,9 +46,10 @@ async def retrieve_chunks(session: AsyncSession, query: str, top_k: int = 5) -> 
 
     result = await session.execute(
         text("""
-            SELECT source, chunk_text, cosine_similarity(embedding, :emb::float8[]) AS similarity
+            SELECT source, chunk_text,
+                   cosine_similarity(embedding, CAST(:emb AS float8[])) AS similarity
             FROM document_chunks
-            ORDER BY cosine_similarity(embedding, :emb::float8[]) DESC
+            ORDER BY cosine_similarity(embedding, CAST(:emb AS float8[])) DESC
             LIMIT :top_k
         """),
         {"emb": emb_str, "top_k": top_k},
