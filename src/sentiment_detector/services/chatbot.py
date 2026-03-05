@@ -62,48 +62,62 @@ async def fetch_live_context(session: AsyncSession) -> dict:
     if "ctx" in _context_cache:
         return _context_cache["ctx"]
 
-    # Current regime
-    regime_row = await session.execute(text("""
-        SELECT regime_label, confidence
-        FROM regime_states
-        ORDER BY detected_at DESC
-        LIMIT 1
-    """))
-    regime = regime_row.fetchone()
+    regime = None
+    sentiments: dict = {}
+    stress = None
+    transitions: list = []
 
-    # Latest sentiment indices by asset class
-    sent_rows = await session.execute(text("""
-        SELECT DISTINCT ON (asset_class)
-            asset_class, mean_compound
-        FROM sentiment_indices
-        WHERE source IS NULL
-        ORDER BY asset_class, period_start DESC
-    """))
-    sentiments = {r[0]: round(float(r[1]), 4) for r in sent_rows.fetchall()}
+    try:
+        regime_row = await session.execute(text("""
+            SELECT regime, confidence
+            FROM regime_states
+            ORDER BY timestamp DESC
+            LIMIT 1
+        """))
+        regime = regime_row.fetchone()
+    except Exception as e:
+        logger.warning("Failed to fetch regime state", error=str(e))
 
-    # Stress level
-    stress_row = await session.execute(text("""
-        SELECT composite_score FROM stress_index
-        ORDER BY as_of_date DESC LIMIT 1
-    """))
-    stress = stress_row.fetchone()
+    try:
+        sent_rows = await session.execute(text("""
+            SELECT DISTINCT ON (asset_class)
+                asset_class, mean_compound
+            FROM sentiment_indices
+            WHERE source IS NULL
+            ORDER BY asset_class, period_start DESC
+        """))
+        sentiments = {r[0]: round(float(r[1]), 4) for r in sent_rows.fetchall()}
+    except Exception as e:
+        logger.warning("Failed to fetch sentiment indices", error=str(e))
 
-    # Recent regime transitions
-    trans_rows = await session.execute(text("""
-        SELECT from_regime, to_regime, transition_date, trigger_description
-        FROM regime_transitions
-        ORDER BY transition_date DESC
-        LIMIT 5
-    """))
-    transitions = [
-        {
-            "from": r[0],
-            "to": r[1],
-            "date": str(r[2]),
-            "trigger": r[3],
-        }
-        for r in trans_rows.fetchall()
-    ]
+    try:
+        stress_row = await session.execute(text("""
+            SELECT value FROM stress_indices
+            WHERE source = 'CISS'
+            ORDER BY date DESC LIMIT 1
+        """))
+        stress = stress_row.fetchone()
+    except Exception as e:
+        logger.warning("Failed to fetch stress index", error=str(e))
+
+    try:
+        trans_rows = await session.execute(text("""
+            SELECT from_regime, to_regime, transition_start, trigger_features
+            FROM regime_transitions
+            ORDER BY transition_start DESC
+            LIMIT 5
+        """))
+        transitions = [
+            {
+                "from": r[0],
+                "to": r[1],
+                "date": str(r[2]),
+                "trigger": r[3].get("description", "N/A") if isinstance(r[3], dict) else "N/A",
+            }
+            for r in trans_rows.fetchall()
+        ]
+    except Exception as e:
+        logger.warning("Failed to fetch regime transitions", error=str(e))
 
     ctx = {
         "current_regime": regime[0] if regime else None,
@@ -113,7 +127,6 @@ async def fetch_live_context(session: AsyncSession) -> dict:
         "recent_transitions": transitions,
     }
 
-    # Build human-readable summary
     regime_label = ctx["current_regime"] or "unknown"
     sent_summary = ", ".join(f"{k}: {v}" for k, v in sentiments.items()) or "no data"
     stress_str = f"{ctx['stress_level']}" if ctx["stress_level"] else "N/A"
