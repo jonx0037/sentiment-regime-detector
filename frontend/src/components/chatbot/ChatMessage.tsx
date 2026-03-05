@@ -18,7 +18,7 @@ export default function ChatMessage({ message }: Props) {
           <span className="text-white text-xs font-medium">You</span>
         </div>
       ) : (
-        <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gray-700">
+        <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gray-200 dark:bg-gray-700">
           <Image
             src="/jon-avatar.png"
             alt="Jon"
@@ -34,7 +34,7 @@ export default function ChatMessage({ message }: Props) {
         className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
           isUser
             ? 'bg-blue-600 text-white rounded-br-md'
-            : 'bg-gray-700 text-gray-100 rounded-bl-md'
+            : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-md'
         }`}
       >
         {message.content.split('\n').map((line, i) => (
