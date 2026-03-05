@@ -118,28 +118,28 @@ export default function ErrorMessage({
 
   const colorClasses = {
     red: {
-      bg: 'bg-red-50',
-      border: 'border-red-200',
-      iconBg: 'bg-red-100',
-      iconColor: 'text-red-600',
-      titleColor: 'text-red-900',
-      textColor: 'text-red-800',
+      bg: 'bg-red-50 dark:bg-red-950',
+      border: 'border-red-200 dark:border-red-800',
+      iconBg: 'bg-red-100 dark:bg-red-800',
+      iconColor: 'text-red-600 dark:text-red-400',
+      titleColor: 'text-red-900 dark:text-red-100',
+      textColor: 'text-red-800 dark:text-red-200',
     },
     amber: {
-      bg: 'bg-amber-50',
-      border: 'border-amber-200',
-      iconBg: 'bg-amber-100',
-      iconColor: 'text-amber-600',
-      titleColor: 'text-amber-900',
-      textColor: 'text-amber-800',
+      bg: 'bg-amber-50 dark:bg-amber-950',
+      border: 'border-amber-200 dark:border-amber-800',
+      iconBg: 'bg-amber-100 dark:bg-amber-800',
+      iconColor: 'text-amber-600 dark:text-amber-400',
+      titleColor: 'text-amber-900 dark:text-amber-100',
+      textColor: 'text-amber-800 dark:text-amber-200',
     },
     blue: {
-      bg: 'bg-blue-50',
-      border: 'border-blue-200',
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
-      titleColor: 'text-blue-900',
-      textColor: 'text-blue-800',
+      bg: 'bg-blue-50 dark:bg-blue-950',
+      border: 'border-blue-200 dark:border-blue-800',
+      iconBg: 'bg-blue-100 dark:bg-blue-800',
+      iconColor: 'text-blue-600 dark:text-blue-400',
+      titleColor: 'text-blue-900 dark:text-blue-100',
+      textColor: 'text-blue-800 dark:text-blue-200',
     },
   }
 
@@ -222,7 +222,7 @@ export default function ErrorMessage({
 
   // Card variant (default)
   return (
-    <div className={`bg-white rounded-xl shadow-sm border ${colors.border} p-6 ${className}`}>
+    <div className={`bg-white dark:bg-gray-900 rounded-xl shadow-sm border ${colors.border} p-6 ${className}`}>
       <div className="flex items-start gap-4">
         <div className={`${colors.iconBg} p-3 rounded-lg flex-shrink-0`}>
           <div className={colors.iconColor}>

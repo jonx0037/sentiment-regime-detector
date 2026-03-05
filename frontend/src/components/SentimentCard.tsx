@@ -65,7 +65,7 @@ export default function SentimentCard({ sentiment, latestDataDate }: SentimentCa
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <span className="text-2xl">{emoji}</span>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             {formatAssetClass(asset_class)}
           </h3>
         </div>
@@ -90,45 +90,45 @@ export default function SentimentCard({ sentiment, latestDataDate }: SentimentCa
       {/* Sentiment Breakdown */}
       <div className="space-y-2 mb-4">
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-600">Positive</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400">Positive</span>
           <div className="flex items-center gap-2">
-            <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-20 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-bullish"
                 style={{ width: `${positive_ratio * 100}%` }}
               />
             </div>
-            <span className="text-sm font-medium text-gray-900 w-12 text-right">
+            <span className="text-sm font-medium text-gray-900 dark:text-white w-12 text-right">
               {formatPercent(positive_ratio)}
             </span>
           </div>
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-600">Negative</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400">Negative</span>
           <div className="flex items-center gap-2">
-            <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-20 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-bearish"
                 style={{ width: `${negative_ratio * 100}%` }}
               />
             </div>
-            <span className="text-sm font-medium text-gray-900 w-12 text-right">
+            <span className="text-sm font-medium text-gray-900 dark:text-white w-12 text-right">
               {formatPercent(negative_ratio)}
             </span>
           </div>
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-600">Neutral</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400">Neutral</span>
           <div className="flex items-center gap-2">
-            <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-20 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-neutral"
                 style={{ width: `${neutral_ratio * 100}%` }}
               />
             </div>
-            <span className="text-sm font-medium text-gray-900 w-12 text-right">
+            <span className="text-sm font-medium text-gray-900 dark:text-white w-12 text-right">
               {formatPercent(neutral_ratio)}
             </span>
           </div>
@@ -136,18 +136,18 @@ export default function SentimentCard({ sentiment, latestDataDate }: SentimentCa
       </div>
 
       {/* Volume & Data Freshness */}
-      <div className="pt-4 border-t border-gray-200">
+      <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500 flex items-center gap-1">
+          <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
             7-Day Volume
             <Tooltip content={`Total texts scored in the last 7 daily aggregation periods for ${formatAssetClass(asset_class)}. Sources include financial news (Finnhub, NewsAPI) and social data (Reddit).`} />
           </span>
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
             {formatNumber(sample_count)} texts
           </span>
         </div>
         {latestDataDate && (
-          <div className="mt-2 text-xs text-gray-400 text-right">
+          <div className="mt-2 text-xs text-gray-400 dark:text-gray-400 text-right">
             Data as of {new Date(latestDataDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </div>
         )}

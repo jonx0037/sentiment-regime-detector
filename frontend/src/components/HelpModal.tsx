@@ -23,7 +23,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
 
       {/* Modal */}
       <div className="relative min-h-screen flex items-center justify-center p-2 sm:p-4">
-        <div className="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
+        <div className="relative bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl shadow-2xl dark:shadow-gray-900/50 max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -40,14 +40,14 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
           </div>
 
           {/* Tabs */}
-          <div className="border-b border-gray-200 bg-gray-50 px-3 sm:px-6 overflow-x-auto">
+          <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-950 px-3 sm:px-6 overflow-x-auto">
             <nav className="flex gap-3 sm:gap-6 min-w-max" aria-label="Help sections">
               <button
                 type="button"
                 onClick={() => setActiveTab('overview')}
                 className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${activeTab === 'overview'
                   ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                   }`}
               >
                 <BookOpen className="w-4 h-4 inline mr-2" />
@@ -58,7 +58,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 onClick={() => setActiveTab('terms')}
                 className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${activeTab === 'terms'
                   ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                   }`}
               >
                 <Activity className="w-4 h-4 inline mr-2" />
@@ -69,7 +69,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 onClick={() => setActiveTab('interpret')}
                 className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${activeTab === 'interpret'
                   ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                   }`}
               >
                 <BarChart3 className="w-4 h-4 inline mr-2" />
@@ -80,7 +80,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 onClick={() => setActiveTab('faq')}
                 className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors ${activeTab === 'faq'
                   ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                   }`}
               >
                 <TrendingUp className="w-4 h-4 inline mr-2" />
@@ -94,8 +94,8 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">What This Dashboard Does</h3>
-                  <p className="text-gray-700 leading-relaxed">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">What This Dashboard Does</h3>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                     The Sentiment Regime Detector analyzes cross-asset market sentiment in real-time to identify
                     market regimes (Risk-On, Risk-Off, or Transition). It combines sentiment analysis from ~33M texts,
                     systemic stress indicators, and volatility modeling to provide comprehensive market insights.
@@ -103,39 +103,39 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <h4 className="font-semibold text-blue-900 mb-2">🎯 Sentiment Analysis</h4>
-                    <p className="text-sm text-blue-800">
+                  <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">🎯 Sentiment Analysis</h4>
+                    <p className="text-sm text-blue-800 dark:text-blue-300">
                       Uses a 6-model ensemble (FinBERT, RoBERTa, VADER, TextBlob, DistilBERT, Llama 3) to analyze sentiment across equity, crypto, forex, and commodity markets.
                       Scores from -1 (bearish) to +1 (bullish).
                     </p>
                   </div>
-                  <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                    <h4 className="font-semibold text-purple-900 mb-2">🔮 Regime Detection</h4>
-                    <p className="text-sm text-purple-800">
+                  <div className="p-4 bg-purple-50 dark:bg-purple-950 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <h4 className="font-semibold text-purple-900 dark:text-purple-300 mb-2">🔮 Regime Detection</h4>
+                    <p className="text-sm text-purple-800 dark:text-purple-300">
                       Statistical Jump Model classifies Risk-On, Risk-Off, and Transition regimes using
                       sentiment, CISS, and VIX features with jump-penalty regularization.
                     </p>
                   </div>
-                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                    <h4 className="font-semibold text-green-900 mb-2">📊 Volatility Modeling</h4>
-                    <p className="text-sm text-green-800">
+                  <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+                    <h4 className="font-semibold text-green-900 dark:text-green-300 mb-2">📊 Volatility Modeling</h4>
+                    <p className="text-sm text-green-800 dark:text-green-300">
                       GARCH(1,1) models forecast market volatility with high persistence (α+β=0.955),
                       combining recent shocks with historical patterns.
                     </p>
                   </div>
-                  <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-                    <h4 className="font-semibold text-amber-900 mb-2">🌐 Systemic Stress</h4>
-                    <p className="text-sm text-amber-800">
+                  <div className="p-4 bg-amber-50 dark:bg-amber-950 rounded-lg border border-amber-200 dark:border-amber-800">
+                    <h4 className="font-semibold text-amber-900 dark:text-amber-300 mb-2">🌐 Systemic Stress</h4>
+                    <p className="text-sm text-amber-800 dark:text-amber-300">
                       Tracks ECB CISS and CBOE VIX to measure financial system stress and market fear levels
                       in real-time.
                     </p>
                   </div>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <h4 className="font-semibold text-gray-900 mb-2">🔄 Auto-Refresh</h4>
-                  <p className="text-sm text-gray-700">
+                <div className="p-4 bg-gray-50 dark:bg-gray-950 rounded-lg border border-gray-200 dark:border-gray-700">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2">🔄 Auto-Refresh</h4>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
                     Data refreshes automatically every 60 seconds, including regime classification updates.
                     You can also manually refresh using the button in the header.
                   </p>
@@ -145,7 +145,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
 
             {activeTab === 'terms' && (
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Glossary of Technical Terms</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Glossary of Technical Terms</h3>
 
                 <div className="space-y-3">
                   <TermDefinition
@@ -198,7 +198,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
 
             {activeTab === 'interpret' && (
               <div className="space-y-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">How to Interpret the Dashboard</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">How to Interpret the Dashboard</h3>
 
                 <div className="space-y-4">
                   <InterpretSection
@@ -242,9 +242,9 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
                   />
                 </div>
 
-                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <h4 className="font-semibold text-yellow-900 mb-2">⚡ Key Insight</h4>
-                  <p className="text-sm text-yellow-800">
+                <div className="p-4 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                  <h4 className="font-semibold text-yellow-900 dark:text-yellow-300 mb-2">⚡ Key Insight</h4>
+                  <p className="text-sm text-yellow-800 dark:text-yellow-300">
                     The most reliable signals occur when <strong>all indicators align</strong>: sentiment, regime
                     classification, CISS/VIX levels, and volatility forecasts all pointing in the same direction.
                     Divergences signal uncertainty or transition periods.
@@ -255,7 +255,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
 
             {activeTab === 'faq' && (
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Frequently Asked Questions</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Frequently Asked Questions</h3>
 
                 <FAQItem
                   question="How often is the data updated?"
@@ -294,8 +294,8 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
           </div>
 
           {/* Footer */}
-          <div className="border-t border-gray-200 px-4 sm:px-6 py-3 sm:py-4 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <p className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
+          <div className="border-t border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4 bg-gray-50 dark:bg-gray-950 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
               SMU DS-6210 Capstone Project • Built with Next.js, FastAPI, and 6-Model Ensemble
             </p>
             <button
@@ -315,20 +315,20 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
 // Helper components
 function TermDefinition({ term, definition }: { term: string; definition: string }) {
   return (
-    <div className="p-3 bg-white border border-gray-200 rounded-lg">
-      <h4 className="font-semibold text-gray-900 text-sm mb-1">{term}</h4>
-      <p className="text-sm text-gray-600">{definition}</p>
+    <div className="p-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
+      <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">{term}</h4>
+      <p className="text-sm text-gray-600 dark:text-gray-400">{definition}</p>
     </div>
   )
 }
 
 function InterpretSection({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="p-4 bg-white border border-gray-200 rounded-lg">
-      <h4 className="font-semibold text-gray-900 mb-2">{title}</h4>
+    <div className="p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
+      <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{title}</h4>
       <ul className="space-y-2">
         {items.map((item, idx) => (
-          <li key={idx} className="text-sm text-gray-700 flex items-start">
+          <li key={idx} className="text-sm text-gray-700 dark:text-gray-300 flex items-start">
             <span className="text-blue-600 mr-2">•</span>
             <span>{item}</span>
           </li>
@@ -340,9 +340,9 @@ function InterpretSection({ title, items }: { title: string; items: string[] }) 
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   return (
-    <div className="p-4 bg-white border border-gray-200 rounded-lg">
-      <h4 className="font-semibold text-gray-900 mb-2">{question}</h4>
-      <p className="text-sm text-gray-700">{answer}</p>
+    <div className="p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
+      <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{question}</h4>
+      <p className="text-sm text-gray-700 dark:text-gray-300">{answer}</p>
     </div>
   )
 }

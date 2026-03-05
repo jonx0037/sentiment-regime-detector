@@ -135,8 +135,8 @@ export default function ExportMenu({
         disabled={isExporting}
         className="
           flex items-center gap-2 px-4 py-2
-          bg-white border border-gray-300 rounded-lg
-          hover:bg-gray-50 hover:border-gray-400
+          bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg
+          hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500
           disabled:opacity-50 disabled:cursor-not-allowed
           transition-colors
         "
@@ -157,15 +157,15 @@ export default function ExportMenu({
         <div
           className="
             absolute right-0 mt-2 w-64
-            bg-white border border-gray-200 rounded-lg shadow-lg
+            bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg dark:shadow-gray-900/50
             z-10
             animate-in fade-in slide-in-from-top-2 duration-200
           "
           role="menu"
         >
           {/* Charts Section */}
-          <div className="p-2 border-b border-gray-100">
-            <div className="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+          <div className="p-2 border-b border-gray-100 dark:border-gray-800">
+            <div className="px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
               Charts
             </div>
             <button
@@ -179,7 +179,7 @@ export default function ExportMenu({
               className="menu-item"
               role="menuitem"
             >
-              <FileImage className="w-4 h-4 text-gray-600" />
+              <FileImage className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               <span>Export All Charts (PNG)</span>
             </button>
             <button
@@ -193,14 +193,14 @@ export default function ExportMenu({
               className="menu-item"
               role="menuitem"
             >
-              <FileImage className="w-4 h-4 text-gray-600" />
+              <FileImage className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               <span>Export All Charts (SVG)</span>
             </button>
           </div>
 
           {/* Data Section */}
-          <div className="p-2 border-b border-gray-100">
-            <div className="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+          <div className="p-2 border-b border-gray-100 dark:border-gray-800">
+            <div className="px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
               Data
             </div>
             <button
@@ -214,7 +214,7 @@ export default function ExportMenu({
               className="menu-item"
               role="menuitem"
             >
-              <FileText className="w-4 h-4 text-gray-600" />
+              <FileText className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               <span>Sentiment Data (CSV)</span>
             </button>
             <button
@@ -228,7 +228,7 @@ export default function ExportMenu({
               className="menu-item"
               role="menuitem"
             >
-              <FileText className="w-4 h-4 text-gray-600" />
+              <FileText className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               <span>Regime Data (CSV)</span>
             </button>
             <button
@@ -242,7 +242,7 @@ export default function ExportMenu({
               className="menu-item"
               role="menuitem"
             >
-              <FileText className="w-4 h-4 text-gray-600" />
+              <FileText className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               <span>GARCH Results (CSV)</span>
             </button>
             <button
@@ -256,7 +256,7 @@ export default function ExportMenu({
               className="menu-item"
               role="menuitem"
             >
-              <FileJson className="w-4 h-4 text-gray-600" />
+              <FileJson className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               <span>GARCH Results (JSON)</span>
             </button>
             <button
@@ -274,7 +274,7 @@ export default function ExportMenu({
               className="menu-item"
               role="menuitem"
             >
-              <FileJson className="w-4 h-4 text-gray-600" />
+              <FileJson className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               <span>All Data (JSON)</span>
             </button>
           </div>
@@ -287,7 +287,7 @@ export default function ExportMenu({
               className="menu-item"
               role="menuitem"
             >
-              <FileText className="w-4 h-4 text-gray-600" />
+              <FileText className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               <span>Generate PDF Report</span>
             </button>
             <button
@@ -296,15 +296,15 @@ export default function ExportMenu({
               className="menu-item"
               role="menuitem"
             >
-              <Share2 className="w-4 h-4 text-gray-600" />
+              <Share2 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               <span>Share Dashboard Link</span>
             </button>
           </div>
 
           {/* Progress Indicator */}
           {exportProgress && (
-            <div className="px-4 py-2 border-t border-gray-200 bg-blue-50">
-              <div className="flex items-center gap-2 text-xs text-blue-700">
+            <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-950">
+              <div className="flex items-center gap-2 text-xs text-blue-700 dark:text-blue-300">
                 <Loader2 className="w-3 h-3 animate-spin" />
                 <span>{exportProgress}</span>
               </div>
@@ -316,7 +316,7 @@ export default function ExportMenu({
       <style jsx>{`
         .menu-item {
           @apply w-full flex items-center gap-3 px-3 py-2 text-sm text-left;
-          @apply hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed;
+          @apply hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed;
           @apply transition-colors rounded;
         }
       `}</style>

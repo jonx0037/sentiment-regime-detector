@@ -44,22 +44,22 @@ export default function Toast({
   const getIcon = () => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="w-5 h-5 text-green-600" />
+        return <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
       case 'error':
-        return <XCircle className="w-5 h-5 text-red-600" />
+        return <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
       case 'info':
-        return <AlertCircle className="w-5 h-5 text-blue-600" />
+        return <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
     }
   }
 
   const getStyles = () => {
     switch (type) {
       case 'success':
-        return 'bg-green-50 border-green-200 text-green-900'
+        return 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 text-green-900 dark:text-green-300'
       case 'error':
-        return 'bg-red-50 border-red-200 text-red-900'
+        return 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800 text-red-900 dark:text-red-300'
       case 'info':
-        return 'bg-blue-50 border-blue-200 text-blue-900'
+        return 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-300'
     }
   }
 
@@ -68,7 +68,7 @@ export default function Toast({
       className={`
         fixed bottom-4 right-4 z-50
         flex items-center gap-3 p-4 pr-12
-        border rounded-lg shadow-lg
+        border rounded-lg shadow-lg dark:shadow-gray-900/50
         transition-all duration-300 ease-in-out
         ${getStyles()}
         ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}
@@ -80,7 +80,7 @@ export default function Toast({
       <span className="text-sm font-medium">{message}</span>
       <button
         onClick={handleClose}
-        className="absolute top-2 right-2 p-1 rounded hover:bg-black/5 transition-colors"
+        className="absolute top-2 right-2 p-1 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
         aria-label="Close notification"
       >
         <X className="w-4 h-4" />

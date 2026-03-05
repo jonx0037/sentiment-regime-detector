@@ -47,26 +47,26 @@ export default function RegimeTimeline() {
   const getRegimeIcon = (regime: string) => {
     switch (regime) {
       case 'risk_on':
-        return <TrendingUp className="w-4 h-4 text-green-600" />
+        return <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
       case 'risk_off':
-        return <TrendingDown className="w-4 h-4 text-red-600" />
+        return <TrendingDown className="w-4 h-4 text-red-600 dark:text-red-400" />
       case 'transition':
-        return <Minus className="w-4 h-4 text-yellow-600" />
+        return <Minus className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
       default:
-        return <Minus className="w-4 h-4 text-gray-600" />
+        return <Minus className="w-4 h-4 text-gray-600 dark:text-gray-400" />
     }
   }
 
   const getRegimeColor = (regime: string) => {
     switch (regime) {
       case 'risk_on':
-        return 'bg-green-100 text-green-700 border-green-300'
+        return 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300 border-green-300 dark:border-green-600'
       case 'risk_off':
-        return 'bg-red-100 text-red-700 border-red-300'
+        return 'bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300 border-red-300 dark:border-red-600'
       case 'transition':
-        return 'bg-yellow-100 text-yellow-700 border-yellow-300'
+        return 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300 border-yellow-300 dark:border-yellow-600'
       default:
-        return 'bg-gray-100 text-gray-700 border-gray-300'
+        return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'
     }
   }
 
@@ -78,12 +78,12 @@ export default function RegimeTimeline() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-16 bg-gray-100 rounded"></div>
+              <div key={i} className="h-16 bg-gray-100 dark:bg-gray-800 rounded"></div>
             ))}
           </div>
         </div>
@@ -93,25 +93,25 @@ export default function RegimeTimeline() {
 
   if (error) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-red-200 p-6">
-        <p className="text-red-600">Error loading transitions: {error}</p>
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-red-200 dark:border-red-800 p-6">
+        <p className="text-red-600 dark:text-red-400">Error loading transitions: {error}</p>
       </div>
     )
   }
 
   return (
-    <div id="regime-timeline-chart" className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div id="regime-timeline-chart" className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
       {/* Header */}
       <div className="flex items-center gap-2 mb-2">
         <Clock className="w-5 h-5 text-blue-600" />
-        <h2 className="text-lg font-semibold text-gray-900">Regime Transition History</h2>
-        <span className="ml-auto text-sm text-gray-500">{transitions.length} recent changes</span>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Regime Transition History</h2>
+        <span className="ml-auto text-sm text-gray-500 dark:text-gray-400">{transitions.length} recent changes</span>
         <ExportButton
           onExportPNG={() => exportChartAsPNG('regime-timeline-chart', 'regime-timeline')}
           onExportSVG={() => exportChartAsSVG('regime-timeline-chart', 'regime-timeline')}
         />
       </div>
-      <p className="text-xs text-gray-500 mb-4">
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
         Detected shifts between Risk-On, Risk-Off, and Transition states, driven by VIX thresholds, ECB CISS systemic stress, and cross-asset sentiment divergence. Jump penalties reduce false signals.
       </p>
 
@@ -120,14 +120,14 @@ export default function RegimeTimeline() {
         {transitions.map((transition, idx) => (
           <div
             key={idx}
-            className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-950 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
             {/* Date */}
             <div className="flex-shrink-0 w-24 text-right">
-              <p className="text-xs font-medium text-gray-900">
+              <p className="text-xs font-medium text-gray-900 dark:text-white">
                 {new Date(transition.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 {new Date(transition.date).getFullYear()}
               </p>
             </div>
@@ -142,7 +142,7 @@ export default function RegimeTimeline() {
             </div>
 
             {/* Arrow */}
-            <ArrowRight className="w-4 h-4 text-gray-400" />
+            <ArrowRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
 
             {/* To Regime */}
             <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md border text-xs font-medium ${getRegimeColor(transition.to_regime)}`}>
@@ -154,14 +154,14 @@ export default function RegimeTimeline() {
             <div className="ml-auto flex gap-3 text-xs">
               {transition.ciss !== null && (
                 <div className="text-right">
-                  <p className="text-gray-500">CISS</p>
-                  <p className="font-semibold text-gray-900">{(transition.ciss * 100).toFixed(1)}%</p>
+                  <p className="text-gray-500 dark:text-gray-400">CISS</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{(transition.ciss * 100).toFixed(1)}%</p>
                 </div>
               )}
               {transition.vix !== null && (
                 <div className="text-right">
-                  <p className="text-gray-500">VIX</p>
-                  <p className="font-semibold text-gray-900">{transition.vix.toFixed(1)}</p>
+                  <p className="text-gray-500 dark:text-gray-400">VIX</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{transition.vix.toFixed(1)}</p>
                 </div>
               )}
             </div>
@@ -170,22 +170,22 @@ export default function RegimeTimeline() {
       </div>
 
       {/* Summary Stats */}
-      <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-3 gap-4 text-center text-sm">
-        <div className="p-2 bg-green-50 rounded">
-          <p className="text-gray-500 text-xs">To Risk On</p>
-          <p className="font-semibold text-green-700">
+      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-3 gap-4 text-center text-sm">
+        <div className="p-2 bg-green-50 dark:bg-green-950 rounded">
+          <p className="text-gray-500 dark:text-gray-400 text-xs">To Risk On</p>
+          <p className="font-semibold text-green-700 dark:text-green-300">
             {transitions.filter(t => t.to_regime === 'risk_on').length}
           </p>
         </div>
-        <div className="p-2 bg-yellow-50 rounded">
-          <p className="text-gray-500 text-xs">To Transition</p>
-          <p className="font-semibold text-yellow-700">
+        <div className="p-2 bg-yellow-50 dark:bg-yellow-950 rounded">
+          <p className="text-gray-500 dark:text-gray-400 text-xs">To Transition</p>
+          <p className="font-semibold text-yellow-700 dark:text-yellow-300">
             {transitions.filter(t => t.to_regime === 'transition').length}
           </p>
         </div>
-        <div className="p-2 bg-red-50 rounded">
-          <p className="text-gray-500 text-xs">To Risk Off</p>
-          <p className="font-semibold text-red-700">
+        <div className="p-2 bg-red-50 dark:bg-red-950 rounded">
+          <p className="text-gray-500 dark:text-gray-400 text-xs">To Risk Off</p>
+          <p className="font-semibold text-red-700 dark:text-red-300">
             {transitions.filter(t => t.to_regime === 'risk_off').length}
           </p>
         </div>

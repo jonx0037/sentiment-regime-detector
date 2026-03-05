@@ -21,7 +21,9 @@ import { InlineTooltip } from '@/components/Tooltip'
 import HelpModal from '@/components/HelpModal'
 import ExportMenu from '@/components/ExportMenu'
 import { ToastContainer, useToast } from '@/components/Toast'
-import { RefreshCw, HelpCircle } from 'lucide-react'
+import { ChatbotWidget } from '@/components/chatbot'
+import { useTheme } from '@/components/ThemeProvider'
+import { RefreshCw, HelpCircle, Sun, Moon } from 'lucide-react'
 
 export default function Dashboard() {
   const [data, setData] = useState<SentimentResponse | null>(null)
@@ -42,6 +44,7 @@ export default function Dashboard() {
   const hasSentimentDataRef = useRef(false)
   const hasGarchErrorRef = useRef(false)
   const { toasts, showToast, removeToast } = useToast()
+  const { theme, toggleTheme } = useTheme()
 
   useEffect(() => {
     hasSentimentDataRef.current = Boolean(data?.asset_classes?.length)
@@ -194,49 +197,55 @@ export default function Dashboard() {
     connecting: {
       label: 'Connecting',
       dot: 'bg-gray-400',
-      badge: 'bg-gray-100 text-gray-700 border-gray-200',
+      badge: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700',
     },
     live: {
       label: 'Live',
       dot: 'bg-emerald-500',
-      badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      badge: 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
     },
     degraded: {
       label: isStale ? 'Stale' : 'Degraded',
       dot: 'bg-amber-500',
-      badge: 'bg-amber-50 text-amber-700 border-amber-200',
+      badge: 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800',
     },
     offline: {
       label: 'Offline',
       dot: 'bg-red-500',
-      badge: 'bg-red-50 text-red-700 border-red-200',
+      badge: 'bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800',
     },
   } as const
 
   const health = healthMap[effectiveHealthStatus]
 
   if (loading && !data) {
-    return <LoadingSkeleton variant="page" message="Loading dashboard..." />
+    return (
+      <>
+        <LoadingSkeleton variant="page" message="Loading dashboard..." />
+        <ChatbotWidget />
+      </>
+    )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
         <ErrorMessage
           error={error}
           onRetry={() => fetchAllData({ manual: true })}
           variant="full"
         />
+        <ChatbotWidget />
       </div>
     )
   }
 
   if (!data || !data.asset_classes || data.asset_classes.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <header className="bg-white border-b border-gray-200">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Sentiment Regime Detector
             </h1>
           </div>
@@ -244,6 +253,7 @@ export default function Dashboard() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <NoSentimentData onRefresh={() => fetchAllData({ manual: true })} />
         </main>
+        <ChatbotWidget />
       </div>
     )
   }
@@ -251,16 +261,16 @@ export default function Dashboard() {
   return (
     <ErrorBoundary onReset={() => fetchAllData({ manual: true })}>
       <HelpModal isOpen={helpModalOpen} onClose={() => setHelpModalOpen(false)} />
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200">
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                   Sentiment Regime Detector
                 </h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   Cross-Asset Sentiment Analysis Dashboard
                 </p>
               </div>
@@ -273,8 +283,16 @@ export default function Dashboard() {
                 />
                 <button
                   type="button"
+                  onClick={toggleTheme}
+                  className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                >
+                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                </button>
+                <button
+                  type="button"
                   onClick={() => setHelpModalOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   aria-label="Open help guide"
                 >
                   <HelpCircle className="w-4 h-4" />
@@ -291,7 +309,7 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
-            <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
               <span className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full border ${health.badge}`}>
                 <span className={`h-2 w-2 rounded-full ${health.dot}`}></span>
                 API {health.label}
@@ -309,7 +327,7 @@ export default function Dashboard() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
           <FadeIn delay={0}>
             <section>
-              <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-xs text-amber-800">
+              <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-3 text-xs text-amber-800 dark:text-amber-300">
                 This dashboard is for educational and research insight only. It is not personal financial advice;
                 consult a licensed financial professional before making investment decisions.
               </div>
@@ -319,7 +337,7 @@ export default function Dashboard() {
           {/* Section 1: Regime & Market Stress */}
           <FadeIn delay={80}>
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
                 <span className="text-2xl">📊</span>
                 Current Market Regime
               </h2>
@@ -338,7 +356,7 @@ export default function Dashboard() {
           {/* Section 2: Cross-Asset Sentiment */}
           <FadeIn delay={160}>
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
                 <span className="text-2xl">💭</span>
                 Cross-Asset Sentiment Analysis
               </h2>
@@ -362,7 +380,7 @@ export default function Dashboard() {
           {/* Section 3: Volatility & Transitions */}
           <FadeIn delay={240}>
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
                 <span className="text-2xl">📈</span>
                 Volatility Modeling & Regime History
               </h2>
@@ -381,14 +399,14 @@ export default function Dashboard() {
           {/* Footer Info */}
           <FadeIn delay={320}>
             <section className="mt-8">
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
                 <div className="flex items-start gap-4">
-                  <div className="text-blue-600 text-2xl">ℹ️</div>
+                  <div className="text-blue-600 dark:text-blue-400 text-2xl">ℹ️</div>
                   <div className="flex-1">
-                    <h3 className="text-base font-semibold text-blue-900 mb-2">
+                    <h3 className="text-base font-semibold text-blue-900 dark:text-blue-200 mb-2">
                       About This Dashboard
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800 dark:text-blue-300">
                       <div>
                         <p className="font-medium mb-1">Sentiment Analysis</p>
                         <p className="text-xs">
@@ -461,6 +479,7 @@ export default function Dashboard() {
         </main>
       </div>
       <ToastContainer toasts={toasts} onRemove={removeToast} />
+      <ChatbotWidget />
     </ErrorBoundary>
   )
 }

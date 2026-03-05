@@ -28,10 +28,10 @@ export default function Tooltip({
   }
 
   const arrowClasses = {
-    top: 'top-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent border-t-gray-900',
-    bottom: 'bottom-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent border-b-gray-900',
-    left: 'left-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-r-transparent border-l-gray-900',
-    right: 'right-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-l-transparent border-r-gray-900',
+    top: 'top-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent border-t-gray-900 dark:border-t-gray-100',
+    bottom: 'bottom-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent border-b-gray-900 dark:border-b-gray-100',
+    left: 'left-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-r-transparent border-l-gray-900 dark:border-l-gray-100',
+    right: 'right-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-l-transparent border-r-gray-900 dark:border-r-gray-100',
   }
 
   return (
@@ -49,7 +49,7 @@ export default function Tooltip({
         aria-label="More information"
       >
         {children || (
-          showIcon && <HelpCircle className="w-3.5 h-3.5 text-gray-400 hover:text-gray-600 transition-colors" />
+          showIcon && <HelpCircle className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors" />
         )}
       </span>
 
@@ -58,7 +58,7 @@ export default function Tooltip({
         <span
           role="tooltip"
           className={`
-            absolute z-50 px-3 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg
+            absolute z-50 px-3 py-2 text-xs font-medium text-white dark:text-gray-900 bg-gray-900 dark:bg-gray-100 rounded-lg shadow-lg dark:shadow-gray-900/50
             whitespace-normal max-w-xs
             animate-in fade-in-0 zoom-in-95 duration-200
             ${sideClasses[side]}
@@ -93,7 +93,7 @@ export function InlineTooltip({ term, definition, className = '' }: InlineToolti
   return (
     <span className={`relative inline-block ${className}`}>
       <span
-        className="border-b border-dotted border-gray-400 cursor-help hover:border-gray-600 transition-colors touch-manipulation"
+        className="border-b border-dotted border-gray-400 dark:border-gray-600 cursor-help hover:border-gray-600 dark:hover:border-gray-300 transition-colors touch-manipulation"
         onMouseEnter={() => setIsVisible(true)}
         onMouseLeave={() => setIsVisible(false)}
         onTouchStart={() => setIsVisible(true)}
@@ -111,14 +111,14 @@ export function InlineTooltip({ term, definition, className = '' }: InlineToolti
         <span
           role="tooltip"
           className="
-            absolute z-50 px-3 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg
+            absolute z-50 px-3 py-2 text-xs font-medium text-white dark:text-gray-900 bg-gray-900 dark:bg-gray-100 rounded-lg shadow-lg dark:shadow-gray-900/50
             whitespace-normal max-w-xs
             bottom-full left-1/2 -translate-x-1/2 mb-2
             animate-in fade-in-0 zoom-in-95 duration-200
           "
         >
           {definition}
-          <span className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-4 border-l-transparent border-r-transparent border-b-transparent border-t-gray-900" />
+          <span className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-4 border-l-transparent border-r-transparent border-b-transparent border-t-gray-900 dark:border-t-gray-100" />
         </span>
       )}
     </span>

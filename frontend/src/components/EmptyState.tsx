@@ -27,43 +27,43 @@ const variants = {
     icon: <Database className="w-12 h-12" />,
     defaultTitle: 'No Data Available',
     defaultMessage: 'There is no data to display at the moment. This could be temporary.',
-    color: 'text-gray-400',
-    bgColor: 'bg-gray-50',
+    color: 'text-gray-400 dark:text-gray-500',
+    bgColor: 'bg-gray-50 dark:bg-gray-950',
   },
   'no-results': {
     icon: <Search className="w-12 h-12" />,
     defaultTitle: 'No Results Found',
     defaultMessage: 'We couldn\'t find any data matching your criteria. Try adjusting your filters.',
-    color: 'text-gray-400',
-    bgColor: 'bg-gray-50',
+    color: 'text-gray-400 dark:text-gray-500',
+    bgColor: 'bg-gray-50 dark:bg-gray-950',
   },
   'no-sentiment': {
     icon: <TrendingUp className="w-12 h-12" />,
     defaultTitle: 'No Sentiment Data',
     defaultMessage: 'Sentiment data is currently unavailable. Check back soon or refresh to try again.',
     color: 'text-blue-400',
-    bgColor: 'bg-blue-50',
+    bgColor: 'bg-blue-50 dark:bg-blue-950',
   },
   'no-history': {
     icon: <LineChart className="w-12 h-12" />,
     defaultTitle: 'No Historical Data',
     defaultMessage: 'Historical data is not yet available for this time period.',
     color: 'text-amber-400',
-    bgColor: 'bg-amber-50',
+    bgColor: 'bg-amber-50 dark:bg-amber-950',
   },
   'no-regime': {
     icon: <AlertCircle className="w-12 h-12" />,
     defaultTitle: 'No Regime Data',
     defaultMessage: 'Market regime information is currently being calculated.',
     color: 'text-purple-400',
-    bgColor: 'bg-purple-50',
+    bgColor: 'bg-purple-50 dark:bg-purple-950',
   },
   'coming-soon': {
     icon: <Clock className="w-12 h-12" />,
     defaultTitle: 'Coming Soon',
     defaultMessage: 'This feature is currently under development and will be available soon.',
     color: 'text-indigo-400',
-    bgColor: 'bg-indigo-50',
+    bgColor: 'bg-indigo-50 dark:bg-indigo-950',
   },
 }
 
@@ -77,7 +77,7 @@ export default function EmptyState({
   const config = variants[variant]
 
   return (
-    <div className={`bg-white rounded-xl shadow-sm border border-gray-200 p-8 ${className}`}>
+    <div className={`bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 ${className}`}>
       <div className="flex flex-col items-center justify-center text-center max-w-md mx-auto py-8">
         {/* Icon */}
         <div className={`${config.bgColor} ${config.color} p-4 rounded-full mb-4`}>
@@ -85,12 +85,12 @@ export default function EmptyState({
         </div>
 
         {/* Title */}
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
           {title || config.defaultTitle}
         </h3>
 
         {/* Message */}
-        <p className="text-sm text-gray-600 mb-6">
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
           {message || config.defaultMessage}
         </p>
 
@@ -107,7 +107,7 @@ export default function EmptyState({
 
         {/* Suggestions (optional) */}
         {!action && (
-          <div className="mt-4 text-xs text-gray-500">
+          <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
             <p>Try refreshing the page or check back later</p>
           </div>
         )}

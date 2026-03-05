@@ -5,6 +5,7 @@ import type { AssetClassSentiment } from '@/types/api'
 import { formatAssetClass } from '@/lib/utils'
 import ExportButton from '@/components/ExportButton'
 import { exportChartAsPNG, exportChartAsSVG } from '@/utils/exportChart'
+import { useTheme } from '@/components/ThemeProvider'
 
 interface SentimentComparisonChartProps {
   data: AssetClassSentiment[]
@@ -12,6 +13,9 @@ interface SentimentComparisonChartProps {
 }
 
 export default function SentimentComparisonChart({ data, latestDataDate }: SentimentComparisonChartProps) {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+
   // Transform data for the chart
   const chartData = data.map((item) => ({
     name: formatAssetClass(item.asset_class),
@@ -21,9 +25,9 @@ export default function SentimentComparisonChart({ data, latestDataDate }: Senti
   }))
 
   return (
-    <div id="sentiment-comparison-chart" className="bg-white rounded-lg border-2 border-gray-200 p-6">
+    <div id="sentiment-comparison-chart" className="bg-white dark:bg-gray-900 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
           Sentiment Comparison
         </h3>
         <div className="flex items-center gap-3">
@@ -41,23 +45,24 @@ export default function SentimentComparisonChart({ data, latestDataDate }: Senti
 
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#e5e7eb'} />
           <XAxis
             dataKey="name"
-            tick={{ fill: '#6b7280', fontSize: 12 }}
-            stroke="#9ca3af"
+            tick={{ fill: isDark ? '#9ca3af' : '#6b7280', fontSize: 12 }}
+            stroke={isDark ? '#4b5563' : '#9ca3af'}
           />
           <YAxis
-            tick={{ fill: '#6b7280', fontSize: 12 }}
-            stroke="#9ca3af"
-            label={{ value: 'Sentiment Score', angle: -90, position: 'insideLeft', fill: '#6b7280', fontSize: 12 }}
+            tick={{ fill: isDark ? '#9ca3af' : '#6b7280', fontSize: 12 }}
+            stroke={isDark ? '#4b5563' : '#9ca3af'}
+            label={{ value: 'Sentiment Score', angle: -90, position: 'insideLeft', fill: isDark ? '#9ca3af' : '#6b7280', fontSize: 12 }}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#ffffff',
-              border: '1px solid #e5e7eb',
+              backgroundColor: isDark ? '#1f2937' : '#ffffff',
+              border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
               borderRadius: '8px',
               padding: '12px',
+              color: isDark ? '#e5e7eb' : '#374151',
             }}
             formatter={(value: number) => `${value.toFixed(1)}%`}
           />
