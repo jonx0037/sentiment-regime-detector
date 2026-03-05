@@ -15,7 +15,7 @@ from sentiment_detector.core.config import settings
 from sentiment_detector.models.base import Base
 
 # Import all models to ensure they're registered with Base.metadata
-from sentiment_detector.models import text_record, sentiment, regime, stress_index, market_data  # noqa: F401
+from sentiment_detector.models import text_record, sentiment, regime, stress_index, market_data, document_chunk  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
