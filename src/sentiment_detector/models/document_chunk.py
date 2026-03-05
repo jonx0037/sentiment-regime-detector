@@ -18,5 +18,5 @@ class DocumentChunk(Base, TimestampMixin):
     metadata_: Mapped[dict | None] = mapped_column(
         "metadata", JSONB, nullable=True, comment="Chunk metadata (section, position)"
     )
-    # Note: embedding column (VECTOR(384)) is added via raw SQL in migration
-    # because pgvector type isn't natively supported by SQLAlchemy autogenerate
+    # Note: embedding column (float8[]) is added via raw SQL in migration
+    # Uses native PostgreSQL arrays with a SQL cosine_similarity function

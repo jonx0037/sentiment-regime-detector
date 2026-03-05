@@ -2,8 +2,8 @@
 
 import json
 
+import httpx
 from cachetools import TTLCache
-from sentence_transformers import SentenceTransformer
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,28 +15,40 @@ logger = get_logger(__name__)
 # In-memory cache for live context (15 min TTL)
 _context_cache: TTLCache = TTLCache(maxsize=1, ttl=900)
 
-# Lazy-loaded embedding model
-_embed_model: SentenceTransformer | None = None
+COHERE_EMBED_URL = "https://api.cohere.com/v2/embed"
+COHERE_EMBED_MODEL = "embed-english-v3.0"
 
 
-def _get_embed_model() -> SentenceTransformer:
-    global _embed_model
-    if _embed_model is None:
-        _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
-    return _embed_model
+async def _embed_query(query: str) -> str:
+    """Embed a query string using Cohere API. Returns PostgreSQL array literal."""
+    async with httpx.AsyncClient(timeout=30) as client:
+        resp = await client.post(
+            COHERE_EMBED_URL,
+            headers={
+                "Authorization": f"Bearer {settings.cohere_api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "texts": [query],
+                "model": COHERE_EMBED_MODEL,
+                "input_type": "search_query",
+                "embedding_types": ["float"],
+            },
+        )
+        resp.raise_for_status()
+        embedding = resp.json()["embeddings"]["float"][0]
+    return "{" + ",".join(str(float(x)) for x in embedding) + "}"
 
 
 async def retrieve_chunks(session: AsyncSession, query: str, top_k: int = 5) -> list[dict]:
-    """Embed query and retrieve top-k similar document chunks via pgvector."""
-    model = _get_embed_model()
-    query_embedding = model.encode(query)
-    emb_str = "[" + ",".join(str(float(x)) for x in query_embedding) + "]"
+    """Embed query and retrieve top-k similar document chunks via cosine similarity."""
+    emb_str = await _embed_query(query)
 
     result = await session.execute(
         text("""
-            SELECT source, chunk_text, 1 - (embedding <=> :emb::vector) AS similarity
+            SELECT source, chunk_text, cosine_similarity(embedding, :emb::float8[]) AS similarity
             FROM document_chunks
-            ORDER BY embedding <=> :emb::vector
+            ORDER BY cosine_similarity(embedding, :emb::float8[]) DESC
             LIMIT :top_k
         """),
         {"emb": emb_str, "top_k": top_k},
