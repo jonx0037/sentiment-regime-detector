@@ -30,7 +30,11 @@ class ChatContextResponse(BaseModel):
 
     current_regime: str | None
     regime_confidence: float | None
+    probabilities: dict[str, float] = {}
     sentiment_scores: dict[str, float]
     stress_level: float | None
+    vix_level: float | None = None
+    volatility_regime: str | None = None
+    volatility_score: float | None = None
     recent_transitions: list[dict]
     summary: str
