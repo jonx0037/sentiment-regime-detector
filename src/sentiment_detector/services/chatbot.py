@@ -1,7 +1,5 @@
 """Chatbot service: RAG retrieval, context assembly, Claude API."""
 
-import json
-
 import httpx
 from cachetools import TTLCache
 from sqlalchemy import text
@@ -12,8 +10,8 @@ from sentiment_detector.core.logging import get_logger
 
 logger = get_logger(__name__)
 
-# In-memory cache for live context (15 min TTL)
-_context_cache: TTLCache = TTLCache(maxsize=1, ttl=900)
+# In-memory cache for live context (2 min TTL — dashboard refreshes every 30-60s)
+_context_cache: TTLCache = TTLCache(maxsize=1, ttl=120)
 
 COHERE_EMBED_URL = "https://api.cohere.com/v2/embed"
 COHERE_EMBED_MODEL = "embed-english-v3.0"
@@ -59,82 +57,137 @@ async def retrieve_chunks(session: AsyncSession, query: str, top_k: int = 5) -> 
 
 
 async def fetch_live_context(session: AsyncSession) -> dict:
-    """Fetch current dashboard state from database. Cached 15 min."""
+    """Fetch current dashboard state using the same classifier logic as the dashboard.
+
+    This mirrors what ``/api/v1/regime/current`` computes so the chatbot
+    always agrees with what the user sees in the UI.  Cached for 2 min.
+    """
     if "ctx" in _context_cache:
         return _context_cache["ctx"]
 
-    regime = None
+    # Lazy imports to avoid circular deps at module level
+    from sentiment_detector.api.routes.regime import (
+        get_latest_features,
+        compute_volatility_state,
+    )
+    from sentiment_detector.services.regime_classifier import (
+        MLRegimeClassifier,
+        RegimeClassifier,
+    )
+
+    regime_label = "unknown"
+    regime_confidence = None
+    probabilities: dict = {}
+    volatility_regime = None
+    volatility_score = None
     sentiments: dict = {}
-    stress = None
+    ciss_level = None
+    vix_level = None
     transitions: list = []
 
+    # ── 1. Classify regime (same path as the dashboard endpoint) ──
     try:
-        regime_row = await session.execute(text("""
-            SELECT regime, confidence
-            FROM regime_states
-            ORDER BY timestamp DESC
-            LIMIT 1
-        """))
-        regime = regime_row.fetchone()
-    except Exception as e:
-        logger.warning("Failed to fetch regime state", error=str(e))
+        features = await get_latest_features(session)
 
-    try:
-        sent_rows = await session.execute(text("""
-            SELECT DISTINCT ON (asset_class)
-                asset_class, mean_compound
-            FROM sentiment_indices
-            WHERE source IS NULL
-            ORDER BY asset_class, period_start DESC
-        """))
-        sentiments = {r[0]: round(float(r[1]), 4) for r in sent_rows.fetchall()}
-    except Exception as e:
-        logger.warning("Failed to fetch sentiment indices", error=str(e))
+        try:
+            classifier = MLRegimeClassifier()
+            classification = classifier.classify(features)
+        except Exception:
+            classifier = RegimeClassifier()
+            classification = classifier.classify(features)
 
-    try:
-        stress_row = await session.execute(text("""
-            SELECT value FROM stress_indices
-            WHERE source = 'CISS'
-            ORDER BY date DESC LIMIT 1
-        """))
-        stress = stress_row.fetchone()
-    except Exception as e:
-        logger.warning("Failed to fetch stress index", error=str(e))
+        regime_label = classification.state.value
+        regime_confidence = round(classification.confidence, 4)
+        probabilities = {
+            "risk_on": round(classification.prob_risk_on, 4),
+            "risk_off": round(classification.prob_risk_off, 4),
+            "transition": round(classification.prob_transition, 4),
+        }
 
+        sentiments = {
+            "equity": round(features.equity_sentiment, 4),
+            "crypto": round(features.crypto_sentiment, 4),
+            "forex": round(features.forex_sentiment, 4),
+            "commodity": round(features.commodity_sentiment, 4),
+        }
+
+        ciss_level = round(features.ciss_level, 4) if features.ciss_level is not None else None
+        vix_level = round(features.vix_level, 2) if features.vix_level is not None else None
+
+        vol_state, vol_score = compute_volatility_state(features.ciss_level, features.vix_level)
+        volatility_regime = vol_state
+        volatility_score = round(vol_score, 4)
+    except Exception as e:
+        logger.warning("Failed to classify regime from features", error=str(e))
+
+    # ── 2. Compute recent transitions from actual CISS/VIX data ──
     try:
-        trans_rows = await session.execute(text("""
-            SELECT from_regime, to_regime, transition_start, trigger_features
-            FROM regime_transitions
-            ORDER BY transition_start DESC
+        trans_result = await session.execute(text("""
+            WITH regime_data AS (
+                SELECT
+                    si.date,
+                    si.value AS ciss,
+                    md.close AS vix,
+                    CASE
+                        WHEN si.value < 0.2 AND md.close < 20 THEN 'risk_on'
+                        WHEN si.value > 0.4 OR md.close > 30 THEN 'risk_off'
+                        ELSE 'transition'
+                    END AS regime
+                FROM stress_indices si
+                LEFT JOIN market_data md
+                    ON si.date = md.date AND md.symbol = '^VIX'
+                WHERE si.source = 'ecb_ciss'
+                ORDER BY si.date
+            ),
+            transitions AS (
+                SELECT
+                    date, regime,
+                    LAG(regime) OVER (ORDER BY date) AS prev_regime,
+                    ciss, vix
+                FROM regime_data
+            )
+            SELECT date, prev_regime, regime, ciss, vix
+            FROM transitions
+            WHERE prev_regime IS NOT NULL AND prev_regime != regime
+            ORDER BY date DESC
             LIMIT 5
         """))
         transitions = [
             {
-                "from": r[0],
-                "to": r[1],
-                "date": str(r[2]),
-                "trigger": r[3].get("description", "N/A") if isinstance(r[3], dict) else "N/A",
+                "from": r[1],
+                "to": r[2],
+                "date": str(r[0]),
+                "ciss": round(float(r[3]), 4) if r[3] else None,
+                "vix": round(float(r[4]), 2) if r[4] else None,
             }
-            for r in trans_rows.fetchall()
+            for r in trans_result.fetchall()
         ]
     except Exception as e:
-        logger.warning("Failed to fetch regime transitions", error=str(e))
+        logger.warning("Failed to compute regime transitions", error=str(e))
 
+    # ── 3. Assemble context dict ──
     ctx = {
-        "current_regime": regime[0] if regime else None,
-        "regime_confidence": round(float(regime[1]), 4) if regime else None,
+        "current_regime": regime_label,
+        "regime_confidence": regime_confidence,
+        "probabilities": probabilities,
         "sentiment_scores": sentiments,
-        "stress_level": round(float(stress[0]), 4) if stress else None,
+        "stress_level": ciss_level,
+        "vix_level": vix_level,
+        "volatility_regime": volatility_regime,
+        "volatility_score": volatility_score,
         "recent_transitions": transitions,
     }
 
-    regime_label = ctx["current_regime"] or "unknown"
     sent_summary = ", ".join(f"{k}: {v}" for k, v in sentiments.items()) or "no data"
-    stress_str = f"{ctx['stress_level']}" if ctx["stress_level"] else "N/A"
+    prob_str = ", ".join(f"{k}: {v}" for k, v in probabilities.items()) if probabilities else "N/A"
+    vol_str = f"{volatility_regime} (score: {volatility_score})" if volatility_regime else "N/A"
     ctx["summary"] = (
-        f"Current regime: {regime_label}. "
+        f"Current regime: {regime_label} (confidence: {regime_confidence or 'N/A'}). "
+        f"Probabilities — {prob_str}. "
+        f"Volatility regime: {vol_str}. "
         f"Sentiment scores — {sent_summary}. "
-        f"Stress index: {stress_str}."
+        f"CISS stress index: {ciss_level if ciss_level is not None else 'N/A'}. "
+        f"VIX: {vix_level if vix_level is not None else 'N/A'}."
     )
 
     _context_cache["ctx"] = ctx
@@ -147,6 +200,8 @@ Your role:
 - Answer questions about the project's methodology, data sources, models, and architecture.
 - Explain the current market regime, sentiment scores, and stress indicators shown on the dashboard.
 - Cite your sources when referencing project documentation.
+
+Important: The "Current Dashboard State" section below contains EXACTLY what the user sees on the dashboard right now. When the user asks about what the dashboard shows, refer to these values directly and confidently — they are the live values.
 
 Rules:
 - Stay strictly within the project domain. Do not answer questions about other topics.
@@ -163,10 +218,24 @@ def build_system_prompt(live_context: dict, rag_chunks: list[dict]) -> str:
     # Live context block
     parts.append("## Current Dashboard State\n")
     parts.append(live_context["summary"])
-    if live_context["recent_transitions"]:
+
+    # Regime probabilities
+    if live_context.get("probabilities"):
+        parts.append(f"\nRegime probabilities: {live_context['probabilities']}")
+
+    # Volatility regime
+    if live_context.get("volatility_regime"):
+        parts.append(
+            f"Volatility regime: {live_context['volatility_regime']} "
+            f"(score: {live_context.get('volatility_score', 'N/A')})"
+        )
+
+    if live_context.get("recent_transitions"):
         parts.append("\nRecent regime transitions:")
         for t in live_context["recent_transitions"][:3]:
-            parts.append(f"- {t['date']}: {t['from']} → {t['to']} ({t['trigger'] or 'N/A'})")
+            ciss_str = f", CISS: {t['ciss']}" if t.get("ciss") else ""
+            vix_str = f", VIX: {t['vix']}" if t.get("vix") else ""
+            parts.append(f"- {t['date']}: {t['from']} → {t['to']}{ciss_str}{vix_str}")
 
     # RAG context block
     if rag_chunks:
@@ -225,5 +294,5 @@ async def chat(
     return {
         "response": answer,
         "sources_used": sources,
-        "regime_context_used": live_context["current_regime"] is not None,
+        "regime_context_used": live_context["current_regime"] != "unknown",
     }
