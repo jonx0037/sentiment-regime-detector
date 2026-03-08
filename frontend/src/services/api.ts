@@ -35,32 +35,62 @@ class ApiError extends Error {
   }
 }
 
-async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
-    })
+const MAX_RETRIES = 3
+const BASE_DELAY_MS = 1000
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null)
-      throw new ApiError(
-        errorData?.detail || `API request failed: ${response.statusText}`,
-        response.status,
-        errorData
-      )
-    }
-
-    return response.json()
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error
-    }
-    throw new ApiError('Network error or server unreachable')
+function isRetryable(error: unknown): boolean {
+  if (error instanceof ApiError) {
+    // Retry on server errors (5xx), not client errors (4xx)
+    return error.status !== undefined && error.status >= 500
   }
+  // Retry on network / DNS failures
+  return true
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  let lastError: unknown
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options?.headers,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null)
+        throw new ApiError(
+          errorData?.detail || `API request failed: ${response.statusText}`,
+          response.status,
+          errorData
+        )
+      }
+
+      return response.json()
+    } catch (error) {
+      lastError = error
+
+      const retryable = isRetryable(error)
+      if (!retryable || attempt === MAX_RETRIES) {
+        break
+      }
+
+      // Exponential backoff: 1s, 2s, 4s
+      await delay(BASE_DELAY_MS * Math.pow(2, attempt))
+    }
+  }
+
+  if (lastError instanceof ApiError) {
+    throw lastError
+  }
+  throw new ApiError('Network error or server unreachable')
 }
 
 export const sentimentApi = {

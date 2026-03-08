@@ -53,38 +53,64 @@ class RegimeExplainer:
         self._feature_names = None
         self._explainer = None
         self.model_version = None
+        self._load_attempted = False
         self.cache = cache
 
+    @property
+    def model_available(self) -> bool:
+        """Whether a trained model has been successfully loaded."""
+        return self._model is not None
+
     def _load_model(self):
-        """Load model from trusted pickle checkpoint."""
-        import pickle
+        """Load model from trusted internal pickle checkpoint.
 
-        with open(self.model_path, 'rb') as f:
-            checkpoint = pickle.load(f)
+        Gracefully handles missing model files by logging a warning
+        and leaving self._model as None. Callers should check
+        self.model_available before using the model.
+        """
+        import pickle  # nosec B403 - loading trusted internal model checkpoints only
 
-        self._model = checkpoint['model']
-        self._scaler = checkpoint['scaler']
-        self._feature_names = checkpoint['feature_names']
+        self._load_attempted = True
 
-        # Generate model version from checkpoint metadata
-        if 'model_version' in checkpoint:
-            self.model_version = checkpoint['model_version']
-        elif 'train_end_date' in checkpoint:
-            # Use train date to create version (e.g., "RF_v2024.01")
-            train_date = checkpoint['train_end_date']
-            self.model_version = f"RF_v{train_date[:4]}.{train_date[5:7]}"
-        else:
-            # Fallback: use model filename
-            self.model_version = self.model_path.stem
+        if not self.model_path.exists():
+            logger.warning(f"Model file not found: {self.model_path}")
+            logger.warning("SHAP explanations unavailable — train and deploy a model first")
+            return
 
-        # Initialize SHAP
-        self._explainer = shap.TreeExplainer(self._model)
-        logger.info(f"Loaded model with {len(self._feature_names)} features")
+        try:
+            with open(self.model_path, 'rb') as f:
+                checkpoint = pickle.load(f)  # nosec B301 - trusted internal checkpoint
 
-    def explain_prediction(self, features: Dict[str, float]) -> ExplanationResult:
-        """Explain prediction using SHAP TreeExplainer."""
-        if self._model is None:
+            self._model = checkpoint['model']
+            self._scaler = checkpoint['scaler']
+            self._feature_names = checkpoint['feature_names']
+
+            # Generate model version from checkpoint metadata
+            if 'model_version' in checkpoint:
+                self.model_version = checkpoint['model_version']
+            elif 'train_end_date' in checkpoint:
+                train_date = checkpoint['train_end_date']
+                self.model_version = f"RF_v{train_date[:4]}.{train_date[5:7]}"
+            else:
+                self.model_version = self.model_path.stem
+
+            # Initialize SHAP
+            self._explainer = shap.TreeExplainer(self._model)
+            logger.info(f"Loaded model with {len(self._feature_names)} features")
+        except Exception as e:
+            logger.error(f"Failed to load model: {e}")
+            self._model = None
+
+    def explain_prediction(self, features: Dict[str, float]) -> Optional[ExplanationResult]:
+        """Explain prediction using SHAP TreeExplainer.
+
+        Returns None if the model is not available.
+        """
+        if self._model is None and not self._load_attempted:
             self._load_model()
+
+        if not self.model_available:
+            return None
 
         # Prepare features in correct order
         feature_vector = pd.DataFrame(
@@ -142,21 +168,24 @@ class RegimeExplainer:
             model_version=self.model_version,
         )
 
-    async def explain_prediction_async(self, features: Dict[str, float]) -> ExplanationResult:
+    async def explain_prediction_async(self, features: Dict[str, float]) -> Optional[ExplanationResult]:
         """Async version of explain_prediction with caching support.
 
         Args:
             features: Dictionary of feature name -> value (all 28 required)
 
         Returns:
-            ExplanationResult with SHAP values and prediction
+            ExplanationResult with SHAP values and prediction, or None if model unavailable
 
         Note:
             Requires cache to be configured in __init__. Falls back to computation
             if cache is not available or encounters errors.
         """
-        if self._model is None:
+        if self._model is None and not self._load_attempted:
             self._load_model()
+
+        if not self.model_available:
+            return None
 
         # Check cache if available
         if self.cache:
@@ -231,7 +260,7 @@ class RegimeExplainer:
 
         return result
 
-    def global_importance(self, features_df: pd.DataFrame) -> Dict[str, float]:
+    def global_importance(self, features_df: pd.DataFrame) -> Optional[Dict[str, float]]:
         """Compute mean(|SHAP|) across samples.
 
         Args:
@@ -239,10 +268,14 @@ class RegimeExplainer:
                         Must have same columns as training features
 
         Returns:
-            Dictionary mapping feature names to mean absolute SHAP values
+            Dictionary mapping feature names to mean absolute SHAP values,
+            or None if model unavailable
         """
-        if self._model is None:
+        if self._model is None and not self._load_attempted:
             self._load_model()
+
+        if not self.model_available:
+            return None
 
         # Ensure features are in correct order
         features_df = features_df[self._feature_names]
@@ -269,7 +302,7 @@ class RegimeExplainer:
 
         return dict(zip(self._feature_names, shap_values))
 
-    def feature_interactions(self, features_df: pd.DataFrame, top_k: int = 10) -> dict:
+    def feature_interactions(self, features_df: pd.DataFrame, top_k: int = 10) -> Optional[dict]:
         """Compute SHAP interaction values to identify synergistic feature effects.
 
         Args:
@@ -277,13 +310,13 @@ class RegimeExplainer:
             top_k: Number of top interaction pairs to return
 
         Returns:
-            Dictionary with:
-                - top_interactions: List of (feature1, feature2, interaction_strength) tuples
-                - interaction_matrix: Full interaction matrix as nested list
-                - feature_names: List of feature names for matrix indexing
+            Dictionary with interaction data, or None if model unavailable
         """
-        if self._model is None:
+        if self._model is None and not self._load_attempted:
             self._load_model()
+
+        if not self.model_available:
+            return None
 
         # Ensure features are in correct order
         features_df = features_df[self._feature_names]

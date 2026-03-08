@@ -298,9 +298,16 @@ async def explain_current_prediction(
     # Build features from latest data
     features = await build_feature_dict(session)
 
-    # Get explanation (cache-enabled)
+    # Get explanation
     explainer = RegimeExplainer(model_path="models/regime_classifier_rf.pkl")
     result = explainer.explain_prediction(features)
+
+    if result is None:
+        raise HTTPException(
+            status_code=503,
+            detail="SHAP explanations unavailable — regime classifier model not deployed. "
+                   "Run scripts/train_regime_classifier.py to generate the model.",
+        )
 
     return explanation_result_to_response(result)
 
@@ -328,6 +335,12 @@ async def explain_prediction_for_date(
 
     explainer = RegimeExplainer(model_path="models/regime_classifier_rf.pkl")
     result = explainer.explain_prediction(features)
+
+    if result is None:
+        raise HTTPException(
+            status_code=503,
+            detail="SHAP explanations unavailable — regime classifier model not deployed.",
+        )
 
     return explanation_result_to_response(result)
 
@@ -367,6 +380,12 @@ async def explain_crisis_event(
 
     explainer = RegimeExplainer(model_path="models/regime_classifier_rf.pkl")
     result = explainer.explain_prediction(features)
+
+    if result is None:
+        raise HTTPException(
+            status_code=503,
+            detail="SHAP explanations unavailable — regime classifier model not deployed.",
+        )
 
     # Convert event to API schema
     api_event = APICrisisEvent(
